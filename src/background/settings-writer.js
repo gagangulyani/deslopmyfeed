@@ -28,8 +28,9 @@ function setBadge(tabId, count = hiddenCounts.get(tabId) ?? 0) {
   chrome.action.setBadgeText({ tabId, text: count > 0 ? String(count) : '' });
 }
 
-async function setTabAppearance(tabId, linkedIn, settings = await loadSettings()) {
-  const active = linkedIn && settings.enabled && settings.mode !== 'off';
+async function setTabAppearance(tabId, linkedIn, settings) {
+  const currentSettings = settings ?? await loadSettings();
+  const active = linkedIn && currentSettings.enabled && currentSettings.mode !== 'off';
   chrome.action.setIcon({ tabId, path: active ? COLOR_ICONS : GRAY_ICONS });
   if (!active) hiddenCounts.delete(tabId);
   setBadge(tabId);
