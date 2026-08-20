@@ -15,6 +15,7 @@ import { stamp } from './debug.js';
  * un-hid must never collapse again underneath them.
  */
 const alwaysShown = new WeakSet();
+const PROFILE_ACTIVITY_ROUTE = /^\/in\/[^/]+\/recent-activity\/all\/?$/;
 
 /** @param {Element} el */
 export function markAlwaysShow(el) {
@@ -38,6 +39,13 @@ export function processPost(el, settings) {
   const post = readPost(el);
   if (post.skip) {
     if (debug) stamp(el, post.skip);
+    return null;
+  }
+
+  // Profile activity is an author's archive, but it includes material they
+  // reshared. Do not present somebody else's words as a judgment of the owner.
+  if (post.reposted && PROFILE_ACTIVITY_ROUTE.test(location.pathname)) {
+    if (debug) stamp(el, 'repost');
     return null;
   }
 

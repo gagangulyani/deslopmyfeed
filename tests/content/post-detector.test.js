@@ -144,4 +144,10 @@ describe('readPost', () => {
     expect(read.skip).toBeNull();
     expect(read.text).toBe('A complete thought.');
   });
+
+  it('identifies a repost separately from the post text', () => {
+    const el = post({ text: 'Another author wrote this.' });
+    el.insertAdjacentHTML('afterbegin', '<span>Example Person reposted this</span>');
+    expect(readPost(el).reposted).toBe(true);
+  });
 });
