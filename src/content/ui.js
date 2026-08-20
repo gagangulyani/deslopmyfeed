@@ -17,6 +17,11 @@ const COLLAPSED = 'dsmf-hidden';
 /** Fired when the user asks to stop filtering posts like this one. Phase 6
  * listens for it; the UI layer does not touch storage itself. */
 export const ALWAYS_SHOW_EVENT = 'dsmf-always-show';
+export const HIDDEN_COUNT_EVENT = 'dsmf-hidden-count';
+
+function reportHiddenCount(detail) {
+  document.dispatchEvent(new CustomEvent(HIDDEN_COUNT_EVENT, { detail }));
+}
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -136,13 +141,16 @@ export function applyHide(post, analysis) {
 
   post.classList.add(COLLAPSED);
   post.prepend(card);
+  reportHiddenCount({ delta: 1 });
 }
 
 /** Restore a collapsed post. Always available to the user (spec §10). */
 export function restore(post) {
   if (!post) return;
+  const wasHidden = post.classList.contains(COLLAPSED);
   post.classList.remove(COLLAPSED);
   for (const artifact of post.querySelectorAll(`[${ARTIFACT}]`)) artifact.remove();
+  if (wasHidden) reportHiddenCount({ delta: -1 });
 }
 
 /** Remove every DeSlopMyFeed artifact from the page. */
@@ -152,4 +160,5 @@ export function clearAll(root = document) {
     if (post) post.classList.remove(COLLAPSED);
     artifact.remove();
   }
+  reportHiddenCount({ reset: true });
 }

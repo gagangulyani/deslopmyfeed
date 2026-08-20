@@ -202,7 +202,7 @@ Walk the spec §31 checklist explicitly:
 
 ## How the open questions resolved
 
-1. **Corpus sourcing.** Resolved by writing all 178 fixtures rather than
+1. **Corpus sourcing.** Resolved by writing all 179 fixtures rather than
    collecting any, which satisfies the no-real-posts rule absolutely and is the
    corpus's central weakness. The measured 0.0% human false-positive rate is a
    regression guard, not a field result. Replacing these with anonymized real

@@ -63,8 +63,8 @@ describe('no LinkedIn control is ever operated (spec §19)', () => {
 });
 
 describe('permissions are the minimum (spec §18)', () => {
-  it('requests storage and nothing else', () => {
-    expect(manifest.permissions).toEqual(['storage']);
+  it('requests only storage and tabs for local settings and the action badge', () => {
+    expect(manifest.permissions).toEqual(['storage', 'tabs']);
   });
 
   it('requests no host permissions and no optional permissions', () => {
@@ -72,7 +72,7 @@ describe('permissions are the minimum (spec §18)', () => {
     expect(manifest.optional_permissions).toBeUndefined();
   });
 
-  it.each(['tabs', 'cookies', 'history', 'webRequest', 'scripting', '<all_urls>'])(
+  it.each(['cookies', 'history', 'webRequest', 'scripting', '<all_urls>'])(
     'never asks for %s',
     (permission) => {
       expect(JSON.stringify(manifest)).not.toContain(`"${permission}"`);
@@ -88,9 +88,15 @@ describe('permissions are the minimum (spec §18)', () => {
     }
   });
 
-  it('declares no background service worker', () => {
-    // Nothing needs to run when the user is not looking at LinkedIn.
-    expect(manifest.background).toBeUndefined();
+  it('uses tabs only for the per-tab action icon and badge', () => {
+    expect(manifest.permissions).toContain('tabs');
+  });
+
+  it('uses a module service worker for local settings and action state', () => {
+    expect(manifest.background).toEqual({
+      service_worker: 'src/background/settings-writer.js',
+      type: 'module'
+    });
   });
 });
 
@@ -104,7 +110,10 @@ describe('the packaged extension is internally consistent', () => {
   it('every file the manifest names exists', () => {
     const referenced = [
       ...manifest.content_scripts.flatMap((entry) => [...entry.js, ...(entry.css ?? [])]),
-      manifest.action.default_popup
+      manifest.action.default_popup,
+      manifest.background.service_worker,
+      ...Object.values(manifest.action.default_icon),
+      ...Object.values(manifest.icons)
     ];
     for (const file of referenced) {
       expect(existsSync(join(ROOT, file)), `${file} is missing`).toBe(true);
@@ -126,7 +135,7 @@ describe('the packaged extension is internally consistent', () => {
     const bootstrap = 'src/content/bootstrap.js';
     const injected = sources
       .map((f) => relative(ROOT, f).split(sep).join('/'))
-      .filter((f) => f !== bootstrap && !f.startsWith('src/popup/'));
+      .filter((f) => f !== bootstrap && !f.startsWith('src/popup/') && !f.startsWith('src/background/'));
 
     for (const file of injected) {
       expect(exposed.has(file), `${file} is not web-accessible`).toBe(true);

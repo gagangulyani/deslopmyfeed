@@ -78,10 +78,18 @@ let pendingWrite = Promise.resolve();
  * @param {Partial<typeof DEFAULT_SETTINGS>} patch
  * @returns {Promise<typeof DEFAULT_SETTINGS>}
  */
-export function saveSettings(patch) {
+export function commitSettingsPatch(patch) {
   const write = pendingWrite.then(async () => {
     const current = await loadSettings();
-    const next = mergeSettings({ ...current, ...patch });
+    const next = mergeSettings({
+      ...current,
+      ...patch,
+      thresholds: { ...current.thresholds, ...(patch.thresholds ?? {}) },
+      rules: { ...current.rules, ...(patch.rules ?? {}) },
+      weights: { ...current.weights, ...(patch.weights ?? {}) },
+      customVocabulary: { ...current.customVocabulary, ...(patch.customVocabulary ?? {}) },
+      exceptions: { ...current.exceptions, ...(patch.exceptions ?? {}) }
+    });
     await chrome.storage.local.set({ [STORAGE_KEY]: next });
     return next;
   });
@@ -89,6 +97,18 @@ export function saveSettings(patch) {
   // A failed write must not strand later writes behind a rejected promise.
   pendingWrite = write.catch(() => {});
   return write;
+}
+
+/**
+ * Route production writes through the extension service worker, which owns the
+ * queue shared by popup and content-script contexts. Tests without a runtime
+ * bridge use the same local commit path.
+ */
+export function saveSettings(patch) {
+  if (chrome.runtime?.sendMessage) {
+    return chrome.runtime.sendMessage({ type: 'dsmf-save-settings', patch });
+  }
+  return commitSettingsPatch(patch);
 }
 
 /**

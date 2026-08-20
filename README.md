@@ -29,6 +29,10 @@ or collapses it locally:
 
 The post is not deleted from LinkedIn. Only your local presentation changes.
 
+The toolbar icon is gray outside LinkedIn or while filtering is off. On an
+active LinkedIn tab it uses the colored brand icon and displays the number of
+currently hidden posts; the badge disappears at zero.
+
 Every hidden card states the matched categories. **Why hidden?** expands the
 specific structural and phrasing evidence used for that decision.
 

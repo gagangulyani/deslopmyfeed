@@ -4,7 +4,7 @@
  */
 import { findPosts, resetProcessed } from './post-detector.js';
 import { processPost, markAlwaysShow } from './post-filter.js';
-import { clearAll, ALWAYS_SHOW_EVENT } from './ui.js';
+import { clearAll, ALWAYS_SHOW_EVENT, HIDDEN_COUNT_EVENT } from './ui.js';
 import {
   DEFAULT_SETTINGS, loadSettings, saveSettings, onSettingsChanged, mergeSettings
 } from '../storage/settings.js';
@@ -100,6 +100,14 @@ function applyTheme(theme) {
  * label suggests, which is the honest trade for not inventing a hidden
  * per-pattern memory.
  */
+function updateHiddenBadge(event) {
+  try {
+    chrome.runtime.sendMessage({ type: 'dsmf-hidden-count', ...event.detail });
+  } catch {
+    // Badge failures must never affect filtering.
+  }
+}
+
 async function onAlwaysShow(event) {
   // The post the user just un-hid stays visible no matter what the rules say
   // afterwards. The rule change below is about future posts.
@@ -165,6 +173,12 @@ export async function start() {
   settings = await readSettings();
   applyTheme(settings.theme);
   document.addEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
+  document.addEventListener(HIDDEN_COUNT_EVENT, updateHiddenBadge);
+  try {
+    chrome.runtime.sendMessage({ type: 'dsmf-linkedin-active' });
+  } catch {
+    // The action icon is non-essential.
+  }
 
   try {
     unsubscribe = onSettingsChanged(applySettings);
@@ -204,6 +218,7 @@ export function stop() {
     unsubscribe = null;
   }
   document.removeEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
+  document.removeEventListener(HIDDEN_COUNT_EVENT, updateHiddenBadge);
   settings = null;
   resetProcessed();
   clearAll();
