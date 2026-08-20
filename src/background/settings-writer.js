@@ -16,7 +16,8 @@ const hiddenCounts = new Map();
 
 function isLinkedIn(url) {
   try {
-    return new URL(url).hostname === 'www.linkedin.com';
+    const hostname = new URL(url).hostname;
+    return hostname === 'linkedin.com' || hostname.endsWith('.linkedin.com');
   } catch {
     return false;
   }
@@ -35,12 +36,22 @@ async function setTabAppearance(tabId, linkedIn, settings = await loadSettings()
 }
 
 async function refreshLinkedInIcons(settings) {
-  const tabs = await chrome.tabs.query({ url: 'https://www.linkedin.com/*' });
-  for (const tab of tabs) await setTabAppearance(tab.id, true, settings);
+  const tabs = await chrome.tabs.query({});
+  for (const tab of tabs) {
+    if (Number.isInteger(tab.id)) await setTabAppearance(tab.id, isLinkedIn(tab.url), settings);
+  }
 }
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-  if (changeInfo.url) void setTabAppearance(tabId, isLinkedIn(changeInfo.url));
+// A reloaded extension does not necessarily receive a URL-change event for an
+// already-open LinkedIn tab. Refreshing at worker startup/install guarantees
+// the default grayscale manifest icon cannot get stuck there.
+chrome.runtime.onInstalled.addListener(() => { void refreshLinkedInIcons(); });
+chrome.runtime.onStartup.addListener(() => { void refreshLinkedInIcons(); });
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.url || changeInfo.status === 'loading') {
+    void setTabAppearance(tabId, isLinkedIn(changeInfo.url ?? tab.url));
+  }
 });
 
 chrome.tabs.onActivated.addListener(async ({ tabId }) => {

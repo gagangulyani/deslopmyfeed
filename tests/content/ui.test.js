@@ -37,24 +37,23 @@ describe('warn', () => {
     const el = post();
     applyWarn(el, analysis());
     const badge = el.querySelector('.dsmf-badge').textContent;
-    expect(badge).toContain('Formulaic pattern detected');
-    expect(badge).toContain('template structure + synthetic formatting');
+    expect(badge).toContain('Formulaic writing pattern');
+    expect(badge).toContain('This post matches template structure + synthetic formatting.');
     expect(badge).not.toMatch(/\d+(\.\d+)?%/);
   });
 
-  it('keeps the explanation collapsed until asked', () => {
+  it('shows complete evidence without a disclosure control', () => {
     const el = post();
     applyWarn(el, analysis());
     const panel = el.querySelector('.dsmf-explain');
-    expect(panel.hidden).toBe(true);
-    [...el.querySelectorAll('button')].find((b) => b.textContent === 'Why it was flagged ›').click();
     expect(panel.hidden).toBe(false);
-    expect(panel.querySelector('.dsmf-explain-item').textContent).toContain('Short hook');
-    expect(panel.querySelector('.dsmf-explain-item').textContent).not.toContain('3 enumerated items');
-    expect(panel.querySelector('summary').textContent).toBe('Show technical details');
+    expect(panel.textContent).toContain('Signals found');
+    expect(panel.textContent).toContain('3 enumerated items');
+    expect(panel.textContent).toContain('7 of 9 paragraphs are a single short line');
+    expect([...el.querySelectorAll('button')].map((b) => b.textContent)).not.toContain('Why it was flagged ›');
   });
 
-  it('uses user-facing rule labels and keeps raw vocabulary hits technical', () => {
+  it('shows complete vocabulary evidence inline', () => {
     const el = post();
     const vocabulary = {
       ...analysis(),
@@ -62,11 +61,9 @@ describe('warn', () => {
     };
     applyWarn(el, vocabulary);
     const panel = el.querySelector('.dsmf-explain');
-    const visible = panel.querySelector('.dsmf-explain-item').textContent;
-    expect(visible).toContain('vocabulary cues');
-    expect(visible).toContain('Generic business language detected');
-    expect(visible).not.toContain('navigate');
-    expect(panel.querySelector('.dsmf-technical').open).toBe(false);
+    expect(panel.textContent).toContain('navigate');
+    expect(panel.textContent).toContain('journey');
+    expect(panel.querySelector('.dsmf-technical')).toBeNull();
   });
 
   it('does not decorate the same post twice', () => {
@@ -86,17 +83,16 @@ describe('hide', () => {
       .toEqual(expect.arrayContaining(['Show post', 'Always show similar']));
   });
 
-  it('states why the post was hidden and expands the supporting evidence', () => {
+  it('states why the post was hidden with complete supporting evidence', () => {
     const el = post();
     applyHide(el, analysis('hide'));
     expect(el.querySelector('.dsmf-card-reason').textContent)
       .toBe('template structure + synthetic formatting');
 
     const panel = el.querySelector('.dsmf-explain');
-    expect(panel.hidden).toBe(true);
-    [...el.querySelectorAll('button')].find((b) => b.textContent === 'Why it was hidden ›').click();
     expect(panel.hidden).toBe(false);
-    expect(panel.textContent).toContain('Repeated short paragraphs');
+    expect(panel.textContent).toContain('3 enumerated items');
+    expect([...el.querySelectorAll('button')].map((b) => b.textContent)).not.toContain('Why it was hidden ›');
   });
 
   it('reports hidden-count changes when a post hides and restores', () => {
