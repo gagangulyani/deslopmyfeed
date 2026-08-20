@@ -47,6 +47,15 @@ describe('load and save', () => {
     expect(await loadSettings()).toMatchObject({ mode: 'hide', sensitivity: 'high' });
   });
 
+  it('merges partial nested patches without resetting sibling settings', async () => {
+    await saveSettings({ rules: { templateStacking: false } });
+    await saveSettings({ rules: { formatting: false } });
+    expect((await loadSettings()).rules).toMatchObject({
+      templateStacking: false,
+      formatting: false
+    });
+  });
+
   it('writes everything under one key', async () => {
     await saveSettings({ mode: 'hide' });
     expect(Object.keys(await chrome.storage.local.get(STORAGE_KEY))).toEqual([STORAGE_KEY]);
