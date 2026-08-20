@@ -51,49 +51,16 @@ function summary(analysis) {
     .join(' + ');
 }
 
-function conciseEvidence(result) {
-  switch (result.rule) {
-    case 'templateStacking':
-      return ['Short hook', 'Repeated short paragraphs'];
-    case 'formatting':
-      return ['Synthetic paragraph rhythm'];
-    case 'templates':
-      return ['Stock phrasing'];
-    case 'genericity':
-      return ['Few concrete details'];
-    case 'vocabulary':
-      return ['Generic business language detected'];
-    case 'engagement':
-      return ['Engagement prompt'];
-    case 'hashtags':
-      return ['Hashtag stacking'];
-    default:
-      return [];
-  }
-}
-
 function explanation(analysis) {
   const panel = el('div', 'dsmf-explain');
-  panel.hidden = true;
+  panel.appendChild(el('span', 'dsmf-explain-title', 'Signals found'));
 
   for (const result of analysis.results) {
-    const item = el('div', 'dsmf-explain-item');
-    item.appendChild(el('span', 'dsmf-explain-rule', SUMMARY_LABELS[result.rule] ?? RULE_LABELS[result.rule] ?? result.rule));
-    for (const line of conciseEvidence(result)) {
-      item.appendChild(el('span', 'dsmf-explain-evidence', line));
+    for (const line of result.evidence) {
+      panel.appendChild(el('span', 'dsmf-explain-evidence', line));
     }
-    panel.appendChild(item);
   }
 
-  const technical = document.createElement('details');
-  technical.className = 'dsmf-technical';
-  technical.appendChild(el('summary', '', 'Show technical details'));
-  for (const result of analysis.results) {
-    for (const line of result.evidence.slice(0, 3)) {
-      technical.appendChild(el('span', 'dsmf-technical-evidence', line));
-    }
-  }
-  panel.appendChild(technical);
   return panel;
 }
 
@@ -112,12 +79,10 @@ export function applyWarn(post, analysis) {
 
   const badge = el('div', 'dsmf-badge dsmf-decision');
   badge.setAttribute(ARTIFACT, 'warn');
-  badge.appendChild(el('span', 'dsmf-badge-label', 'Formulaic pattern detected'));
-  badge.appendChild(el('span', 'dsmf-badge-reason', summary(analysis)));
+  badge.appendChild(el('span', 'dsmf-badge-label', 'Formulaic writing pattern'));
+  badge.appendChild(el('span', 'dsmf-badge-reason', `This post matches ${summary(analysis)}.`));
 
-  const panel = explanation(analysis);
-  badge.appendChild(button('Why it was flagged ›', () => { panel.hidden = !panel.hidden; }));
-  badge.appendChild(panel);
+  badge.appendChild(explanation(analysis));
 
   post.prepend(badge);
 }
@@ -135,7 +100,6 @@ export function applyHide(post, analysis) {
   const show = button('Show post', () => restore(post));
   show.classList.add('dsmf-primary');
   card.appendChild(show);
-  card.appendChild(button('Why it was hidden ›', () => { panel.hidden = !panel.hidden; }));
   card.appendChild(alwaysShow(post, analysis));
   card.appendChild(panel);
 

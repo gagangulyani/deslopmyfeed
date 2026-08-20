@@ -10,6 +10,9 @@
  */
 (async () => {
   try {
+    // Set the action state before feed discovery, so every LinkedIn page reflects
+    // whether filtering is enabled even when it is not a feed route.
+    chrome.runtime.sendMessage({ type: 'dsmf-linkedin-active' });
     const { start } = await import(chrome.runtime.getURL('src/content/observer.js'));
     await start();
   } catch (err) {
