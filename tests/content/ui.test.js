@@ -43,15 +43,18 @@ describe('warn', () => {
     expect(badge).not.toMatch(/\d+(\.\d+)?%/);
   });
 
-  it('shows complete evidence without a disclosure control', () => {
+  it('keeps detector evidence out of the normal warning UI', () => {
     const el = post();
     applyWarn(el, analysis());
+    expect(el.querySelector('.dsmf-explain')).toBeNull();
+  });
+
+  it('shows complete evidence only when diagnostics are enabled', () => {
+    const el = post();
+    applyWarn(el, analysis(), true);
     const panel = el.querySelector('.dsmf-explain');
-    expect(panel.hidden).toBe(false);
-    expect(panel.textContent).not.toContain('Signals found');
     expect(panel.textContent).toContain('3 enumerated items');
     expect(panel.textContent).toContain('7 of 9 paragraphs are a single short line');
-    expect([...el.querySelectorAll('button')].map((b) => b.textContent)).not.toContain('Why it was flagged ›');
   });
 
   it('shows complete vocabulary evidence inline', () => {
@@ -60,7 +63,7 @@ describe('warn', () => {
       ...analysis(),
       results: [{ rule: 'vocabulary', triggered: true, score: 0.5, evidence: ['navigate', 'journey'] }]
     };
-    applyWarn(el, vocabulary);
+    applyWarn(el, vocabulary, true);
     const panel = el.querySelector('.dsmf-explain');
     expect(panel.textContent).toContain('Navigate');
     expect(panel.textContent).toContain('Journey');
@@ -81,19 +84,18 @@ describe('hide', () => {
     applyHide(el, analysis('hide'));
     expect(el.classList.contains('dsmf-hidden')).toBe(true);
     expect([...el.querySelectorAll('button')].map((b) => b.textContent))
-      .toEqual(expect.arrayContaining(['Show post', 'Always show similar']));
+      .toEqual(expect.arrayContaining(['ⓘ', 'Show post']));
   });
 
-  it('states why the post was hidden with complete supporting evidence', () => {
+  it('uses a compact author row and concise reason for a hidden post', () => {
     const el = post();
-    applyHide(el, analysis('hide'));
-    expect(el.querySelector('.dsmf-card-reason').textContent)
-      .toBe('template structure + synthetic formatting');
-
-    const panel = el.querySelector('.dsmf-explain');
-    expect(panel.hidden).toBe(false);
-    expect(panel.textContent).toContain('3 enumerated items');
-    expect([...el.querySelectorAll('button')].map((b) => b.textContent)).not.toContain('Why it was hidden ›');
+    applyHide(el, analysis('hide'), { author: 'Priya Sharma', authorAvatar: 'https://example.test/priya.png' });
+    expect(el.querySelector('.dsmf-hidden-author-name').textContent).toBe('Priya Sharma’s post was hidden');
+    expect(el.querySelector('.dsmf-hidden-avatar').src).toBe('https://example.test/priya.png');
+    const info = el.querySelector('.dsmf-info-button');
+    expect(info.title).toBe('Hidden because: template structure + synthetic formatting');
+    expect(el.querySelector('.dsmf-explain')).toBeNull();
+    expect([...el.querySelectorAll('button')].map((b) => b.textContent)).toEqual(['ⓘ', 'Show post']);
   });
 
   it('reports flag-count changes when posts warn, hide, and restore', () => {
@@ -117,14 +119,10 @@ describe('hide', () => {
     expect(el.classList.contains('dsmf-hidden')).toBe(false);
   });
 
-  it('announces "always show similar" instead of writing settings itself', () => {
+  it('shows full hidden-post evidence only in diagnostics mode', () => {
     const el = post();
-    applyHide(el, analysis('hide'));
-    const seen = [];
-    document.addEventListener(ALWAYS_SHOW_EVENT, (e) => seen.push(e.detail));
-    [...el.querySelectorAll('button')].find((b) => b.textContent === 'Always show similar').click();
-    expect(seen).toHaveLength(1);
-    expect(el.classList.contains('dsmf-hidden')).toBe(false);
+    applyHide(el, analysis('hide'), { showDetails: true });
+    expect(el.querySelector('.dsmf-explain').textContent).toContain('3 enumerated items');
   });
 });
 
@@ -142,7 +140,7 @@ describe('post text is never treated as markup', () => {
         evidence: ['<script>window.__pwned = 1</script>']
       }]
     };
-    applyWarn(el, hostile);
+    applyWarn(el, hostile, true);
     expect(el.querySelector('script')).toBeNull();
     expect(el.querySelector('img')).toBeNull();
     expect(el.querySelector('.dsmf-explain').textContent).toContain('<script>');

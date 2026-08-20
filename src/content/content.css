@@ -350,3 +350,84 @@
 :root:not([data-dsmf-theme='light']) .dsmf-card-reason,
 :root:not([data-dsmf-theme='light']) .dsmf-explain-evidence,
 :root:not([data-dsmf-theme='light']) .dsmf-technical { color: #cbd5e1; }
+
+.dsmf-hidden-row {
+  flex-wrap: nowrap;
+  gap: 10px;
+  min-height: 42px;
+}
+
+.dsmf-hidden-author {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+}
+
+.dsmf-hidden-avatar {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dsmf-hidden-author-name {
+  overflow: hidden;
+  color: #172033;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dsmf-info-button {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  padding: 0;
+  border-color: transparent;
+  color: #475569;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.dsmf-info-button:hover { background: #f1f5f9; }
+
+:root[data-dsmf-theme='dark'] .dsmf-hidden-author-name,
+:root:not([data-dsmf-theme='light']) .dsmf-hidden-author-name { color: #e5e7eb; }
+:root[data-dsmf-theme='dark'] .dsmf-info-button,
+:root:not([data-dsmf-theme='light']) .dsmf-info-button { color: #cbd5e1; }
+:root[data-dsmf-theme='dark'] .dsmf-info-button:hover,
+:root:not([data-dsmf-theme='light']) .dsmf-info-button:hover { background: #334155; }
+
+/* The collapsed replacement follows LinkedIn's quiet feed-card language. */
+.dsmf-hidden-row {
+  padding: 8px 12px;
+  background: #ffffff;
+  border-color: #d9e2ec;
+  box-shadow: none;
+}
+
+.dsmf-hidden-row .dsmf-primary {
+  padding: 4px 8px;
+  background: #e8f3ff;
+  border-color: transparent;
+  color: #0a66c2;
+  font-weight: 650;
+}
+
+.dsmf-hidden-row .dsmf-primary:hover { background: #d0e8ff; }
+
+:root[data-dsmf-theme='dark'] .dsmf-hidden-row,
+:root:not([data-dsmf-theme='light']) .dsmf-hidden-row {
+  background: #1d2939;
+  border-color: #475569;
+  box-shadow: none;
+}
+
+:root[data-dsmf-theme='dark'] .dsmf-hidden-row .dsmf-primary,
+:root:not([data-dsmf-theme='light']) .dsmf-hidden-row .dsmf-primary {
+  background: #183b5b;
+  color: #9acbff;
+}

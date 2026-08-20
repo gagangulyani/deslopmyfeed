@@ -98,6 +98,11 @@ function findTextContainer(post) {
   return null;
 }
 
+function findAvatar(post) {
+  const image = post.querySelector('a[href*="/in/"] img, a[href*="/company/"] img');
+  return image?.currentSrc || image?.getAttribute('src') || null;
+}
+
 function findAuthor(post) {
   for (const el of post.querySelectorAll('[aria-label]')) {
     const match = AUTHOR_LABEL.exec(el.getAttribute('aria-label') ?? '');
@@ -200,13 +205,13 @@ function findCounts(post) {
  * null-or-post contract.
  *
  * @param {Element} post
- * @returns {{ text: string|null, author: string|null, headline: string|null,
+ * @returns {{ text: string|null, author: string|null, authorAvatar: string|null, headline: string|null,
  *   reactions: number|null, comments: number|null, reposted: boolean,
  *   skip: null|'no text node'|'sponsored' }}
  */
 export function readPost(post) {
   const unreadable = (skip) => ({
-    text: null, author: null, headline: null, reactions: null, comments: null, reposted: false, skip
+    text: null, author: null, authorAvatar: null, headline: null, reactions: null, comments: null, reposted: false, skip
   });
 
   if (!post || typeof post.querySelector !== 'function') return unreadable('no text node');
@@ -237,6 +242,7 @@ export function readPost(post) {
     text,
     reposted: isRepost(post),
     author: findAuthor(post),
+    authorAvatar: findAvatar(post),
     headline: findHeadline(post),
     ...findCounts(post),
     skip: null
