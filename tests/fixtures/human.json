@@ -1,0 +1,452 @@
+[
+  {
+    "id": "human-001",
+    "label": "human",
+    "text": "Spent four hours today chasing a bug that turned out to be a trailing space in a CSV header. The parser was matching on \"amount \" instead of \"amount\". Four hours. I have been writing parsers for eleven years and I still lost an entire afternoon to whitespace. Adding a trim to the header normalization step and never speaking of this again."
+  },
+  {
+    "id": "human-002",
+    "label": "human",
+    "text": "We are hiring two backend engineers in Pune. Go, Postgres, a bit of Kafka. The band is 28-42 LPA depending on level and we publish it because I got tired of the dance where nobody says a number for three rounds. Notice period buyout is possible for the right person. DM me and I will send the JD."
+  },
+  {
+    "id": "human-003",
+    "label": "human",
+    "text": "My daughter asked me what I do at work. I said I move data from one place to another place. She asked why it does not just stay where it is. Genuinely the best question anyone has asked me about my job in a decade."
+  },
+  {
+    "id": "human-004",
+    "label": "human",
+    "text": "Notes from the Postgres meetup last night in Indiranagar:\n\n- Anand walked through their partitioning migration on a 14TB orders table. Six weeks, three rollbacks, one very bad Saturday.\n- Someone asked pg_repack vs VACUUM FULL and the room genuinely got heated.\n- The pizza was cold. The talks were not.\n\nSlides should be on the meetup page by Friday. Next one is the second Thursday of March."
+  },
+  {
+    "id": "human-005",
+    "label": "human",
+    "text": "Editing is the job — writing is just the part that gets the credit. I cut 900 words out of a 2,400 word piece this morning and it reads better at 1,500. The client will ask why it got shorter. It got shorter because it got finished. This is the third time this month I have had that conversation and I have stopped apologising for it."
+  },
+  {
+    "id": "human-006",
+    "label": "human",
+    "text": "Day 30 of learning Rust. The borrow checker still wins about half our arguments, but I shipped a small CLI that renames photo files based on their EXIF date. 180 lines. It is not good code but it runs on 4,000 photos in under two seconds and my wedding album is finally in order. #rust #learninginpublic"
+  },
+  {
+    "id": "human-007",
+    "label": "human",
+    "text": "Question for the data engineers here: has anyone actually moved off Airflow and been happy about it afterwards? We are looking at Dagster and Prefect. Not interested in vendor pitches, I want to hear from people who did the migration and lived with the result for a year. What broke that you did not expect?"
+  },
+  {
+    "id": "human-008",
+    "label": "human",
+    "text": "Got laid off on Tuesday. Six years at the same company. I am not going to write the post about how grateful I am for the journey. I am angry and my mortgage does not care about my mindset. What I will say is that if you have a senior SRE opening in Bangalore or fully remote, I am looking, and I am good at the boring parts nobody wants to own."
+  },
+  {
+    "id": "human-009",
+    "label": "human",
+    "text": "PSA: if your Docker build is slow, check whether you are COPYing node_modules in before the npm install layer. Saved four minutes per build. That is it, that is the post."
+  },
+  {
+    "id": "human-010",
+    "label": "human",
+    "text": "Three things that actually fixed our on-call rotation:\n\n1. We deleted 40% of our alerts. Nobody has missed one of them.\n2. Whoever writes an alert is the first responder for it. This ended the argument fast.\n3. We started paying for on-call. Real money, not comp days.\n\nAlert volume went from around 90 a week to 12. Attrition on the platform team went to zero for the first time since 2022."
+  },
+  {
+    "id": "human-011",
+    "label": "human",
+    "text": "Twelve hour shift, four admissions, one of them a 91 year old who kept apologising for being a bother. He was not a bother. I am going to sleep for a very long time."
+  },
+  {
+    "id": "human-012",
+    "label": "human",
+    "text": "Finished the structural drawings for the Whitefield site today. The client wanted a cantilever over the driveway and we found a way to do it without a column in the middle of the parking bay, which is what they actually cared about even though it is not what they asked for. Six weeks of back and forth for 1.8 metres of overhang."
+  },
+  {
+    "id": "human-013",
+    "label": "human",
+    "text": "Reminder that GST returns are due on the 20th and the portal will be slow on the 19th and the 20th, as it is every single month, as it has been for seven years. File on the 15th. I am begging you."
+  },
+  {
+    "id": "human-014",
+    "label": "human",
+    "text": "We ran our first proper load test on the new checkout service. It fell over at 1,200 requests per second, which sounds bad until you know the old one fell over at 340. The bottleneck is a synchronous call to the fraud vendor that we can make async for everything except high-value carts. Fix goes out next sprint."
+  },
+  {
+    "id": "human-015",
+    "label": "human",
+    "text": "My students asked why we still teach long division when calculators exist. I did not have a good answer ready and I said so out loud, which felt like losing. Thought about it all evening. I think the answer is that the algorithm is the point and the arithmetic is the excuse, but I need to find a way to say that to a room of fourteen year olds without sounding like a fortune cookie."
+  },
+  {
+    "id": "human-016",
+    "label": "human",
+    "text": "Two years since I opened the bakery. Numbers, since people ask and nobody tells you:\n\nRevenue last month: 4.2 lakh\nRent: 85k\nIngredients: roughly 32% of revenue\nMe, paying myself: 40k, finally, since January\n\nIt is not a lot. It is more than I made in year one, which was nothing."
+  },
+  {
+    "id": "human-017",
+    "label": "human",
+    "text": "The court listing moved again. Third adjournment on the same matter. My client has now taken four days off work to sit in a corridor. When people ask why litigation is expensive, this is why. Nobody bills for the corridor but everybody pays for it."
+  },
+  {
+    "id": "human-018",
+    "label": "human",
+    "text": "Shipped dark mode. Took three days, two of which were spent on one chart component that had colours hardcoded in eleven places by four different people over two years, including me. Sorry to everyone, including me."
+  },
+  {
+    "id": "human-019",
+    "label": "human",
+    "text": "Genuinely useful thing I learned this week: you can pass --dry-run to the migration CLI and it prints the SQL it would run. This has existed since version 2. We are on version 6."
+  },
+  {
+    "id": "human-020",
+    "label": "human",
+    "text": "Interviewed eight candidates for one role this month. Three were clearly using an AI assistant during the call, and I do not mean they had it open, I mean there was a four second pause before every answer and then a paragraph came out in a voice that was not theirs. I do not know how to feel about this yet. I am not going to pretend I have a policy."
+  },
+  {
+    "id": "human-021",
+    "label": "human",
+    "text": "Small win: our p99 latency dropped from 840ms to 210ms after we moved the session lookup out of the request path and into a middleware cache with a 30 second TTL. Two lines of config and one line of code. The three weeks before that were spent proving it was the session lookup."
+  },
+  {
+    "id": "human-022",
+    "label": "human",
+    "text": "Anyone in Chennai know a good commercial electrician? Our workshop tripped the mains twice this week and the guy who installed it has stopped answering. Happy to pay properly, just want someone who turns up."
+  },
+  {
+    "id": "human-023",
+    "label": "human",
+    "text": "I have now been a manager for exactly one year. The thing nobody warned me about is how much of the job is remembering things on behalf of other people. Not deciding. Remembering. Who said they would follow up, what we agreed in October, which promise is about to become a surprise."
+  },
+  {
+    "id": "human-024",
+    "label": "human",
+    "text": "Our Kubernetes bill went from $9,400 to $3,100 a month. Not a clever architecture story: we found 22 idle dev namespaces, six of them belonging to people who left, and one CronJob that had been spawning a pod every minute since a bad merge in April."
+  },
+  {
+    "id": "human-025",
+    "label": "human",
+    "text": "Attended a wedding, ate too much, drove 400km, slept nine hours. Back on Monday. That is the whole update."
+  },
+  {
+    "id": "human-026",
+    "label": "human",
+    "text": "The thing about doing user research properly is that it keeps telling you things you did not want to hear. We ran six sessions on the new onboarding. Five of six users never scrolled past the fold. The feature we spent a quarter on is below the fold. We are moving it up and I am trying not to be dramatic about the quarter."
+  },
+  {
+    "id": "human-027",
+    "label": "human",
+    "text": "Bought a used oscilloscope off OLX for 6k. Seller was a retired BEL engineer who spent forty minutes showing me how to use it and refused chai money. Probes are worn but it triggers cleanly. Best purchase of the year."
+  },
+  {
+    "id": "human-028",
+    "label": "human",
+    "text": "If you are writing a postmortem, the sentence \"we will be more careful\" is not an action item. Neither is \"add more monitoring\" without saying which metric and what threshold and who gets paged. I have read about sixty of these now and the good ones are always specific and slightly boring."
+  },
+  {
+    "id": "human-029",
+    "label": "human",
+    "text": "Physiotherapy update, week 7: I can climb a flight of stairs without holding the rail. Six months ago I could not stand up from a chair without help. Progress is not linear and it is not inspiring, it is just Tuesday and Thursday at 6am with a very patient woman named Reshma counting reps."
+  },
+  {
+    "id": "human-030",
+    "label": "human",
+    "text": "We finally deleted the legacy PHP monolith. 214,000 lines. It had been \"two sprints from decommission\" since 2021. The last thing running on it was a nightly report that eleven people received and one person read."
+  },
+  {
+    "id": "human-031",
+    "label": "human",
+    "text": "Sales note: stopped opening calls with a discovery script and started opening with \"what made you take this meeting?\". Close rate on first calls did not change but the meetings got 15 minutes shorter and I stopped dreading them."
+  },
+  {
+    "id": "human-032",
+    "label": "human",
+    "text": "Photo dump from the Hampi trip. Third time here and the light on the boulders at 6pm still does something I cannot explain. Camera was a 12 year old Nikon with a kit lens, so no, you do not need the new body."
+  },
+  {
+    "id": "human-033",
+    "label": "human",
+    "text": "Our test suite takes 38 minutes. I spent a day profiling it. 24 of those minutes are in one file that spins up a real Postgres container per test instead of per file. I am not naming the file because I wrote it."
+  },
+  {
+    "id": "human-034",
+    "label": "human",
+    "text": "Thing I got wrong publicly last month: I said our churn was seasonal. It was not seasonal. It was a billing bug that failed silently for cards issued by two specific banks and we only noticed because a customer emailed to ask why she had not been charged since November. We refunded nobody because we had charged nobody. Corrected now."
+  },
+  {
+    "id": "human-035",
+    "label": "human",
+    "text": "Teaching my father to use UPI. He is 71. He asked why the app needs to know his location to send money to the milkman. I did not have an answer. He is right."
+  },
+  {
+    "id": "human-036",
+    "label": "human",
+    "text": "Design review notes: the empty state is doing too much work. It has an illustration, a headline, a subhead, two buttons and a link to docs. A person who has just signed up has no idea which of those is the next step. Pick one action. The docs link can live in the corner."
+  },
+  {
+    "id": "human-037",
+    "label": "human",
+    "text": "Two rounds of interviews at a company that then told me the role was \"paused\". Fine. What is not fine is that they told me by not replying for five weeks. I followed up three times. Say no. It takes eleven seconds."
+  },
+  {
+    "id": "human-038",
+    "label": "human",
+    "text": "Quick tip for anyone doing GST reconciliation in Excel: VLOOKUP on invoice numbers will silently fail if one side stores them as text and the other as numbers. Use a helper column with TEXT() on both. I lost a full day to this in 2019 and I still check it first every single time."
+  },
+  {
+    "id": "human-039",
+    "label": "human",
+    "text": "Ran the Bangalore 10k in 58:42. Target was under an hour. Went out too fast, died at 7k, walked twenty metres at the water station and was furious about it for the last 3k, which is probably why I finished under target."
+  },
+  {
+    "id": "human-040",
+    "label": "human",
+    "text": "The client asked for a dashboard. What they wanted was one number, emailed to them at 8am. We built the one number first and they have not asked about the dashboard in four months."
+  },
+  {
+    "id": "human-041",
+    "label": "human",
+    "text": "Honest question about pricing: we are at $29/month per seat and every competitor is between $12 and $19. We win on migration tooling, we lose on the first call when the number comes up. Do we drop the price or do we get better at the first call? I have opinions but I have been wrong about pricing twice."
+  },
+  {
+    "id": "human-042",
+    "label": "human",
+    "text": "Restaurant week 3: we cut the menu from 34 items to 19. Food cost went from 38% to 29%, waste is down about a third, and the kitchen stopped screaming at 8pm. Two regulars are upset about the mutton chops. The mutton chops sold four portions a week."
+  },
+  {
+    "id": "human-043",
+    "label": "human",
+    "text": "Reading the RBI circular from last week and it is genuinely ambiguous about whether the reporting requirement applies to entities under the 50 crore threshold. Our compliance vendor says one thing, our auditor says another. If anyone has written clarification, I would love to see it."
+  },
+  {
+    "id": "human-044",
+    "label": "human",
+    "text": "Rewrote our error messages this week. \"Something went wrong\" appeared 47 times in the codebase. Now they say what went wrong and what to do. Support tickets tagged 'confused' dropped by half in ten days. Cheapest thing we have ever shipped."
+  },
+  {
+    "id": "human-045",
+    "label": "human",
+    "text": "First day at the new place. Laptop took four hours to arrive, VPN did not work, and I fixed a typo in the README to have something to commit. Classic. Genuinely happy to be here though, the team seems calm and nobody has said the word 'rockstar' yet."
+  },
+  {
+    "id": "human-046",
+    "label": "human",
+    "text": "Watching a junior engineer debug something for 40 minutes without stepping in was harder than debugging it myself in 5. She got it. She will remember it. I will not do this every time because we have deadlines, but I will do it more than I used to."
+  },
+  {
+    "id": "human-047",
+    "label": "human",
+    "text": "We surveyed 340 of our users. 61% said the mobile app was 'fine'. Nobody said they loved it. Nobody said they hated it. I think 'fine' is the most dangerous survey result there is and I do not have a plan for it yet."
+  },
+  {
+    "id": "human-048",
+    "label": "human",
+    "text": "Hot take that is not actually hot: most 'culture' problems in engineering teams are staffing problems. If two people are doing the work of five, they will be short with each other, they will skip reviews, and they will look like they have an attitude problem. They have a headcount problem."
+  },
+  {
+    "id": "human-049",
+    "label": "human",
+    "text": "Fixed the leaking tap myself after watching one video. Total cost 40 rupees for a washer. Plumber quoted 600. I understand why he quoted 600, he has to travel here, and I still feel enormously pleased with myself."
+  },
+  {
+    "id": "human-050",
+    "label": "human",
+    "text": "Our incident last Thursday: a config change removed a required environment variable from the staging manifest, which was fine, and then someone copied the staging manifest to production, which was not. 41 minutes of downtime. The fix is a required-keys check in CI. The real fix is not copying manifests, but I have said that before and it keeps happening, so: CI check."
+  },
+  {
+    "id": "human-051",
+    "label": "human",
+    "text": "Three books that changed how I work, and I am aware this is a cliche format:\n\n- Thinking in Systems, Meadows. The one about stocks and flows finally clicked in year eight of my career.\n- The Design of Everyday Things. Obvious, still right.\n- An Elegant Puzzle, Larson. Half of it did not apply to a 12 person team and half of it did.\n\nNot a reading list post, someone asked in DMs and I would rather answer once."
+  },
+  {
+    "id": "human-052",
+    "label": "human",
+    "text": "The warehouse WMS goes live Monday after fourteen months. I have been dreaming about pick paths. If you work in logistics you know that the last two weeks before a cutover are 30% software and 70% convincing people that the new labels are fine."
+  },
+  {
+    "id": "human-053",
+    "label": "human",
+    "text": "Someone reported a bug where dates were off by one day, but only for users in Auckland, and only in October. It was daylight saving. It is always daylight saving. Store UTC."
+  },
+  {
+    "id": "human-054",
+    "label": "human",
+    "text": "Two weeks of paternity leave done. Went back today. My inbox had 412 unread and roughly four of them mattered. The team handled everything, which is the point of the team, and I still had to fight the urge to check Slack at 2am. Working on it."
+  },
+  {
+    "id": "human-055",
+    "label": "human",
+    "text": "For the freelancers: I now ask for 40% upfront and I have lost exactly two clients over it in three years, both of whom I suspect would not have paid at the end either. Not a business masterclass, just a data point."
+  },
+  {
+    "id": "human-056",
+    "label": "human",
+    "text": "We measured how long it takes a new engineer to get a change to production. It was nine days. Of those, six were environment setup and access requests. The actual code review took four hours. We are fixing the six days and I expect nobody outside the team will notice, which is the nature of this work."
+  },
+  {
+    "id": "human-057",
+    "label": "human",
+    "text": "That was a brutal quarter. We missed the number by 18%. Two large deals slipped and one churned. I am not going to dress it up as a learning experience for the internet."
+  },
+  {
+    "id": "human-058",
+    "label": "human",
+    "text": "Attended a training on accessibility that I expected to be a compliance box-tick. Was not. Watching someone navigate our product with a screen reader for ten minutes was the single most useful ten minutes of my year. Our modals are unusable. We shipped them in March."
+  },
+  {
+    "id": "human-059",
+    "label": "human",
+    "text": "Update on the terrace garden: the tomatoes failed completely, the chillies are producing more than two people can eat, and the curry leaf plant that I was told was dead has put out new growth after eight months. Gardening is mostly waiting and being wrong."
+  },
+  {
+    "id": "human-060",
+    "label": "human",
+    "text": "I keep seeing advice to 'just start writing'. Fine. What actually got me writing weekly was a friend who asked to read the draft every Thursday. External deadline, one reader, no audience. Six months in and I have 24 pieces, most of them mediocre, four of them good."
+  },
+  {
+    "id": "human-061",
+    "label": "human",
+    "text": "The API returns 200 with an error body. I have raised this three times. The vendor says changing it would break existing clients, which is true, and which is also a sentence that guarantees it will still be true in five years."
+  },
+  {
+    "id": "human-062",
+    "label": "human",
+    "text": "Winter closing note from the site: concrete pour is done on levels 1 through 4, level 5 slips to March because of the rain in the third week. Labour is holding steady at 42 on site. Client walkthrough on the 8th. Everything else is on the tracker."
+  },
+  {
+    "id": "human-063",
+    "label": "human",
+    "text": "We spent the last five months rebuilding our search. I want to write down what actually happened rather than the version that will end up in the case study.\n\nThe old search was a LIKE query against a products table with 400,000 rows and no full text index, which worked fine in 2019 when there were 12,000 rows. By the time anyone looked at it properly, the p95 was 2.8 seconds and about 30% of searches returned nothing at all, mostly because of plurals and spelling.\n\nWe moved to Elasticsearch. The migration itself took three weeks. The other four months went to relevance tuning, which nobody warned me about and which turned out to be the entire job. Getting results back fast is an engineering problem. Getting the right results back is an argument between three departments about what right means.\n\nWhere we landed: p95 is 140ms, zero-result searches are down to 6%, and conversion from search is up about 11% year on year, though I would not swear that is all us because we also changed the product images in the same quarter.\n\nThe part I would redo: we should have shipped the plural and spelling handling on the old system in week one. It was two days of work and it would have bought us four months of goodwill."
+  },
+  {
+    "id": "human-064",
+    "label": "human",
+    "text": "Long post about our hiring process, because someone asked and the answer does not fit in a comment.\n\nWe get roughly 300 applications for a backend role. Two people screen them, which takes about six hours each. We move maybe 25 to a first call.\n\nThe first call is 30 minutes and I do most of them myself. I ask what they worked on most recently and then I ask follow-up questions until either I understand the system or it becomes clear they do not. That is the whole screen. No puzzles, no trivia.\n\nAbout 10 go to the technical session. That is two hours, paired, on a branch of our actual repository with a real ticket from our backlog. We pay for it if it runs long. Roughly half the people who do it get an offer.\n\nThe part I am least happy about: our time from application to offer is 24 days on average and we have lost at least four people to faster companies. I do not have a fix that does not involve cutting something I think is load bearing.\n\nThe part that works better than I expected: candidates tell us the paired session was the most enjoyable interview they have had in years. Two people who did not get offers have since referred friends to us."
+  },
+  {
+    "id": "human-065",
+    "label": "human",
+    "text": "Postmortem for our outage on the 9th, shared publicly because we told customers we would.\n\nAt 14:02 IST a routine deploy of the notifications service went out. At 14:04 the service began returning 500s on about 40% of requests. Full recovery at 15:11. Sixty-nine minutes.\n\nCause: the deploy included a dependency bump that changed the default TLS verification behaviour of our HTTP client. Our internal certificate authority is not in the default trust store, so calls to two internal services started failing. This did not surface in staging because staging talks to those services over plaintext inside the cluster.\n\nWhy it took an hour: the error we logged was a generic connection failure, and the first thirty minutes went to investigating a network change that had happened the same morning and was entirely unrelated. Classic.\n\nActions, with owners and dates, not vibes:\n1. Staging uses the same TLS path as production. Priya, by the 30th.\n2. The HTTP client wrapper logs the underlying TLS error rather than swallowing it. Karthik, this week.\n3. Dependency bumps for anything touching transport get a separate deploy, not a bundled one. Already in the runbook.\n\nWe did not lose data. Notifications queued during the window were delivered by 15:40, out of order in some cases, which we know is annoying for anyone who received them."
+  },
+  {
+    "id": "human-066",
+    "label": "human",
+    "text": "Some numbers from four years of running a small design studio, since everyone shares revenue and nobody shares the shape of it.\n\nWe are three people. Last financial year we invoiced 92 lakh. After salaries, rent, software and taxes, the business kept about 6 lakh, which sat in the account as buffer and is now down to 4 because January and February were slow.\n\nRevenue by client: our largest client was 34% of the total. Our top three were 61%. This is the number that keeps me awake. We have tried three times to fix it by doing outbound and it has produced exactly one client, who then became our second largest, so the concentration got worse.\n\nWhat we bill: 2,400 rupees an hour for most work, 3,200 for anything with a deadline under two weeks. We raised from 1,800 in 2023 and lost nobody, which taught me my rates had been wrong for two years.\n\nWhat I would tell someone starting: the work is not the hard part and the pitching is not the hard part. The hard part is that a good month and a bad month feel identical while you are in them, and you only find out which it was about seven weeks later when the invoices either clear or do not."
+  },
+  {
+    "id": "human-067",
+    "label": "human",
+    "text": "I have been reviewing our accessibility backlog and I want to say something about how it got this long.\n\nWe have 61 open accessibility issues. 40 of them were filed by the same two people. Nothing in our process stops an inaccessible component from shipping, and nothing prioritises fixing one afterwards, so the backlog is where these go to be counted rather than fixed.\n\nThe things actually broken, roughly in order of how much they matter: our modal traps focus incorrectly so a keyboard user can tab behind it into the page; our form errors are announced as generic text rather than being associated with the field; three of our five chart types have no text alternative at all; and our primary button colour fails contrast against the background we most often put it on, which we have known since a design review in 2023.\n\nWe are fixing the modal and the form errors this quarter because they are the ones that make the product unusable rather than unpleasant. The charts need a real design conversation and I am not going to pretend it will happen before June.\n\nI am writing this partly as a commitment device. If it is still 61 issues in September, someone should send me this post."
+  },
+  {
+    "id": "human-068",
+    "label": "human",
+    "text": "Thoughts after a year of using our own product every day, which we did not do for the first two years and should have.\n\nThings I found that no customer ever reported: the session expires at 30 minutes, and if you are mid-form when it happens, you lose the form. Every single one of us had learned to copy our text before submitting. Nobody had filed a ticket about it because we had all adapted.\n\nThat is the thing about dogfooding that surprised me. It does not surface the bugs people complain about. It surfaces the ones people have quietly built habits around, which are usually worse.\n\nWe fixed the session thing in a day. It had been there for four years.\n\nThe other change: I now know how slow our reports page is on a bad connection, because I used it from a train. Two minutes. Our internal testing all happens on office fibre, so it has always looked fine.\n\nNot a revelation, I know. But there is a difference between knowing you should use your own product and having the calendar reality of actually doing it, and we only got there by making one person's job include it."
+  },
+  {
+    "id": "human-069",
+    "label": "human",
+    "text": "We ran a proper retrospective on a project that failed and I want to record what came out of it, because most failure writeups I read are secretly about how the failure was noble.\n\nThe project was a customer portal. Eight months, four engineers, one designer. It shipped and roughly 4% of the customers it was built for have used it more than once.\n\nWhat we got wrong, in the order it happened:\n\nWe validated the idea with the people who asked for it, who were the account managers, not the customers. The account managers wanted customers to self-serve so they would stop answering the same email. That is a real problem, but it is their problem, not the customer's problem.\n\nWe never talked to a customer until month six. When we did, the first one said she would rather email her account manager because then she has a record and a person to chase.\n\nWe kept going after that conversation, because we were two months from shipping and stopping felt more expensive than finishing. That was the actual mistake. The eight months were sunk by then, the last two were a choice.\n\nWhat we are changing: nothing ships without three conversations with the people who will use it, held in the first month, recorded, with the questions written before the call so we do not lead them. We have said versions of this before. This time it is in the project template as a gate, which is the only mechanism that has ever worked here."
+  },
+  {
+    "id": "human-070",
+    "label": "human",
+    "text": "A practical writeup on moving our team from Jira to plain GitHub issues, four months in, including the parts that are worse.\n\nBetter: the work is where the code is, so nobody context switches to update status. Our issue hygiene went from about half the tickets being stale to almost none, purely because closing an issue is now a side effect of merging.\n\nBetter: engineers actually read the backlog now. In eighteen months of Jira I never once saw someone browse the backlog voluntarily.\n\nWorse: reporting. Our head of delivery used to pull a burndown in two clicks and now I write a script. She is being gracious about it, and the honest position is that we moved a cost from nine engineers to one manager, which is a good trade for the nine and a bad one for her.\n\nWorse: cross-team dependencies. We have three repositories and an issue that spans two of them lives in neither properly. Jira handled this and GitHub does not, and the workaround is a checklist in a third issue, which is exactly as bad as it sounds.\n\nWould I do it again: yes, at nine people. At forty, no. I think that is the whole answer and I do not think it generalises past our size."
+  },
+  {
+    "id": "human-071",
+    "label": "human",
+    "text": "On the question of whether to rewrite or refactor, from someone who has now done both badly.\n\nIn 2021 we rewrote a payments integration from scratch. It took five months against an estimate of six weeks. The rewrite was correct on the happy path in about three weeks. The other four months were the seventeen edge cases the old code handled that nobody had documented, each discovered in production, several of them involving refunds, one of them involving a regulator.\n\nIn 2023 we refactored a scheduling module instead. Twelve weeks, incremental, tests added before each change, feature flag per behaviour. It was tedious and it worked and nobody outside the team noticed, which is the correct outcome.\n\nWhat I take from those two: the old code's ugliness is usually the record of the requirements. If you cannot enumerate why each ugly branch exists, you do not understand the system well enough to replace it, and the rewrite is a bet that the branches were not important.\n\nSometimes they are not important. The 2021 code also had 400 lines of dead retry logic for a payment provider we left in 2018. But we found that out by reading it, not by deleting it and waiting."
+  },
+  {
+    "id": "human-072",
+    "label": "human",
+    "text": "Notes on running a clinic front desk, written for the software people who keep trying to sell me products.\n\nWe see between 60 and 80 patients a day across four doctors. The front desk is two people, one of whom is also handling insurance paperwork.\n\nThe actual bottleneck is not scheduling and it is not billing. It is that a patient arrives, and we need to know within about fifteen seconds whether they are here for a first consultation, a follow-up within the free window, a procedure that needs pre-authorisation, or a report collection. Four different flows, decided at the counter, while the person is standing there and three others are queued behind them.\n\nEvery system I have been shown solves the calendar. The calendar was never hard. What I want is a screen that shows me who is in the waiting room right now, colour coded by what they need, updated when the doctor finishes with someone.\n\nWe currently do this with a whiteboard. The whiteboard has been more reliable than the two systems we bought and abandoned, and I say that as someone who would genuinely like to stop using a whiteboard."
+  },
+  {
+    "id": "human-073",
+    "label": "human",
+    "text": "I want to talk about what a year of trying to hire a senior data engineer taught me about our own job description.\n\nWe opened the role in January. We closed it in November with an internal transfer. In between we spoke to 31 people.\n\nThe description asked for Spark, Airflow, dbt, Kafka, Snowflake, Terraform, and \"strong SQL\". Every candidate who had all of those was either at a company paying 40% more than us or wanted to work on something bigger than our 200GB of data.\n\nThe person we eventually moved into the role knew SQL extremely well, had never touched Kafka, and had spent three years as an analyst arguing with our data, which meant she already knew where every bad join in the warehouse was.\n\nSix months in she has removed more problems than the job description would have predicted, and she learned Airflow in a fortnight because Airflow is not the hard part.\n\nI am not making the argument that skills do not matter. I am making the narrower argument that we wrote down the tools we use instead of the problems we have, and then we spent eleven months looking for someone who matched a list."
+  },
+  {
+    "id": "human-074",
+    "label": "human",
+    "text": "Our engineering onboarding document was 40 pages and nobody read it. Here is what we replaced it with and what happened.\n\nWe deleted 31 pages. What survived: how to get access to things, how to run the app locally, how deploys work, who to ask about what, and a single annotated walkthrough of one request from the load balancer to the database and back.\n\nThat last one is the only part anyone has thanked me for. It is four pages and it took two days to write because I had to check things I thought I knew.\n\nThe 31 deleted pages were mostly history. Why we chose Postgres. Why the billing service is separate. The 2022 architecture decision records. All of that is real and useful and none of it is useful in week one.\n\nWe moved it to a folder called background and told people to read it in month two. As far as I can tell nobody has, which is either fine or is telling me something I do not want to hear about how much of our written history matters.\n\nTime for a new engineer to open their first pull request went from about nine days to three. Most of that is the access section, which is now a script."
+  },
+  {
+    "id": "human-075",
+    "label": "human",
+    "text": "Reflections on eleven years of teaching mathematics to fourteen year olds, prompted by a colleague asking if I am tired of it.\n\nI am not tired of the teaching. I am tired of the reporting. This year I will write roughly 340 individual comments, each of which must reference a specific piece of evidence and a next step, for a system that produces a document most parents skim in ninety seconds.\n\nThe teaching itself has got better. Specifically: I stopped explaining a method and then giving twenty practice questions. I now give three questions, two of which the method handles cleanly and one of which it does not, and we spend the lesson on the one that does not.\n\nMy top set hated this for about six weeks because it felt slower and they are optimised for speed. The middle set took to it immediately. The bottom set, where I expected disaster, has been the biggest surprise, because the third question does not have a right answer they are failing to reach.\n\nThe exam results are essentially unchanged. I am aware this undermines my case somewhat. But the questions the students ask me now are better questions, and I do not have a metric for that, and I am choosing to believe it anyway."
+  },
+  {
+    "id": "human-076",
+    "label": "human",
+    "text": "We migrated 14 years of files off a Windows file server and I have opinions about digital hoarding now.\n\n2.1 terabytes. 940,000 files. The oldest ones were from 2010 and were Word documents saved by people who left before I joined.\n\nWhat we found when we actually looked: about 60% of the volume was duplicated. Not similar, byte identical. The same board pack existing in eleven folders because eleven people had saved it. Another 15% was one department's scanned PDFs of documents that also exist in the accounting system.\n\nWe kept everything, because deciding what to delete would have cost more than the storage does, and because deleting the wrong thing in a regulated business is not a mistake you make twice. But we deduplicated and the actual unique content is about 500GB.\n\nThe part that surprised me: nobody has requested a file older than 2019 in the eight months since the migration. Not once. We have all this and we use the last four years of it.\n\nI do not have a tidy conclusion. We are paying to store the professional memory of a company that does not consult its memory."
+  },
+  {
+    "id": "human-077",
+    "label": "human",
+    "text": "A note on estimates, from someone who has been wrong about them for a long time and has stopped trying to be right.\n\nWe tracked every estimate against actuals for two quarters. 38 pieces of work. The median piece took 1.7 times its estimate. The mean took 2.4, which tells you there were some real disasters in there.\n\nBut here is the useful bit. When we split by whether the work touched a system the estimator had personally worked on before, the median for familiar systems was 1.1. For unfamiliar ones it was 2.9.\n\nSo our estimates are not bad. Our estimates of unfamiliar work are bad, and we were averaging the two together and concluding that estimation is impossible.\n\nWhat we do now: an estimate comes with a note about familiarity, and anything marked unfamiliar gets a two day spike before it gets a number. The spike is not free, it is roughly 8% of our capacity, and it has taken our overall multiplier from 1.7 to about 1.3.\n\nThat is not a transformation and I am not going to sell it as one. It is a fifth of our overrun, recovered, for a cost we can see."
+  },
+  {
+    "id": "human-078",
+    "label": "human",
+    "text": "I run the logistics for a mid-sized distributor and I want to describe what a normal Tuesday actually involves, because I read a lot of supply chain content that does not resemble my job.\n\nWe move about 400 orders a day out of one warehouse to roughly 90 retailers. Four trucks, two of them ours, two contracted.\n\nToday: one truck did not arrive because the contractor double-booked. That is 90 orders that need to go on other vehicles or wait. Deciding which ones wait is the job, and it is not an optimisation problem, it is a relationship problem, because two of those retailers will call my director and two will not, and the ones who will not call are the ones we have been letting down for six weeks.\n\nOur system tells me delivery windows and stock levels. It does not tell me who is out of patience. That lives in my head and in a notebook, and when I was on leave in October the person covering had no way to know it and made entirely defensible decisions that cost us an account.\n\nEvery vendor who has demoed to me wants to show me route optimisation. Our routes are basically fixed. I want to encode the notebook."
+  },
+  {
+    "id": "human-079",
+    "label": "human",
+    "text": "Three months after switching our team to trunk based development, an honest account.\n\nBefore: feature branches, average lifetime eleven days, merge conflicts constantly, and a release process that took a full afternoon and required one specific person.\n\nNow: everything goes to main behind a flag, we deploy about nine times a day, and releases are not an event.\n\nThe good is obvious and I will not belabour it. The costs, which nobody mentioned to me:\n\nOur flag count went from zero to 34 in two months, and roughly a third of them are dead. Nobody removes a flag once the feature is out, because removing it is work with no visible benefit. We now have a fortnightly flag cleanup that everyone hates and that I will defend forever.\n\nCode review changed character. Reviews are smaller, which is better, but the design conversation that used to happen on a big pull request now happens nowhere unless someone deliberately schedules it. We lost something there and I have not fully replaced it.\n\nAnd one engineer is genuinely unhappy. He liked long branches and deep focus and he experiences the new rhythm as constant interruption. I do not think he is wrong. I think we optimised for the team at a real cost to him and I have not found a way to give it back."
+  },
+  {
+    "id": "human-080",
+    "label": "human",
+    "text": "Someone asked me to write up how we do incident response at a company with nine engineers and no dedicated ops team, so here it is, unglamorous.\n\nOne person is on call for a week. They carry a phone. If it rings outside hours, they get the next morning off, and that is honoured without negotiation because the first time we negotiated it we lost the goodwill for a year.\n\nWe have four alerts that page. Four. Everything else goes to a channel that nobody is obliged to read at night. Getting from about sixty alerts to four took a quarter and mostly consisted of asking, for each alert, whether we would genuinely wake a person for it. For fifty-six of them the answer was no.\n\nWhen something happens the on-call person's first job is to say in the channel that they are on it. Not to fix it. To say it. This sounds trivial and it eliminated the thing where three people independently debug the same problem and one of them restarts something under the others.\n\nWe write a postmortem for anything customer-visible over five minutes. It is a page. It has a timeline, a cause, and actions with names and dates. No blameless-culture language, because we are nine people and everybody already knows who deployed it, and pretending otherwise is more corrosive than just being decent about it."
+  },
+  {
+    "id": "human-081",
+    "label": "human",
+    "text": "What I learned auditing our own analytics after discovering our signup number was wrong for eight months.\n\nThe dashboard said 1,200 signups a month. The database said about 900. Nobody noticed because the dashboard number was the one in the board pack and the database number was the one nobody queried.\n\nCause: the tracking event fired on the form submit, not on successful account creation. So every failed signup, every duplicate email, every validation error counted as a signup. Roughly 25% of form submits fail, which is its own problem and one I would not have found otherwise.\n\nThe embarrassing part is that we made decisions on the wrong number. We concluded our Q2 campaign worked. Recalculated, it was flat. We spent about 6 lakh extending it.\n\nWhat we changed: every metric on the executive dashboard now has a link to the query or the event definition behind it, and one person is responsible for reconciling the top five against the database monthly. It takes her about two hours.\n\nWhat I actually think the lesson is: not that we should verify our metrics, which everyone already agrees with in the abstract, but that a number becomes true by being repeated in meetings, and there was no moment where anyone was supposed to check."
+  },
+  {
+    "id": "human-082",
+    "label": "human",
+    "text": "A year of trying to reduce our carbon reporting burden, described honestly for other people in operations roles who have been handed this.\n\nWe are a 180 person manufacturing business. In 2024 our largest customer began requiring scope 1, 2 and partial scope 3 data as a condition of the contract. Nobody here had done this before and I got it because I had a spreadsheet reputation.\n\nScope 1 and 2 were tedious but tractable. Fuel receipts, electricity bills, twelve months of data, about three weeks of work including finding out that two of our meters had been billed on estimates since 2022.\n\nScope 3 is where it falls apart. It requires data from suppliers, and 40 of our 60 suppliers either do not have it or will not share it. The accepted practice is to use industry average emission factors, which means a substantial part of the number I am submitting is an average multiplied by our spend. It is defensible. It is also not a measurement of anything we did.\n\nI am not writing this to be cynical about the reporting. The scope 1 work found real waste, and we cut gas usage 14% by fixing a compressor schedule. I am writing it because the confident single number at the end of these reports conceals an enormous difference in how much of it is measured and how much is arithmetic on a spend column."
+  },
+  {
+    "id": "human-083",
+    "label": "human",
+    "text": "We killed our chatbot after fourteen months and I want to write down why, in case it is useful to someone about to build one.\n\nIt handled 31% of incoming conversations without a human. That number was in every deck and it is real. What the number does not say is which 31%.\n\nWhen we looked, the automated conversations were almost entirely password resets, order status, and opening hours. All three of those already had a self-serve page. What the bot was actually doing was giving people who could not find the page a slower way to reach the same information, and we counted that as deflection.\n\nMeanwhile the conversations that mattered, where somebody was upset about a delivery or confused about a charge, were being routed through two or three bot turns before reaching a person, and our satisfaction scores for those conversations were nine points lower than for conversations that started with a human.\n\nWe replaced it with a better search on the help pages and a form that routes directly. Handle time went up, because now humans handle the hard ones and the easy ones do not become conversations at all. Total conversations dropped by a fifth.\n\nI do not think chatbots are useless. I think we measured the thing that was easy to measure and then defended it for a year."
+  },
+  {
+    "id": "human-084",
+    "label": "human",
+    "text": "Some thoughts on remote work from a company that has been fully distributed since 2019, so before it was fashionable and after it stopped being.\n\nWhat has consistently worked: written decisions. Anything agreed in a call gets written in a channel within the day, by the person who called the meeting. We have done this for five years and it is the single practice I would keep if I could keep one.\n\nWhat has consistently not worked: our attempts at social connection. We have tried virtual coffee, games, a book club, and a channel for pets. All of them run for six weeks on the enthusiasm of one organiser and then stop. I have concluded that we cannot manufacture this and I have stopped trying, which some people read as giving up and which I read as being honest about what a company can provide.\n\nWhat surprised me: onboarding is harder remotely and stays harder for about four months, not four weeks. New people are missing the incidental context that in-person work delivers for free, and the only thing that has helped is deliberately over-inviting them to conversations they do not obviously need to be in.\n\nWhat I would tell a company going distributed now: your bottleneck will not be tools. It will be that every implicit thing has to become explicit, and half your senior people communicate implicitly and do not know it."
+  },
+  {
+    "id": "human-085",
+    "label": "human",
+    "text": "Two years into using infrastructure as code properly, here is the state of things including the parts that annoy me.\n\nEverything in AWS is in Terraform except for two things: the certificate for our apex domain, which was created by hand in 2019 by someone who left and which I am afraid to touch, and an SQS queue that a lambda creates at runtime, which is a design mistake we have not paid to fix.\n\nGood: rebuilding our staging environment from nothing takes 40 minutes and one command. We do it monthly, deliberately, so that we know it still works. The first time we tried it took four days because of exactly the kind of hand-created drift I described above.\n\nAnnoying: the plan output for any change to our networking module is 300 lines and nobody reads it properly. We have approved changes we did not understand. Twice this caused an outage, both times brief.\n\nAlso annoying: our modules have become their own codebase, with versioning and a changelog and a deprecation policy, and I now employ roughly a third of a person maintaining the thing that was supposed to reduce work.\n\nStill worth it. But the honest accounting is that we traded a class of problem we understood for a class of problem we are still learning, and the second class has better tooling and worse intuition."
+  },
+  {
+    "id": "human-086",
+    "label": "human",
+    "text": "Writing this up because three people have asked me the same question this month about pricing changes.\n\nWe raised prices 22% in April on new customers only. Existing customers were grandfathered indefinitely, which we announced clearly.\n\nWhat happened to conversion: our trial to paid rate went from 14.2% to 13.6% over the following four months. That is a real drop and it is smaller than the price increase, so revenue per trial went up meaningfully.\n\nWhat happened that I did not predict: about 30 existing customers wrote in to ask if they should upgrade or lock in, and eleven of them upgraded to annual plans to feel secure about it. So the announcement itself generated revenue from people whose prices had not changed.\n\nWhat I got wrong: I spent two weeks writing a careful email explaining the reasoning, the cost increases, the additional features. Our head of support suggested a three sentence version. We sent hers. Nobody asked for the reasoning.\n\nThe grandfathering is now a liability we carry forever, and in five years someone will suggest ending it and there will be a bad week. I made that trade knowingly and I would make it again, but it is a trade and not a free choice."
+  },
+  {
+    "id": "human-087",
+    "label": "human",
+    "text": "Notes from six months of being the only technical person at a nonprofit, after fifteen years at software companies.\n\nThe technology is not the problem. The problem is that there are eleven systems, nine of which were set up by a volunteer or a consultant who is gone, and each of which holds a slightly different version of the same list of people.\n\nOur donor list exists in the CRM, the email tool, a Google Sheet maintained by the fundraising lead, and the accounting system. None of them agree. When someone dies, we find out because a family member calls us upset that we sent a letter, and then I update it in four places and probably miss one.\n\nWhat I have done so far: made the CRM authoritative, written a weekly sync from CRM to email tool, and deleted the sheet after copying its unique data across. The accounting system stays separate because integrating it is a two month project and the finance officer, reasonably, does not want her ledger written to by a script I wrote.\n\nWhat I have learned: at a software company, technical debt costs you velocity. Here it costs you dignity in your relationship with a grieving family. Same category of problem, entirely different weight, and it has changed how I prioritise."
+  },
+  {
+    "id": "human-088",
+    "label": "human",
+    "text": "I have spent the last month reading our own API documentation as if I were a new customer and I want to record what that was like.\n\nThe reference is complete. Every endpoint, every field, generated from the schema, always current. This is the part we are proud of and it is genuinely good.\n\nThe problem is that it is the only thing we have. There is no page that says what the objects mean or how they relate. A new developer arrives, finds 60 endpoints, and has no way to learn that an Account contains Subscriptions, a Subscription has exactly one Plan, and that our Invoice object predates all of this and attaches to the Account rather than the Subscription for historical reasons that affect how you should query it.\n\nI know this because I have explained it verbally to about twenty customers.\n\nSo I wrote one page. A diagram, five paragraphs, and three worked examples of common tasks. It took a week, most of which was arguing with myself about the invoice thing.\n\nSupport questions tagged as integration have dropped by roughly a third since it went up. I am not going to claim causation from one month of data, but I will say that the generated reference, which took a quarter to build, has never moved that number."
+  },
+  {
+    "id": "human-089",
+    "label": "human",
+    "text": "An account of our attempt to reduce meeting load, including the part where it partially failed.\n\nWe started at an average of 14 hours a week in meetings per engineer, measured from calendars over a month.\n\nWe cancelled every recurring meeting for two weeks and let people re-add what they missed. This is the advice everyone gives. Here is what actually happened.\n\nSeven meetings came back immediately, which was fine and informative. Three did not come back, and two months later it became clear that two of them had been doing something. Specifically, the cross-team sync that nobody re-added had been the only place where the mobile team heard about API changes, and we shipped a breaking change in September that cost them a week.\n\nSo the meeting had a function that was invisible to the people in it, including me, and it only became visible after it was gone.\n\nWe are now at about 9 hours a week, which I am happy with. The cross-team sync is back, at half the length, with a written agenda.\n\nThe lesson I take is not that the reset was wrong. It is that the two week window was too short to observe the consequences, and I presented the result as a success in week three when I did not yet know."
+  },
+  {
+    "id": "human-090",
+    "label": "human",
+    "text": "Some numbers on our apprenticeship programme, three cohorts in, because I keep being asked whether it is worth it and the honest answer is complicated.\n\nWe have taken 12 apprentices over three years. Nine are still with us. Two left for other companies, which is fine and expected. One left the industry.\n\nCost: an apprentice is roughly 40% of a junior salary, plus the mentoring time, which we measured at about four hours a week for the first six months. Four hours of a senior engineer is not cheap. Total cost per apprentice in year one is close to a junior hire.\n\nOutput: by month nine, our apprentices are producing at roughly the level of a junior with a year of experience. By month eighteen there is no distinguishable difference between them and someone we hired conventionally.\n\nSo purely financially, it is roughly a wash with a slower ramp.\n\nWhy we keep doing it: the nine who stayed have a retention pattern nothing else in our hiring produces. Average tenure is now past three years against a company average of 2.1. And two of them are now the best mentors we have, which I did not anticipate and which I think comes from having been on the other side recently enough to remember it."
+  }
+]
