@@ -19,6 +19,9 @@ const MIN_ENUMERATED_ITEMS = 3;
 /** Fragmentation: standalone one-sentence paragraphs used as beats. */
 const MIN_FRAGMENT_PARAGRAPHS = 4;
 
+/** Repeating the same imperative lead across several lines is a common generated crescendo. */
+const MIN_REPEATED_LEADS = 3;
+
 // Standalone digits followed by space (no dot) are common in listicles.
 const ENUMERATION = /^(?:\d{1,2}[.)]?\s|[-•*→▪]\s|[0-9]️?⃣\s)/;
 
@@ -75,6 +78,17 @@ export function stacking(features) {
     evidence.push(`${fragments.length} one-line paragraphs used as beats`);
   }
 
+  const leads = new Map();
+  for (const line of body) {
+    const lead = line.match(/^([a-z’']+(?:\s+[a-z’']+){0,2})\b/i)?.[1]?.toLowerCase();
+    if (lead) leads.set(lead, (leads.get(lead) ?? 0) + 1);
+  }
+  const repeatedLead = [...leads.entries()].find(([, count]) => count >= MIN_REPEATED_LEADS);
+  if (repeatedLead) {
+    components += 1;
+    evidence.push(`repeats “${repeatedLead[0]}” across ${repeatedLead[1]} lines`);
+  }
+
   const close = body[body.length - 1] ?? '';
   if (wordsIn(close) <= 15 && GENERIC_CLOSE.some((p) => p.test(close))) {
     components += 1;
@@ -84,6 +98,6 @@ export function stacking(features) {
   // Co-presence only. One component is a writing choice; three is a template.
   if (components < 2) return noSignal('templateStacking');
 
-  const score = { 2: 0.45, 3: 0.75, 4: 1 }[components] ?? 1;
+  const score = (repeatedLead ? { 2: 0.75, 3: 1, 4: 1 } : { 2: 0.45, 3: 0.75, 4: 1 })[components] ?? 1;
   return signal('templateStacking', score, evidence);
 }

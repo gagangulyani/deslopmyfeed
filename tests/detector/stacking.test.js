@@ -17,6 +17,20 @@ describe('template stacking', () => {
   it('reports the rule id it is registered under', () => {
     expect(run(fixture('ai', 'ai-011')).rule).toBe('templateStacking');
   });
+
+  it('recognizes a repeated imperative crescendo paired with fragmented beats', () => {
+    const result = run([
+      'This is the bigger question.', '',
+      'Don’t wait for hospitals to fill up.', '',
+      'Don’t wait for another scandal.', '',
+      'Don’t wait for a crisis to act.', '',
+      'Protect people before the harm is done.', '',
+      'Policy should prevent the problem.'
+    ].join('\n'));
+    expect(result.triggered).toBe(true);
+    expect(result.evidence).toContain('repeats “don’t wait for” across 3 lines');
+    expect(result.score).toBeGreaterThanOrEqual(0.75);
+  });
 });
 
 describe('template stacking does not fire on human posts that look similar', () => {
