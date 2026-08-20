@@ -8,8 +8,11 @@ generic and AI-style content out of your LinkedIn feed.
 Analysis happens entirely in your browser. No post content is sent anywhere, no
 AI API is used, no account is required.
 
-**Status: pre-alpha.** The scaffold and interfaces exist; the detectors are not
-implemented yet. See [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+**Status: alpha, never run on LinkedIn.** All seven detectors, the content
+script, the UI and settings are implemented and tested (177 tests). Nobody has
+loaded it into Chrome and scrolled a real feed yet, so the DOM selectors are
+unproven. See [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) for what is verified
+and what is not.
 
 ---
 
@@ -48,25 +51,51 @@ are weak on purpose; combinations carry the signal.
 | Rhetorical templates | 2 | "Here's what I learned", "It's not X, it's Y" |
 | Genericity | 2 | Broad claims, few dates, numbers, names or concrete events |
 | Synthetic formatting | 2 | One-line paragraph clusters, colon-led lines, em-dash density |
-| Vocabulary clusters | 1–2 | Co-occurring abstract/inspirational/discourse terms |
+| Vocabulary clusters | 1 | Co-occurring abstract/inspirational/discourse terms |
 | Engagement formula | 1 | "Thoughts?", "Comment below", 👇 |
 | Hashtag behavior | 1 | Hashtag-stuffed endings |
 
 ### Score bands
 
+Each rule reports a strength between 0 and 1; the score is that strength times
+the rule's weight, summed. Thresholds were calibrated against the test corpus
+rather than guessed — the highest score any human fixture reaches is 0.8.
+
 | Score | Reading | Default action |
 | ---: | --- | --- |
-| 0–2 | Insufficient signal | Show |
-| 3–4 | Mild signal | Show |
-| 5–6 | Suspicious pattern | Warn |
-| 7+ | Strong pattern | Hide |
+| under 2.5 | Insufficient signal | Show |
+| 2.5–4 | Suspicious pattern | Warn |
+| 4+ | Strong pattern | Hide (in hide mode, with corroboration) |
+
+### Measured behavior
+
+Against `tests/fixtures/` (178 posts), at default settings:
+
+| Corpus | Flagged | Hidden |
+| --- | ---: | ---: |
+| human (54 analyzable) | 0.0% | 0.0% |
+| ai (50) | 74.0% | 26.0% |
+| assisted (22) | 0.0% | 0.0% |
+| adversarial (16) | 0.0% | 0.0% |
+
+Run `npm test` to reproduce; the build fails if the human false-positive rate
+goes above budget. **These fixtures were written for the project, not collected
+from LinkedIn** — the number is a regression guard, not a field measurement.
+Adversarial recall is 0% by construction: those posts were written to evade
+every rule, and the project's stated preference is to miss slop rather than hide
+a real post.
 
 ### Guard rails
 
 - Posts under 50 words are never filtered.
-- 50–100 words are scored conservatively.
+- 50–100 words are scored conservatively (0.7x).
 - Hiding requires at least two independent signal categories, one structural.
-- Every hidden post offers **Show post** and **Always show similar**.
+- Weak rules cannot reach a hide verdict between them, at any weight.
+- A post truncated behind "…see more" is treated as unanalyzable and left alone,
+  because clicking the control is a LinkedIn interaction this project refuses to
+  automate.
+- Every hidden post offers **Show post** and **Always show similar**, and a post
+  you have asked to see stays visible for the rest of the session.
 
 The project prefers *missing some slop* over *hiding legitimate content*.
 
@@ -88,6 +117,9 @@ npm test
 Then in Chrome: `chrome://extensions` → enable **Developer mode** → **Load
 unpacked** → select the repository root. There is no build step; the extension
 ships the source as-is.
+
+`npm run bench` reports per-post analysis cost (currently p95 0.17ms against a
+50ms budget).
 
 ## Platform risk
 

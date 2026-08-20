@@ -1,5 +1,10 @@
 # Implementation Plan — V1
 
+**All eight phases are implemented.** What each one actually produced, and where
+it diverged from the plan, is recorded inline below. The one thing the plan
+cannot close is that none of it has run on LinkedIn — see
+[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
+
 Ordered by dependency, not by how interesting the work is. Each phase has a
 success criterion that can be checked by running something, not by looking at
 the code and feeling good about it.
@@ -20,7 +25,7 @@ and the popup opens. (The popup will render nothing until Phase 5.)
 
 ---
 
-## Phase 1 — Corpus and harness
+## Phase 1 — Corpus and harness ✅
 
 Build the measuring instrument first.
 
@@ -49,7 +54,7 @@ genericity detector reads.
 
 ---
 
-## Phase 2 — Features and scoring engine
+## Phase 2 — Features and scoring engine ✅
 
 `src/detector/features.js`, `src/detector/scoring.js`.
 
@@ -67,7 +72,7 @@ asserting the composition and each guard rail independently.
 
 ---
 
-## Phase 3 — Detectors, strongest first
+## Phase 3 — Detectors, strongest first ✅
 
 One module per rule, each with its own test file, each landing green against the
 Phase 1 metrics before the next one starts. Order matters: adding a weak rule to
@@ -100,7 +105,7 @@ budget, ship it default-off rather than weakening the whole score.
 
 ---
 
-## Phase 4 — Content script
+## Phase 4 — Content script ✅
 
 `bootstrap.js` → `observer.js` → `post-detector.js` → `post-filter.js`.
 
@@ -127,7 +132,7 @@ LinkedIn control, and clicking it is exactly the automation the project forbids
 
 ---
 
-## Phase 5 — UI
+## Phase 5 — UI ✅
 
 `ui.js`, `content.css`, popup, themes.
 
@@ -145,7 +150,7 @@ are affected with the extension enabled.
 
 ---
 
-## Phase 6 — Settings and exceptions
+## Phase 6 — Settings and exceptions ✅
 
 `storage/settings.js`.
 
@@ -160,7 +165,7 @@ feed react without reload; settings survive browser restart.
 
 ---
 
-## Phase 7 — Performance
+## Phase 7 — Performance ✅
 
 `tests/bench.js`: run `analyze()` over the whole corpus, report p50/p95/max.
 
@@ -173,7 +178,7 @@ feed.
 
 ---
 
-## Phase 8 — Release readiness
+## Phase 8 — Release readiness ✅
 
 Walk the spec §31 checklist explicitly:
 
@@ -194,18 +199,44 @@ Walk the spec §31 checklist explicitly:
 
 ---
 
-## Open questions
+## How the open questions resolved
 
-1. **Corpus sourcing.** 60 anonymized human posts is real work. Paraphrasing
-   changes the writing style being measured; copying verbatim raises its own
-   questions. Leaning toward paraphrase-preserving-structure, and documenting it.
-2. **Calibration honesty.** The weights in the spec are reasonable guesses. If
-   measurement contradicts them, measurement wins — the spec's numbers are a
-   starting point, not a contract.
-3. **Genericity may not survive.** See Phase 3 risk. It carries weight 2 and it
-   is the detector most likely to hide something the user wanted.
-4. **DOM fragility.** LinkedIn class names are partly generated. The plan is to
-   fail closed and isolate the damage, not to chase selectors.
+1. **Corpus sourcing.** Resolved by writing all 178 fixtures rather than
+   collecting any, which satisfies the no-real-posts rule absolutely and is the
+   corpus's central weakness. The measured 0.0% human false-positive rate is a
+   regression guard, not a field result. Replacing these with anonymized real
+   posts remains the highest-value change available to the project.
+2. **Calibration honesty.** Measurement won. The spec's thresholds of 5 and 7
+   were guesses on an unknown scale; measured against the corpus the highest
+   human score is 0.8 and the ai median is 3.5, so the thresholds are now 2.5
+   and 4. The corpus could not distinguish warn=2 from warn=3 — no post scores
+   in that range at all — so the final choice was made on margin (roughly three
+   times the human ceiling) and is documented as such rather than claimed as
+   fitted. Weights were left at the spec's values.
+3. **Genericity survived, enabled.** It fires on 48% of ai fixtures and 0% of
+   human ones, because it requires high abstraction AND low specificity together
+   rather than either alone. The margin is thinner than the number suggests:
+   four human fixtures sit just below the abstraction threshold. It is the first
+   detector to turn off if real-world use produces false positives.
+4. **DOM fragility.** Unresolved by design. `post-detector.js` is the only file
+   that knows LinkedIn markup and returns null whenever it is unsure, so stale
+   selectors cost a no-op rather than a broken feed. Untested against the real
+   site.
+
+## Found while building, not planned for
+
+- **"Always show similar" had no defined mechanism.** Implemented as turning off
+  the signal that drove the verdict — visible in the popup, reversible, no
+  hidden state. Testing it surfaced a real defect: the other rules could still
+  clear the threshold, so the post the user had just un-hidden collapsed again
+  on the next rescan. Posts the user explicitly asks for are now held for the
+  session.
+- **The ai corpus contained no consultant-register slop at all**, so the
+  vocabulary detector had nothing to fire on and read as broken. Fixed by adding
+  eight corporate-register fixtures rather than bending the dictionary toward
+  the fixtures that already existed.
+- **Colon-led list intros were being read as hooks**, which cost two human
+  posts. A hook withholds; a line ending in a colon introduces.
 
 ## Explicitly out of V1
 
