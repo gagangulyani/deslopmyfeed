@@ -13,6 +13,7 @@ import { RULE_LABELS } from '../detector/scoring.js';
  * to LinkedIn's recycled post elements. */
 const ARTIFACT = 'data-dsmf-artifact';
 const COLLAPSED = 'dsmf-hidden';
+const WARNED = 'dsmf-warned';
 
 /** Fired when the user asks to stop filtering posts like this one. Phase 6
  * listens for it; the UI layer does not touch storage itself. */
@@ -84,6 +85,7 @@ export function applyWarn(post, analysis) {
 
   badge.appendChild(explanation(analysis));
 
+  post.classList.add(WARNED);
   post.prepend(badge);
 }
 
@@ -112,7 +114,7 @@ export function applyHide(post, analysis) {
 export function restore(post) {
   if (!post) return;
   const wasHidden = post.classList.contains(COLLAPSED);
-  post.classList.remove(COLLAPSED);
+  post.classList.remove(COLLAPSED, WARNED);
   for (const artifact of post.querySelectorAll(`[${ARTIFACT}]`)) artifact.remove();
   if (wasHidden) reportHiddenCount({ delta: -1 });
 }
@@ -120,8 +122,8 @@ export function restore(post) {
 /** Remove every DeSlopMyFeed artifact from the page. */
 export function clearAll(root = document) {
   for (const artifact of root.querySelectorAll(`[${ARTIFACT}]`)) {
-    const post = artifact.closest(`.${COLLAPSED}`);
-    if (post) post.classList.remove(COLLAPSED);
+    const post = artifact.closest(`.${COLLAPSED}`) ?? artifact.parentElement;
+    if (post) post.classList.remove(COLLAPSED, WARNED);
     artifact.remove();
   }
   reportHiddenCount({ reset: true });

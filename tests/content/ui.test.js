@@ -31,6 +31,7 @@ describe('warn', () => {
     expect(el.querySelector('.dsmf-badge')).not.toBeNull();
     expect(el.querySelector('.content').textContent).toBe('Original body');
     expect(el.classList.contains('dsmf-hidden')).toBe(false);
+    expect(el.classList.contains('dsmf-warned')).toBe(true);
   });
 
   it('states a compact reason without inventing a number', () => {
@@ -156,6 +157,7 @@ describe('clearAll', () => {
 
     expect(document.querySelectorAll('[data-dsmf-artifact]')).toHaveLength(0);
     expect(document.querySelectorAll('.dsmf-hidden')).toHaveLength(0);
+    expect(document.querySelectorAll('.dsmf-warned')).toHaveLength(0);
   });
 
   it('is safe on a page it never touched', () => {

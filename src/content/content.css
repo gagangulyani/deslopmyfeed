@@ -61,6 +61,10 @@
    removing one class and one node. */
 .dsmf-hidden > *:not(.dsmf-card):not(.dsmf-debug) { display: none !important; }
 
+/* Marks the actual LinkedIn post the notice belongs to without moving its layout. */
+.dsmf-warned { box-shadow: inset 3px 0 #d97706 !important; }
+.dsmf-hidden { box-shadow: inset 3px 0 #b45309 !important; }
+
 /* A restrained LinkedIn-style decision notice, not a red alert or debug pill. */
 .dsmf-badge {
   display: flex;
@@ -286,6 +290,7 @@
   background: #ffffff;
   color: #172033;
   border-color: #d8dee9;
+  box-shadow: inset 3px 0 #b45309;
 }
 
 .dsmf-card-reason,
@@ -317,6 +322,12 @@
   color: #e5e7eb;
   border-color: #334155;
 }
+
+:root[data-dsmf-theme='dark'] .dsmf-warned,
+:root:not([data-dsmf-theme='light']) .dsmf-warned { box-shadow: inset 3px 0 #f59e0b !important; }
+:root[data-dsmf-theme='dark'] .dsmf-hidden { box-shadow: inset 3px 0 #f59e0b !important; }
+:root[data-dsmf-theme='dark'] .dsmf-card,
+:root:not([data-dsmf-theme='light']) .dsmf-card { box-shadow: inset 3px 0 #f59e0b; }
 
 :root[data-dsmf-theme='dark'] .dsmf-card-reason,
 :root[data-dsmf-theme='dark'] .dsmf-explain-evidence,
