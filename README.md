@@ -87,8 +87,11 @@ a real post.
 
 ### Guard rails
 
-- Posts under 50 words are never filtered.
+- Posts under 10 words are never judged.
+- 10–49 words can be flagged but never hidden — little text is little evidence.
 - 50–100 words are scored conservatively (0.7x).
+- Non-English text is left alone; every rule is English-only.
+- Sponsored posts are never judged — ad copy is engineered to trip the rules.
 - Hiding requires at least two independent signal categories, one structural.
 - Weak rules cannot reach a hide verdict between them, at any weight.
 - A post truncated behind "…see more" is treated as unanalyzable and left alone,

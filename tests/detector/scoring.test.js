@@ -5,7 +5,8 @@ import {
   STRONG_RULES,
   CONSERVATIVE_MULTIPLIER,
   SENSITIVITY_OFFSETS,
-  MIN_WORDS_TO_ANALYZE
+  MIN_WORDS_TO_ANALYZE,
+  SHORT_POST_FLOOR
 } from '../../src/detector/scoring.js';
 import { signal, noSignal } from '../../src/detector/rule.js';
 import { DEFAULT_SETTINGS } from '../../src/storage/settings.js';
@@ -14,8 +15,8 @@ import { DEFAULT_SETTINGS } from '../../src/storage/settings.js';
 const LONG = 'word '.repeat(150);
 /** Text inside the 50-100 word conservative band. */
 const MEDIUM = 'word '.repeat(60);
-/** Text below the analysis floor. */
-const SHORT = 'word '.repeat(10);
+/** Text inside the short band: judged, but the verdict is capped at warn. */
+const SHORT = 'word '.repeat(20);
 
 /**
  * Build a rule registry where each rule reports a fixed score, so composition
@@ -57,20 +58,56 @@ describe('composition', () => {
 });
 
 describe('guard rail: short posts', () => {
-  it('never filters a post below the analysis floor', () => {
+  it('never judges a post below the short-post floor', () => {
     const everything = stub(Object.fromEntries(Object.keys(RULES).map((id) => [id, 1])));
-    const result = analyze(SHORT, HIDE_MODE, everything);
+    const result = analyze('word '.repeat(SHORT_POST_FLOOR - 1), HIDE_MODE, everything);
     expect(result.verdict).toBe('show');
     expect(result.score).toBe(0);
     expect(result.reason).toBe('too short to judge');
   });
 
   it('the floor is measured in words, not characters', () => {
-    const justUnder = 'word '.repeat(MIN_WORDS_TO_ANALYZE - 1);
-    const justOver = 'word '.repeat(MIN_WORDS_TO_ANALYZE);
+    const justUnder = 'word '.repeat(SHORT_POST_FLOOR - 1);
+    const justOver = 'word '.repeat(SHORT_POST_FLOOR);
     const rules = stub({ templateStacking: 1, formatting: 1 });
     expect(analyze(justUnder, HIDE_MODE, rules).score).toBe(0);
     expect(analyze(justOver, HIDE_MODE, rules).score).toBeGreaterThan(0);
+  });
+
+  it('a short post can be flagged but never hidden, at any weight', () => {
+    const everything = stub(Object.fromEntries(Object.keys(RULES).map((id) => [id, 1])));
+    const weights = Object.fromEntries(Object.keys(RULES).map((id) => [id, 9]));
+    const result = analyze(SHORT, { ...HIDE_MODE, weights }, everything);
+    expect(result.score).toBeGreaterThanOrEqual(DEFAULT_SETTINGS.thresholds.hide);
+    expect(result.verdict).toBe('warn');
+  });
+
+  it('the hide verdict still needs the full analysis floor', () => {
+    const rules = stub({ templateStacking: 1, vocabulary: 1 });
+    const weights = { templateStacking: 9, vocabulary: 9 };
+    const short = 'word '.repeat(MIN_WORDS_TO_ANALYZE - 1);
+    const full = 'word '.repeat(MIN_WORDS_TO_ANALYZE);
+    expect(analyze(short, { ...HIDE_MODE, weights }, rules).verdict).toBe('warn');
+    expect(analyze(full, { ...HIDE_MODE, weights }, rules).verdict).toBe('hide');
+  });
+});
+
+describe('guard rail: non-English posts', () => {
+  it('does not score Hinglish with English-only rules', () => {
+    const hinglish = 'bhai yeh hai matlab sabse zyada generic post '.repeat(3);
+    const everything = stub(Object.fromEntries(Object.keys(RULES).map((id) => [id, 1])));
+    const result = analyze(hinglish, HIDE_MODE, everything);
+    expect(result.verdict).toBe('show');
+    expect(result.score).toBe(0);
+    expect(result.reason).toBe('non-English text');
+  });
+});
+
+describe('structural input', () => {
+  it('accepts the object readPost returns, not only a bare string', () => {
+    const post = { text: LONG, headline: 'CEO at Example', reactions: 12, comments: 3 };
+    const result = analyze(post, HIDE_MODE, stub({ templateStacking: 1 }));
+    expect(result.score).toBe(3);
   });
 });
 

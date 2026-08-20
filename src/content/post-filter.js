@@ -46,7 +46,7 @@ export function processPost(el, settings) {
     return null;
   }
 
-  const analysis = analyze(post.text, settings);
+  const analysis = analyze(post, settings);
   if (analysis.verdict === 'warn') applyWarn(el, analysis);
   else if (analysis.verdict === 'hide') applyHide(el, analysis);
 

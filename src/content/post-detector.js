@@ -119,6 +119,75 @@ function findAuthor(post) {
 }
 
 /**
+ * Leaf elements that are the post's own — never a commenter's, never the post
+ * text itself. Social proof and the promoted label live in leaves.
+ */
+function* ownLeaves(post) {
+  const comments = COMMENT_SELECTORS.join(',');
+  const text = TEXT_SELECTORS.join(',');
+  for (const el of post.querySelectorAll('span, div, p')) {
+    if (el.children.length > 0) continue;
+    if (el.closest(comments) || el.closest(text)) continue;
+    yield el;
+  }
+}
+
+/**
+ * Ads carry a standalone "Promoted" label in the actor area. The probes never
+ * captured one — the sponsored post in the sample only showed up as a failed
+ * author resolution — so this shape is defined by the fixture, and a missed
+ * label means an ad is judged as a post, not a crash.
+ */
+function isSponsored(post) {
+  for (const el of ownLeaves(post)) {
+    if (el.textContent.trim() === 'Promoted') return true;
+  }
+  return false;
+}
+
+/**
+ * The headline sits in the actor block as the profile link's sibling
+ * (structure [4]). No stable attribute — positional, so null is normal.
+ */
+function findHeadline(post) {
+  const link = post.querySelector('a[href*="/in/"], a[href*="/company/"]');
+  if (!link) return null;
+  for (let el = link.nextElementSibling; el; el = el.nextElementSibling) {
+    const text = (el.textContent ?? '').trim();
+    if (text) return text;
+  }
+  return null;
+}
+
+const toCount = (s) => parseInt(s.replace(/,/g, ''), 10);
+
+/**
+ * Social proof is leaf text: "{n} others reacted", "{n} comments"
+ * (structure [8]). Numbers only; when LinkedIn renders none the answer is
+ * null, not zero — absent and zero are different facts.
+ */
+function findCounts(post) {
+  let reactions = null;
+  let comments = null;
+  for (const el of ownLeaves(post)) {
+    const text = el.textContent.trim();
+    if (reactions === null) {
+      const reacted = /^(\d[\d,]*)\s+others? reacted$/.exec(text);
+      if (reacted) {
+        reactions = toCount(reacted[1]);
+        continue;
+      }
+    }
+    if (comments === null) {
+      const commented = /^(\d[\d,]*)\s+comments?$/.exec(text);
+      if (commented) comments = toCount(commented[1]);
+    }
+    if (reactions !== null && comments !== null) break;
+  }
+  return { reactions, comments };
+}
+
+/**
  * Read a post, and say why when it cannot be read.
  *
  * The reason is split out because every skip looks identical to the caller,
@@ -127,12 +196,19 @@ function findAuthor(post) {
  * null-or-post contract.
  *
  * @param {Element} post
- * @returns {{ text: string|null, author: string|null, skip: null|'no text node'|'truncated' }}
+ * @returns {{ text: string|null, author: string|null, headline: string|null,
+ *   reactions: number|null, comments: number|null,
+ *   skip: null|'no text node'|'truncated'|'sponsored' }}
  */
 export function readPost(post) {
-  const unreadable = (skip) => ({ text: null, author: null, skip });
+  const unreadable = (skip) => ({
+    text: null, author: null, headline: null, reactions: null, comments: null, skip
+  });
 
   if (!post || typeof post.querySelector !== 'function') return unreadable('no text node');
+
+  // Ad copy is engineered to trip the text rules, so ads are never judged.
+  if (isSponsored(post)) return unreadable('sponsored');
 
   const container = findTextContainer(post);
   if (!container) return unreadable('no text node');
@@ -152,16 +228,25 @@ export function readPost(post) {
   // the control to expand it is a LinkedIn interaction and forbidden (spec §19).
   if (TRUNCATED.test(text)) return unreadable('truncated');
 
-  return { text, author: findAuthor(post), skip: null };
+  return {
+    text,
+    author: findAuthor(post),
+    headline: findHeadline(post),
+    ...findCounts(post),
+    skip: null
+  };
 }
 
 /**
  * @param {Element} post
- * @returns {{ text: string, author: string|null } | null}
+ * @returns {{ text: string, author: string|null, headline: string|null,
+ *   reactions: number|null, comments: number|null } | null}
  */
 export function extractPost(post) {
   const read = readPost(post);
-  return read.skip ? null : { text: read.text, author: read.author };
+  if (read.skip) return null;
+  const { text, author, headline, reactions, comments } = read;
+  return { text, author, headline, reactions, comments };
 }
 
 /** True if this element has already been processed in this page session. */

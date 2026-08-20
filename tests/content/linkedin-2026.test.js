@@ -16,7 +16,16 @@ import { loadCorpus } from '../corpus.js';
 const slop = loadCorpus('ai').find((p) => p.id === 'ai-001').text;
 
 /** One post, shaped the way LinkedIn shapes them now. */
-function post({ key = 'AbC123', text = 'body', author = 'Jane Doe', comment = null } = {}) {
+function post({
+  key = 'AbC123',
+  text = 'body',
+  author = 'Jane Doe',
+  comment = null,
+  headline = null,
+  reactions = null,
+  comments = null,
+  sponsored = false
+} = {}) {
   const wrapper = document.createElement('div');
   wrapper.className = '_2cb07017 _40e147aa _1d9c1239';
   wrapper.id = `expanded${key}FeedType_MAIN_FEED_RELEVANCE`;
@@ -41,6 +50,36 @@ function post({ key = 'AbC123', text = 'body', author = 'Jane Doe', comment = nu
     </div>
     <span tabindex="-1" data-testid="expandable-text-box"></span>`;
   body.querySelector('[data-testid="expandable-text-box"]').textContent = text;
+
+  // Structure [4]: the headline is the profile link's sibling in the actor block.
+  const actorLink = body.querySelector('a');
+  if (headline) {
+    const div = document.createElement('div');
+    div.textContent = headline;
+    actorLink.after(div);
+  }
+  // Sponsored posts carry a standalone "Promoted" label in the actor area.
+  if (sponsored) {
+    const label = document.createElement('span');
+    label.textContent = 'Promoted';
+    actorLink.after(label);
+  }
+
+  // Structure [8]: social proof is leaf text.
+  if (reactions !== null || comments !== null) {
+    const proof = document.createElement('div');
+    if (reactions !== null) {
+      const r = document.createElement('span');
+      r.textContent = `${reactions} others reacted`;
+      proof.appendChild(r);
+    }
+    if (comments !== null) {
+      const c = document.createElement('span');
+      c.textContent = `${comments} comments`;
+      proof.appendChild(c);
+    }
+    body.appendChild(proof);
+  }
 
   if (comment) {
     const thread = document.createElement('div');
@@ -101,6 +140,28 @@ describe('the 2026 feed markup', () => {
     const read = readPost(findPosts(document)[0]);
     expect(read.text).toBe(slop);
     expect(read.text).not.toContain('Congratulations');
+  });
+
+  it('reads the headline from the actor block', () => {
+    feed(post({ text: slop, headline: 'CEO at Example Corp' }));
+    expect(readPost(findPosts(document)[0]).headline).toBe('CEO at Example Corp');
+  });
+
+  it('reads the reaction and comment counts', () => {
+    feed(post({ text: slop, reactions: 42, comments: 7 }));
+    const read = readPost(findPosts(document)[0]);
+    expect(read.reactions).toBe(42);
+    expect(read.comments).toBe(7);
+  });
+
+  it('never reads social proof out of the comment thread', () => {
+    feed(post({ text: slop, comment: '12 comments' }));
+    expect(readPost(findPosts(document)[0]).comments).toBeNull();
+  });
+
+  it('skips a sponsored post instead of judging ad copy', () => {
+    feed(post({ text: slop, sponsored: true }));
+    expect(readPost(findPosts(document)[0]).skip).toBe('sponsored');
   });
 
   it('strips the see-more control out of the text it judges', () => {

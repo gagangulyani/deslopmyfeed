@@ -54,7 +54,13 @@ describe('findPosts', () => {
 describe('extractPost', () => {
   it('reads the text and the author', () => {
     expect(extractPost(post({ text: 'Shipped the migration.', author: 'R. Iyer' })))
-      .toEqual({ text: 'Shipped the migration.', author: 'R. Iyer' });
+      .toEqual({
+        text: 'Shipped the migration.',
+        author: 'R. Iyer',
+        headline: null,
+        reactions: null,
+        comments: null
+      });
   });
 
   it('returns null when no known text container is present', () => {
@@ -90,7 +96,13 @@ describe('extractPost', () => {
   it('reports a missing author as null rather than guessing', () => {
     const el = document.createElement('div');
     el.innerHTML = '<div class="update-components-text">Body text here.</div>';
-    expect(extractPost(el)).toEqual({ text: 'Body text here.', author: null });
+    expect(extractPost(el)).toEqual({
+      text: 'Body text here.',
+      author: null,
+      headline: null,
+      reactions: null,
+      comments: null
+    });
   });
 
   it('does not modify the page while reading it', () => {

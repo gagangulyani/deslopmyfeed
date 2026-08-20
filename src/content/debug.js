@@ -34,6 +34,7 @@ let hudNote = '';
 export const STAGES = {
   'no text node': 'skip',
   truncated: 'skip',
+  sponsored: 'skip',
   exempt: 'skip',
   show: 'clean',
   warn: 'flag',
