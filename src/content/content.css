@@ -85,6 +85,14 @@
 
 .dsmf-badge-reason { color: var(--dsmf-secondary); }
 
+.dsmf-decision {
+  width: calc(100% - 24px);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.dsmf-decision .dsmf-button { margin-left: auto; }
+
 /* The hide card replaces the post in place. */
 .dsmf-card {
   display: flex;
@@ -171,6 +179,22 @@
 
 .dsmf-explain-evidence {
   color: var(--dsmf-secondary);
+  overflow-wrap: anywhere;
+}
+
+.dsmf-technical {
+  color: var(--dsmf-secondary);
+  margin-top: 2px;
+}
+
+.dsmf-technical summary {
+  cursor: pointer;
+  color: var(--dsmf-fg);
+}
+
+.dsmf-technical-evidence {
+  display: block;
+  margin-top: 4px;
   overflow-wrap: anywhere;
 }
 

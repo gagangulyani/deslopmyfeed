@@ -36,19 +36,59 @@ function button(label, onClick) {
  * Reasons are phrased as observations, never as a probability. "93% AI" is a
  * number the extension does not have (spec §7).
  */
+const SUMMARY_LABELS = {
+  vocabulary: 'vocabulary cues'
+};
+
+function summary(analysis) {
+  return analysis.results
+    .map((result) => SUMMARY_LABELS[result.rule] ?? RULE_LABELS[result.rule] ?? result.rule)
+    .join(' + ');
+}
+
+function conciseEvidence(result) {
+  switch (result.rule) {
+    case 'templateStacking':
+      return ['Short hook', 'Repeated short paragraphs'];
+    case 'formatting':
+      return ['Synthetic paragraph rhythm'];
+    case 'templates':
+      return ['Stock phrasing'];
+    case 'genericity':
+      return ['Few concrete details'];
+    case 'vocabulary':
+      return ['Generic business language detected'];
+    case 'engagement':
+      return ['Engagement prompt'];
+    case 'hashtags':
+      return ['Hashtag stacking'];
+    default:
+      return [];
+  }
+}
+
 function explanation(analysis) {
   const panel = el('div', 'dsmf-explain');
   panel.hidden = true;
 
   for (const result of analysis.results) {
     const item = el('div', 'dsmf-explain-item');
-    item.appendChild(el('span', 'dsmf-explain-rule', RULE_LABELS[result.rule] ?? result.rule));
-    for (const line of result.evidence.slice(0, 3)) {
+    item.appendChild(el('span', 'dsmf-explain-rule', SUMMARY_LABELS[result.rule] ?? RULE_LABELS[result.rule] ?? result.rule));
+    for (const line of conciseEvidence(result)) {
       item.appendChild(el('span', 'dsmf-explain-evidence', line));
     }
     panel.appendChild(item);
   }
 
+  const technical = document.createElement('details');
+  technical.className = 'dsmf-technical';
+  technical.appendChild(el('summary', '', 'Show technical details'));
+  for (const result of analysis.results) {
+    for (const line of result.evidence.slice(0, 3)) {
+      technical.appendChild(el('span', 'dsmf-technical-evidence', line));
+    }
+  }
+  panel.appendChild(technical);
   return panel;
 }
 
@@ -65,13 +105,13 @@ function alwaysShow(post, analysis) {
 export function applyWarn(post, analysis) {
   if (!post || post.querySelector(`[${ARTIFACT}]`)) return;
 
-  const badge = el('div', 'dsmf-badge');
+  const badge = el('div', 'dsmf-badge dsmf-decision');
   badge.setAttribute(ARTIFACT, 'warn');
-  badge.appendChild(el('span', 'dsmf-badge-label', 'Looks formulaic'));
-  badge.appendChild(el('span', 'dsmf-badge-reason', analysis.reason));
+  badge.appendChild(el('span', 'dsmf-badge-label', 'Formulaic pattern detected'));
+  badge.appendChild(el('span', 'dsmf-badge-reason', summary(analysis)));
 
   const panel = explanation(analysis);
-  badge.appendChild(button('Why?', () => { panel.hidden = !panel.hidden; }));
+  badge.appendChild(button('Why it was flagged ›', () => { panel.hidden = !panel.hidden; }));
   badge.appendChild(panel);
 
   post.prepend(badge);
@@ -84,13 +124,13 @@ export function applyHide(post, analysis) {
   const card = el('div', 'dsmf-card');
   card.setAttribute(ARTIFACT, 'hide');
   card.appendChild(el('div', 'dsmf-card-title', 'Post hidden'));
-  card.appendChild(el('div', 'dsmf-card-reason', `Hidden because: ${analysis.reason}`));
+  card.appendChild(el('div', 'dsmf-card-reason', summary(analysis)));
 
   const panel = explanation(analysis);
   const show = button('Show post', () => restore(post));
   show.classList.add('dsmf-primary');
   card.appendChild(show);
-  card.appendChild(button('Why hidden?', () => { panel.hidden = !panel.hidden; }));
+  card.appendChild(button('Why it was hidden ›', () => { panel.hidden = !panel.hidden; }));
   card.appendChild(alwaysShow(post, analysis));
   card.appendChild(panel);
 
