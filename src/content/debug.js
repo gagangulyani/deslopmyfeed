@@ -2,8 +2,8 @@
  * Temporary diagnostics. Off by default, switched on from the popup.
  *
  * The extension is silent by design, which makes "nothing happened" ambiguous:
- * a stale post selector, a post truncated behind "…see more", and a post that
- * simply is not slop all look identical from the outside. With debug on, every
+ * a stale post selector and a post that simply is not slop all look identical
+ * from the outside. With debug on, every
  * candidate post carries a visible tag naming the stage it reached and the
  * score it earned, so the failure has a name.
  *
@@ -33,7 +33,6 @@ let hudNote = '';
  */
 export const STAGES = {
   'no text node': 'skip',
-  truncated: 'skip',
   sponsored: 'skip',
   exempt: 'skip',
   show: 'clean',
