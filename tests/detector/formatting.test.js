@@ -26,6 +26,19 @@ describe('synthetic formatting', () => {
     expect(result.evidence).toContain('short post uses a dash separator');
   });
 
+  it('counts repeated long-post dashes when they corroborate fragmented layout', () => {
+    const filler = 'This sentence supplies ordinary context without adding a structural cue. '.repeat(30);
+    const result = run([
+      'This is the framing line.', '',
+      'First rhetorical beat —', '',
+      'Second rhetorical beat —', '',
+      'Third rhetorical beat.', '',
+      filler
+    ].join('\n'));
+    expect(result.triggered).toBe(true);
+    expect(result.evidence.join(' ')).toMatch(/2 em dashes/);
+  });
+
   it('one weak sub-signal alone is not enough', () => {
     // Colon-led lines only: a common way to write structured human notes.
     const colonsOnly = [
