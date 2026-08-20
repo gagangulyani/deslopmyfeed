@@ -14,6 +14,12 @@ const GRAY_ICONS = {
 };
 const hiddenCounts = new Map();
 
+function extensionIconPaths(icons) {
+  return Object.fromEntries(
+    Object.entries(icons).map(([size, path]) => [size, chrome.runtime.getURL(path)])
+  );
+}
+
 function isLinkedIn(url) {
   try {
     const hostname = new URL(url).hostname;
@@ -31,7 +37,10 @@ function setBadge(tabId, count = hiddenCounts.get(tabId) ?? 0) {
 async function setTabAppearance(tabId, linkedIn, settings) {
   const currentSettings = settings ?? await loadSettings();
   const active = linkedIn && currentSettings.enabled && currentSettings.mode !== 'off';
-  chrome.action.setIcon({ tabId, path: active ? COLOR_ICONS : GRAY_ICONS });
+  chrome.action.setIcon({
+    tabId,
+    path: extensionIconPaths(active ? COLOR_ICONS : GRAY_ICONS)
+  });
   if (!active) hiddenCounts.delete(tabId);
   setBadge(tabId);
 }
