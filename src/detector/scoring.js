@@ -45,9 +45,8 @@ export const CONSERVATIVE_WORD_CEILING = 100;
 export const CONSERVATIVE_MULTIPLIER = 0.7;
 
 /**
- * Sensitivity shifts both thresholds; it never changes weights. The offsets are
- * scaled to the calibrated thresholds (2.5 / 4): at high sensitivity warn sits
- * at 1.5, which is still above every human fixture's score.
+ * Sensitivity shifts the flagging threshold; it never changes weights. At high
+ * sensitivity it sits at 1.5, which is still above every human fixture's score.
  */
 export const SENSITIVITY_OFFSETS = { low: 1.5, medium: 0, high: -1 };
 
@@ -128,7 +127,6 @@ export function analyze(post, settings, rules = RULES) {
   const score = Math.round(total * 10) / 10;
   const offset = SENSITIVITY_OFFSETS[config.sensitivity] ?? 0;
   const warnAt = config.thresholds.warn + offset;
-  const hideAt = config.thresholds.hide + offset;
 
   const onlyShortDash =
     features.wordCount < MIN_WORDS_TO_ANALYZE &&
@@ -150,7 +148,9 @@ export function analyze(post, settings, rules = RULES) {
     results.length >= MIN_CATEGORIES_TO_HIDE && hasStrong && config.mode === 'hide';
 
   return {
-    verdict: score >= hideAt && canHide ? 'hide' : 'warn',
+    // Hide mode collapses the same sufficiently corroborated patterns that
+    // warn mode labels. A separate higher score made Hide feel non-functional.
+    verdict: canHide ? 'hide' : 'warn',
     score,
     results,
     reason: describe(results)

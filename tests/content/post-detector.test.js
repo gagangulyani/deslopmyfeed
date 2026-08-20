@@ -75,18 +75,16 @@ describe('extractPost', () => {
     expect(extractPost(el).text).toBe('Real content.');
   });
 
-  it('returns null for a post truncated behind "see more"', () => {
-    // Clicking the control is forbidden, and judging the visible prefix would
-    // mean judging an arbitrary fragment. Unanalyzable, so leave it alone.
+  it('keeps a trailing ellipsis as post content after removing the see-more control', () => {
     const el = post({
       text: 'This is the beginning of a long post that LinkedIn has cut off…',
       toggle: '<button class="see-more">see more</button>'
     });
-    expect(extractPost(el)).toBeNull();
+    expect(extractPost(el).text).toBe('This is the beginning of a long post that LinkedIn has cut off…');
   });
 
-  it('treats a three-dot truncation the same as an ellipsis character', () => {
-    expect(extractPost(post({ text: 'Cut off here...' }))).toBeNull();
+  it('keeps three dots as post content', () => {
+    expect(extractPost(post({ text: 'Cut off here...' })).text).toBe('Cut off here...');
   });
 
   it('returns null when the container is empty', () => {
@@ -129,12 +127,12 @@ describe('readPost', () => {
     expect(readPost(el).skip).toBe('no text node');
   });
 
-  it('distinguishes a truncated post from an unreadable one', () => {
+  it('does not infer truncation from a trailing ellipsis', () => {
     const el = document.createElement('div');
     el.setAttribute('data-id', 'urn:li:activity:1');
     el.innerHTML = '<div class="update-components-text"></div>';
     el.querySelector('.update-components-text').textContent = 'A long thought that stops…';
-    expect(readPost(el).skip).toBe('truncated');
+    expect(readPost(el).skip).toBeNull();
   });
 
   it('reports no skip reason when the post reads cleanly', () => {
