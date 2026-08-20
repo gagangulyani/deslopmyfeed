@@ -52,17 +52,40 @@ function summary(analysis) {
     .join(' + ');
 }
 
+function evidenceLine(line) {
+  const hook = line.match(/^opens on a \d+-word hook:\s*(.+)$/i);
+  if (hook) return `Opening hook: ${hook[1]}`;
+
+  const beats = line.match(/^(\d+) one-line paragraphs used as beats$/i);
+  if (beats) {
+    const number = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][Number(beats[1])];
+    return `${number ? number.charAt(0).toUpperCase() + number.slice(1) : beats[1]} one-line paragraphs`;
+  }
+
+  const dashes = line.match(/^(\d+) em dashes in (\d+) words$/i);
+  if (dashes) return `${dashes[1]} em dashes across ${dashes[2]} words`;
+
+  return line.charAt(0).toUpperCase() + line.slice(1);
+}
+
 function explanation(analysis) {
   const panel = el('div', 'dsmf-explain');
-  panel.appendChild(el('span', 'dsmf-explain-title', 'Signals found'));
 
   for (const result of analysis.results) {
     for (const line of result.evidence) {
-      panel.appendChild(el('span', 'dsmf-explain-evidence', line));
+      panel.appendChild(el('span', 'dsmf-explain-evidence', evidenceLine(line)));
     }
   }
 
   return panel;
+}
+
+function patternDescription(analysis) {
+  const rules = new Set(analysis.results.map((result) => result.rule));
+  if (rules.has('templateStacking') && rules.has('formatting')) {
+    return 'Short, formulaic post structure';
+  }
+  return 'Recurring formulaic cues';
 }
 
 function alwaysShow(post, analysis) {
@@ -80,8 +103,8 @@ export function applyWarn(post, analysis) {
 
   const badge = el('div', 'dsmf-badge dsmf-decision');
   badge.setAttribute(ARTIFACT, 'warn');
-  badge.appendChild(el('span', 'dsmf-badge-label', 'Formulaic writing pattern'));
-  badge.appendChild(el('span', 'dsmf-badge-reason', `This post matches ${summary(analysis)}.`));
+  badge.appendChild(el('span', 'dsmf-badge-label', 'Pattern detected'));
+  badge.appendChild(el('span', 'dsmf-badge-reason', patternDescription(analysis)));
 
   badge.appendChild(explanation(analysis));
 

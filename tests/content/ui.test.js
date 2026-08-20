@@ -38,8 +38,8 @@ describe('warn', () => {
     const el = post();
     applyWarn(el, analysis());
     const badge = el.querySelector('.dsmf-badge').textContent;
-    expect(badge).toContain('Formulaic writing pattern');
-    expect(badge).toContain('This post matches template structure + synthetic formatting.');
+    expect(badge).toContain('Pattern detected');
+    expect(badge).toContain('Short, formulaic post structure');
     expect(badge).not.toMatch(/\d+(\.\d+)?%/);
   });
 
@@ -48,7 +48,7 @@ describe('warn', () => {
     applyWarn(el, analysis());
     const panel = el.querySelector('.dsmf-explain');
     expect(panel.hidden).toBe(false);
-    expect(panel.textContent).toContain('Signals found');
+    expect(panel.textContent).not.toContain('Signals found');
     expect(panel.textContent).toContain('3 enumerated items');
     expect(panel.textContent).toContain('7 of 9 paragraphs are a single short line');
     expect([...el.querySelectorAll('button')].map((b) => b.textContent)).not.toContain('Why it was flagged ›');
@@ -62,8 +62,8 @@ describe('warn', () => {
     };
     applyWarn(el, vocabulary);
     const panel = el.querySelector('.dsmf-explain');
-    expect(panel.textContent).toContain('navigate');
-    expect(panel.textContent).toContain('journey');
+    expect(panel.textContent).toContain('Navigate');
+    expect(panel.textContent).toContain('Journey');
     expect(panel.querySelector('.dsmf-technical')).toBeNull();
   });
 
