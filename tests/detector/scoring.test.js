@@ -4,6 +4,7 @@ import {
   RULES,
   STRONG_RULES,
   CONSERVATIVE_MULTIPLIER,
+  SENSITIVITY_OFFSETS,
   MIN_WORDS_TO_ANALYZE
 } from '../../src/detector/scoring.js';
 import { signal, noSignal } from '../../src/detector/rule.js';
@@ -129,21 +130,26 @@ describe('modes', () => {
 });
 
 describe('sensitivity', () => {
-  // Score of exactly 5 sits on the default warn threshold.
-  const rules = stub({ templateStacking: 1, formatting: 1 });
+  // Pin the thresholds in the test so it measures the offsets, not the defaults.
+  const thresholds = { warn: 5, hide: 9 };
+  const onTheLine = stub({ templateStacking: 1, formatting: 1 }); // 3 + 2 = 5
 
-  it('medium uses the configured thresholds', () => {
-    expect(analyze(LONG, { sensitivity: 'medium' }, rules).verdict).toBe('warn');
+  it('medium uses the configured thresholds unchanged', () => {
+    expect(SENSITIVITY_OFFSETS.medium).toBe(0);
+    expect(analyze(LONG, { thresholds, sensitivity: 'medium' }, onTheLine).verdict).toBe('warn');
   });
 
-  it('low raises the bar', () => {
-    expect(analyze(LONG, { sensitivity: 'low' }, rules).verdict).toBe('show');
+  it('low raises the bar above the same score', () => {
+    expect(SENSITIVITY_OFFSETS.low).toBeGreaterThan(0);
+    expect(analyze(LONG, { thresholds, sensitivity: 'low' }, onTheLine).verdict).toBe('show');
   });
 
   it('high lowers it', () => {
-    const quiet = stub({ templateStacking: 1 });
-    expect(analyze(LONG, { sensitivity: 'medium' }, quiet).verdict).toBe('show');
-    expect(analyze(LONG, { sensitivity: 'high' }, quiet).verdict).toBe('warn');
+    expect(SENSITIVITY_OFFSETS.high).toBeLessThan(0);
+    const quiet = stub({ templateStacking: 1 }); // 3, under the warn threshold
+    const raised = { thresholds: { warn: 3 - SENSITIVITY_OFFSETS.high / 2, hide: 9 } };
+    expect(analyze(LONG, { ...raised, sensitivity: 'medium' }, quiet).verdict).toBe('show');
+    expect(analyze(LONG, { ...raised, sensitivity: 'high' }, quiet).verdict).toBe('warn');
   });
 });
 

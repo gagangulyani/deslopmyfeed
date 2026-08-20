@@ -1,5 +1,5 @@
 import { loadCorpus, LABELS, wordCount } from './corpus.js';
-import { analyze, MIN_WORDS_TO_ANALYZE } from '../src/detector/scoring.js';
+import { analyze, MIN_WORDS_TO_ANALYZE, RULES } from '../src/detector/scoring.js';
 
 /**
  * The false-positive budget from the plan. Recall is deliberately not budgeted:
@@ -36,7 +36,14 @@ export function evaluate({ settings, rules } = {}) {
     const hidden = results.filter((r) => r.analysis.verdict === 'hide');
     const warned = results.filter((r) => r.analysis.verdict === 'warn');
 
+    const triggers = {};
+    for (const id of Object.keys(rules ?? RULES)) {
+      const fired = results.filter((r) => r.analysis.results.some((x) => x.rule === id));
+      triggers[id] = analyzed.length ? fired.length / analyzed.length : 0;
+    }
+
     rows[label] = {
+      triggers,
       total: posts.length,
       analyzed: analyzed.length,
       hidden,
@@ -81,8 +88,28 @@ export function formatTable(summary) {
     `false positives   hide ${pct(summary.fpr.hide)} (budget ${pct(FPR_BUDGET.hide)})` +
       `   warn+ ${pct(summary.fpr.warn)} (budget ${pct(FPR_BUDGET.warn)})`,
     `recall            ai ${pct(summary.recall.ai)}   adversarial ${pct(summary.recall.adversarial)}`,
-    `precision         ${summary.precision === null ? 'n/a (nothing flagged)' : pct(summary.precision)}`
+    `precision         ${summary.precision === null ? 'n/a (nothing flagged)' : pct(summary.precision)}`,
+    '',
+    formatTriggers(summary)
   ].join('\n');
+}
+
+/**
+ * Per-rule trigger rate by label. The verdict table only moves once several
+ * rules fire together, so this is the view that makes a single detector
+ * tunable: a rule that fires as often on `human` as on `ai` is not a signal.
+ *
+ * @param {ReturnType<typeof evaluate>} summary
+ */
+export function formatTriggers(summary) {
+  const ids = Object.keys(summary.rows.human.triggers);
+  const width = Math.max(...ids.map((id) => id.length)) + 2;
+  const header = 'rule'.padEnd(width) + LABELS.map((l) => l.padStart(13)).join('');
+  const lines = ids.map((id) =>
+    id.padEnd(width) +
+    LABELS.map((l) => pct(summary.rows[l].triggers[id]).padStart(13)).join('')
+  );
+  return ['trigger rate (fires on this share of analyzed posts)', header, ...lines].join('\n');
 }
 
 /**

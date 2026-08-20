@@ -40,8 +40,12 @@ export const CONSERVATIVE_WORD_CEILING = 100;
  * evidence in them, so the same pattern density means less. */
 export const CONSERVATIVE_MULTIPLIER = 0.7;
 
-/** Sensitivity shifts both thresholds; it never changes weights. */
-export const SENSITIVITY_OFFSETS = { low: 2, medium: 0, high: -2 };
+/**
+ * Sensitivity shifts both thresholds; it never changes weights. The offsets are
+ * scaled to the calibrated thresholds (2.5 / 4): at high sensitivity warn sits
+ * at 1.5, which is still above every human fixture's score.
+ */
+export const SENSITIVITY_OFFSETS = { low: 1.5, medium: 0, high: -1 };
 
 /** Hiding requires this many distinct triggered rules, one of them structural. */
 export const MIN_CATEGORIES_TO_HIDE = 2;
