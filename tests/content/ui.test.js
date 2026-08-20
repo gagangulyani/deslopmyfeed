@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest';
-import { applyWarn, applyHide, restore, clearAll, ALWAYS_SHOW_EVENT } from '../../src/content/ui.js';
+import {
+  applyWarn, applyHide, restore, clearAll, ALWAYS_SHOW_EVENT, HIDDEN_COUNT_EVENT
+} from '../../src/content/ui.js';
 
 const analysis = (verdict = 'warn') => ({
   verdict,
@@ -95,6 +97,15 @@ describe('hide', () => {
     [...el.querySelectorAll('button')].find((b) => b.textContent === 'Why it was hidden ›').click();
     expect(panel.hidden).toBe(false);
     expect(panel.textContent).toContain('Repeated short paragraphs');
+  });
+
+  it('reports hidden-count changes when a post hides and restores', () => {
+    const el = post();
+    const changes = [];
+    document.addEventListener(HIDDEN_COUNT_EVENT, (event) => changes.push(event.detail));
+    applyHide(el, analysis('hide'));
+    restore(el);
+    expect(changes).toEqual([{ delta: 1 }, { delta: -1 }]);
   });
 
   it('restores the post to exactly what it was', () => {

@@ -55,10 +55,13 @@ the extension and never contains anything from your browsing session.
 | Content script on `https://www.linkedin.com/*` | Read visible feed post text and collapse posts locally. |
 
 The extension requests no `<all_urls>`, no `history`, no `cookies`, no
-`webRequest`, no `scripting` and no `tabs`. It uses a module service worker only
-to serialize local settings writes from popup and content-script contexts; it
-has no network access, no periodic work, and no post-content handling. This is
-asserted in `tests/policy.test.js` rather than only stated here.
+`webRequest` and no `scripting`. The `tabs` permission is used only to set the
+per-tab action icon and hidden-post badge: gray outside LinkedIn or while
+filtering is off, colored while filtering is active on LinkedIn. It does not
+read browsing history or transmit URLs. The module service worker serializes
+local settings writes and maintains that per-tab badge state; it has no network
+access, periodic work, or post-content handling. This is asserted in
+`tests/policy.test.js` rather than only stated here.
 
 The content script matches all of `linkedin.com` rather than only `/feed/*`
 because LinkedIn is a single-page app: client-side navigation into the feed

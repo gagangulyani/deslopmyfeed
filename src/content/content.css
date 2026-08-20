@@ -17,9 +17,10 @@
   --dsmf-fg: var(--dsmf-navy);
   --dsmf-secondary: var(--dsmf-muted);
   --dsmf-border: rgb(15 23 42 / 14%);
-  --dsmf-signal: #dc2626;
-  --dsmf-signal-bg: rgb(239 68 68 / 8%);
-  --dsmf-signal-border: rgb(239 68 68 / 35%);
+  --dsmf-signal: #7c2d12;
+  --dsmf-signal-bg: #fff7ed;
+  --dsmf-signal-border: #fed7aa;
+  --dsmf-linkedin: #0a66c2;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,9 +29,10 @@
     --dsmf-fg: var(--dsmf-paper);
     --dsmf-secondary: #94a3b8;
     --dsmf-border: rgb(100 116 139 / 35%);
-    --dsmf-signal: var(--dsmf-red);
-    --dsmf-signal-bg: rgb(239 68 68 / 14%);
-    --dsmf-signal-border: rgb(239 68 68 / 45%);
+    --dsmf-signal: #fdba74;
+    --dsmf-signal-bg: rgb(124 45 18 / 28%);
+    --dsmf-signal-border: rgb(253 186 116 / 45%);
+    --dsmf-linkedin: #70b5f9;
   }
 }
 
@@ -39,9 +41,10 @@
   --dsmf-fg: var(--dsmf-paper);
   --dsmf-secondary: #94a3b8;
   --dsmf-border: rgb(100 116 139 / 35%);
-  --dsmf-signal: var(--dsmf-red);
-  --dsmf-signal-bg: rgb(239 68 68 / 14%);
-  --dsmf-signal-border: rgb(239 68 68 / 45%);
+  --dsmf-signal: #fdba74;
+  --dsmf-signal-bg: rgb(124 45 18 / 28%);
+  --dsmf-signal-border: rgb(253 186 116 / 45%);
+  --dsmf-linkedin: #70b5f9;
 }
 
 :root[data-dsmf-theme='light'] {
@@ -58,40 +61,49 @@
    removing one class and one node. */
 .dsmf-hidden > *:not(.dsmf-card):not(.dsmf-debug) { display: none !important; }
 
-/* The warn badge: a tinted red pill pinned to the top of the post. */
+/* A restrained LinkedIn-style decision notice, not a red alert or debug pill. */
 .dsmf-badge {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 6px 10px;
   margin: 8px 12px 0;
-  padding: 5px 12px;
+  padding: 10px 12px;
   width: fit-content;
   max-width: calc(100% - 24px);
   background: var(--dsmf-signal-bg);
   border: 1px solid var(--dsmf-signal-border);
-  border-radius: 999px;
+  border-radius: 8px;
   color: var(--dsmf-fg);
-  font: 12px/1.5 system-ui, -apple-system, sans-serif;
+  font: 12px/1.45 system-ui, -apple-system, sans-serif;
 }
 
 .dsmf-badge-label {
-  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--dsmf-signal);
 }
 
-.dsmf-badge-reason { color: var(--dsmf-secondary); }
-
-.dsmf-decision {
-  width: calc(100% - 24px);
-  border-radius: 10px;
-  padding: 8px 12px;
+.dsmf-badge-reason {
+  flex: 1 1 100%;
+  color: var(--dsmf-secondary);
 }
 
-.dsmf-decision .dsmf-button { margin-left: auto; }
+.dsmf-decision { width: calc(100% - 24px); }
+
+.dsmf-decision .dsmf-button {
+  order: 3;
+  margin-left: 0;
+  padding: 0;
+  border: 0;
+  color: var(--dsmf-linkedin);
+  font-weight: 600;
+}
+
+.dsmf-decision .dsmf-button:hover {
+  background: transparent;
+  color: var(--dsmf-linkedin);
+  text-decoration: underline;
+}
 
 /* The hide card replaces the post in place. */
 .dsmf-card {
@@ -163,7 +175,11 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 4px;
+  padding: 10px 12px;
+  background: var(--dsmf-bg);
+  border: 1px solid var(--dsmf-border);
+  border-radius: 6px;
   font-size: 12px;
 }
 
@@ -189,7 +205,7 @@
 
 .dsmf-technical summary {
   cursor: pointer;
-  color: var(--dsmf-fg);
+  color: var(--dsmf-linkedin);
 }
 
 .dsmf-technical-evidence {

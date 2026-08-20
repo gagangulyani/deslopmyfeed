@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "description": "Locally filters formulaic, generic, and AI-style posts from your LinkedIn feed. No servers, no accounts, no telemetry.",
   "permissions": [
-    "storage"
+    "storage",
+    "tabs"
   ],
   "background": {
     "service_worker": "src/background/settings-writer.js",
@@ -40,16 +41,16 @@
     "default_popup": "src/popup/index.html",
     "default_title": "DeSlopMyFeed",
     "default_icon": {
-      "16": "icons/icon-16.png",
-      "32": "icons/icon-32.png",
-      "48": "icons/icon-48.png",
-      "128": "icons/icon-128.png"
+      "16": "icons/icon-gray-16.png",
+      "32": "icons/icon-gray-32.png",
+      "48": "icons/icon-gray-48.png",
+      "128": "icons/icon-gray-128.png"
     }
   },
   "icons": {
-    "16": "icons/icon-16.png",
-    "32": "icons/icon-32.png",
-    "48": "icons/icon-48.png",
-    "128": "icons/icon-128.png"
+    "16": "icons/icon-gray-16.png",
+    "32": "icons/icon-gray-32.png",
+    "48": "icons/icon-gray-48.png",
+    "128": "icons/icon-gray-128.png"
   }
 }
