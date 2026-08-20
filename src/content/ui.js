@@ -101,6 +101,52 @@ function hiddenAuthor(author, avatarUrl) {
   return row;
 }
 
+function reasonPopover(analysis) {
+  const popover = el('div', 'dsmf-reason-popover');
+  popover.hidden = true;
+  popover.appendChild(el('strong', 'dsmf-reason-title', 'Why this post was hidden'));
+  popover.appendChild(el('span', 'dsmf-reason-label', 'Matched signals'));
+  const list = el('ul', 'dsmf-reason-list');
+  for (const result of analysis.results) {
+    list.appendChild(el('li', '', SUMMARY_LABELS[result.rule] ?? RULE_LABELS[result.rule] ?? result.rule));
+  }
+  popover.appendChild(list);
+  return popover;
+}
+
+function postContent(post) {
+  return [...post.children].filter((child) => !child.matches('.dsmf-card, .dsmf-debug'));
+}
+
+function animateContent(post, from, to) {
+  for (const node of postContent(post)) {
+    if (typeof node.animate !== 'function') continue;
+    node.animate([{ opacity: from, transform: `translateY(${from ? 0 : -4}px)` }, { opacity: to, transform: `translateY(${to ? 0 : -4}px)` }], {
+      duration: 160,
+      easing: 'ease-out',
+      fill: 'both'
+    });
+  }
+}
+
+function setHidden(post, card, hidden) {
+  const action = card.querySelector('.dsmf-primary');
+  const label = card.querySelector('.dsmf-hidden-author-name');
+  if (hidden) {
+    animateContent(post, 1, 0);
+    setTimeout(() => post.classList.add(COLLAPSED), 160);
+    action.textContent = 'Show post';
+    label.textContent = label.textContent.replace('is shown', 'was hidden');
+    reportFlagCount({ delta: 1 });
+  } else {
+    post.classList.remove(COLLAPSED);
+    animateContent(post, 0, 1);
+    action.textContent = 'Hide post';
+    label.textContent = label.textContent.replace('was hidden', 'is shown');
+    reportFlagCount({ delta: -1 });
+  }
+}
+
 /** @param {Element} post @param {import('../detector/scoring.js').Analysis} analysis @param {boolean} [showDetails] */
 export function applyWarn(post, analysis, showDetails = false) {
   if (!post || post.querySelector(`[${ARTIFACT}]`)) return;
@@ -135,15 +181,20 @@ export function applyHide(post, analysis, postInfo = {}) {
   card.setAttribute(ARTIFACT, 'hide');
   card.appendChild(hiddenAuthor(postInfo.author, postInfo.authorAvatar));
 
-  const info = button('ⓘ', () => {});
+  const popover = reasonPopover(analysis);
+  const info = button('ⓘ', () => {
+    popover.hidden = !popover.hidden;
+    info.setAttribute('aria-expanded', String(!popover.hidden));
+  });
   info.classList.add('dsmf-info-button');
-  info.setAttribute('aria-label', `Hidden because: ${summary(analysis)}`);
-  info.title = `Hidden because: ${summary(analysis)}`;
+  info.setAttribute('aria-label', 'Why this post was hidden');
+  info.setAttribute('aria-expanded', 'false');
   card.appendChild(info);
 
-  const show = button('Show post', () => restore(post));
+  const show = button('Show post', () => setHidden(post, card, !post.classList.contains(COLLAPSED)));
   show.classList.add('dsmf-primary');
   card.appendChild(show);
+  card.appendChild(popover);
   if (postInfo.showDetails) card.appendChild(explanation(analysis));
 
   post.classList.add(COLLAPSED);

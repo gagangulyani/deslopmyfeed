@@ -94,7 +94,11 @@ describe('hide', () => {
     expect(el.querySelector('.dsmf-hidden-author-name').textContent).toBe('Priya Sharma’s post was hidden');
     expect(el.querySelector('.dsmf-hidden-avatar').src).toBe('https://example.test/priya.png');
     const info = el.querySelector('.dsmf-info-button');
-    expect(info.title).toBe('Hidden because: template structure + synthetic formatting');
+    expect(info.title).toBe('');
+    info.click();
+    expect(info.getAttribute('aria-expanded')).toBe('true');
+    expect(el.querySelector('.dsmf-reason-popover').textContent).toContain('Why this post was hidden');
+    expect(el.querySelector('.dsmf-reason-popover').textContent).toContain('template structure');
     expect(el.querySelector('.dsmf-explain')).toBeNull();
     expect([...el.querySelectorAll('button')].map((b) => b.textContent)).toEqual(['ⓘ', 'Show post']);
   });
@@ -111,13 +115,14 @@ describe('hide', () => {
     expect(changes).toEqual([{ delta: 1 }, { delta: 1 }, { delta: -1 }, { delta: -1 }]);
   });
 
-  it('restores the post to exactly what it was', () => {
+  it('keeps the row and toggles the post back to hidden', () => {
     const el = post('Untouched body');
-    const before = el.innerHTML;
     applyHide(el, analysis('hide'));
-    [...el.querySelectorAll('button')].find((b) => b.textContent === 'Show post').click();
-    expect(el.innerHTML).toBe(before);
+    const action = [...el.querySelectorAll('button')].find((b) => b.textContent === 'Show post');
+    action.click();
     expect(el.classList.contains('dsmf-hidden')).toBe(false);
+    expect(action.textContent).toBe('Hide post');
+    expect(el.querySelector('.dsmf-hidden-row')).not.toBeNull();
   });
 
   it('shows full hidden-post evidence only in diagnostics mode', () => {
