@@ -431,3 +431,43 @@
   background: #183b5b;
   color: #9acbff;
 }
+
+/* A quiet LinkedIn row: no alert rail or custom-tooltip chrome. */
+.dsmf-hidden,
+.dsmf-hidden-row { box-shadow: none !important; }
+
+.dsmf-hidden-row { position: relative; }
+
+.dsmf-reason-popover {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% + 6px);
+  right: 8px;
+  width: min(260px, calc(100vw - 48px));
+  padding: 12px;
+  background: #ffffff;
+  color: #172033;
+  border: 1px solid #d9e2ec;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(15 23 42 / 16%);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.dsmf-reason-popover[hidden] { display: none; }
+.dsmf-reason-title { display: block; font-size: 13px; }
+.dsmf-reason-label { display: block; margin-top: 8px; color: #475569; }
+.dsmf-reason-list { margin: 5px 0 0; padding-left: 17px; color: #334155; }
+.dsmf-reason-list li + li { margin-top: 2px; }
+
+:root[data-dsmf-theme='dark'] .dsmf-reason-popover,
+:root:not([data-dsmf-theme='light']) .dsmf-reason-popover {
+  background: #1d2939;
+  color: #e5e7eb;
+  border-color: #475569;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 30%);
+}
+:root[data-dsmf-theme='dark'] .dsmf-reason-label,
+:root:not([data-dsmf-theme='light']) .dsmf-reason-label { color: #cbd5e1; }
+:root[data-dsmf-theme='dark'] .dsmf-reason-list,
+:root:not([data-dsmf-theme='light']) .dsmf-reason-list { color: #e5e7eb; }
