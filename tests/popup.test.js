@@ -20,10 +20,9 @@ describe('popup renders from the settings schema', () => {
   it('shows a toggle for every registered rule', () => {
     render();
     const labels = [...root.querySelectorAll('.row-label')].map((n) => n.textContent);
-    // One checkbox per rule, plus the kill switch and the debug toggle. Modes,
-    // sensitivities and themes are radios, not checkboxes.
+    // One checkbox per rule, plus the kill switch, personalization, and debug toggles.
     expect(root.querySelectorAll('input[type="checkbox"]')).toHaveLength(
-      Object.keys(RULES).length + 2
+      Object.keys(RULES).length + 3
     );
     expect(labels).toContain('Enable DeSlopMyFeed');
   });
@@ -76,7 +75,7 @@ describe('popup renders from the settings schema', () => {
     // must still see it, defaulted on.
     render({ rules: { templateStacking: false } });
     expect(root.querySelectorAll('input[type="checkbox"]')).toHaveLength(
-      Object.keys(RULES).length + 2
+      Object.keys(RULES).length + 3
     );
   });
 });

@@ -117,7 +117,9 @@ export function analyze(post, settings, rules = RULES) {
     if (!result?.triggered || result.score <= 0) continue;
 
     results.push(result);
-    total += Math.min(1, Math.max(0, result.score)) * (config.weights[id] ?? 0);
+    const adjustment = config.personalization.enabled ? (config.personalization.adjustments[id] ?? 0) : 0;
+    const weight = Math.min(10, Math.max(0, (config.weights[id] ?? 0) + adjustment));
+    total += Math.min(1, Math.max(0, result.score)) * weight;
   }
 
   if (features.wordCount <= CONSERVATIVE_WORD_CEILING) {

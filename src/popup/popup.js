@@ -145,6 +145,23 @@ export function renderInto(root, settings, onChange) {
   }
   root.appendChild(rules);
 
+  const personalization = section('Personalization');
+  personalization.appendChild(
+    toggle('Learn from my feedback', config.personalization.enabled, (enabled) =>
+      onChange({ personalization: { ...config.personalization, enabled } })
+    )
+  );
+  const adjusted = Object.values(config.personalization.adjustments).filter((value) => value !== 0).length;
+  personalization.appendChild(el('p', 'section-hint', `${adjusted} pattern${adjusted === 1 ? '' : 's'} adjusted locally. Post text and author data are never stored.`));
+  const reset = el('button', 'reset-personalization', 'Reset learned preferences');
+  reset.type = 'button';
+  reset.disabled = adjusted === 0;
+  reset.addEventListener('click', () => onChange({
+    personalization: { ...config.personalization, adjustments: {} }
+  }));
+  personalization.appendChild(reset);
+  root.appendChild(personalization);
+
   const theme = section('Theme');
   theme.appendChild(choice('theme', THEMES, config.theme, (value) => onChange({ theme: value })));
   root.appendChild(theme);

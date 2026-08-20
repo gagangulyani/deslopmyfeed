@@ -108,7 +108,9 @@ describe('hide', () => {
     expect(info.getAttribute('aria-expanded')).toBe('false');
     expect(el.querySelector('.dsmf-reason-popover').hidden).toBe(true);
     expect(el.querySelector('.dsmf-explain')).toBeNull();
-    expect([...el.querySelectorAll('button')].map((b) => b.textContent)).toEqual(['ⓘ', 'Show post']);
+    expect([...el.querySelectorAll('button')].map((b) => b.textContent)).toEqual([
+      'ⓘ', 'Show post', 'Useful — show more like this', 'Hide more like this'
+    ]);
   });
 
   it('reports flag-count changes when posts warn, hide, and restore', () => {

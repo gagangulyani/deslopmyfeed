@@ -4,7 +4,7 @@
  */
 import { findPosts, resetProcessed } from './post-detector.js';
 import { processPost, markAlwaysShow } from './post-filter.js';
-import { clearAll, ALWAYS_SHOW_EVENT, FLAG_COUNT_EVENT } from './ui.js';
+import { clearAll, restore, ALWAYS_SHOW_EVENT, FEEDBACK_EVENT, FLAG_COUNT_EVENT } from './ui.js';
 import {
   DEFAULT_SETTINGS, loadSettings, saveSettings, onSettingsChanged, mergeSettings
 } from '../storage/settings.js';
@@ -110,6 +110,24 @@ function updateFlagBadge(event) {
   }
 }
 
+async function onPatternFeedback(event) {
+  if (!settings?.personalization?.enabled) return;
+  const { post, analysis, direction } = event.detail ?? {};
+  const results = analysis?.results ?? [];
+  if (!post || !Number.isFinite(direction) || results.length === 0) return;
+
+  const adjustments = { ...(settings.personalization.adjustments ?? {}) };
+  for (const result of results) {
+    const current = adjustments[result.rule] ?? 0;
+    adjustments[result.rule] = Math.min(1, Math.max(-1, current + (direction * 0.25)));
+  }
+  if (direction < 0) {
+    markAlwaysShow(post);
+    restore(post);
+  }
+  await saveSettings({ personalization: { ...settings.personalization, adjustments } });
+}
+
 async function onAlwaysShow(event) {
   // The post the user just un-hid stays visible no matter what the rules say
   // afterwards. The rule change below is about future posts.
@@ -178,6 +196,7 @@ export async function start() {
   // Debug is opt-in, so never leave an old diagnostic strip behind at boot.
   if (!settings.debug) clearDebug();
   document.addEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
+  document.addEventListener(FEEDBACK_EVENT, onPatternFeedback);
   document.addEventListener(FLAG_COUNT_EVENT, updateFlagBadge);
   try {
     chrome.runtime.sendMessage({ type: 'dsmf-linkedin-active' });
@@ -223,6 +242,7 @@ export function stop() {
     unsubscribe = null;
   }
   document.removeEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
+  document.removeEventListener(FEEDBACK_EVENT, onPatternFeedback);
   document.removeEventListener(FLAG_COUNT_EVENT, updateFlagBadge);
   settings = null;
   resetProcessed();

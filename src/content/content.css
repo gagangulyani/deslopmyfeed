@@ -480,3 +480,17 @@
 :root:not([data-dsmf-theme='light']) .dsmf-reason-label { color: #cbd5e1; }
 :root[data-dsmf-theme='dark'] .dsmf-reason-list,
 :root:not([data-dsmf-theme='light']) .dsmf-reason-list { color: #e5e7eb; }
+
+.dsmf-feedback { display: grid; gap: 5px; margin-top: 10px; }
+.dsmf-feedback-button {
+  padding: 4px 0;
+  color: #0a66c2;
+  background: none;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.dsmf-feedback-button:hover { text-decoration: underline; }
+:root[data-dsmf-theme='dark'] .dsmf-feedback-button,
+:root:not([data-dsmf-theme='light']) .dsmf-feedback-button { color: #9acbff; }
