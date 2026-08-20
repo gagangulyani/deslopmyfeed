@@ -112,26 +112,7 @@ describe('settings take effect without a reload', () => {
   });
 });
 
-describe('always show similar', () => {
-  it('turns off the signal that drove the verdict and persists it', async () => {
-    appendPost();
-    await start({ mode: 'hide' });
-    await saveSettings({ mode: 'hide' });
-    expect(cards()).toBe(1);
-
-    const post = document.querySelector('[data-id^="urn:li:activity"]');
-    [...post.querySelectorAll('button')]
-      .find((b) => b.textContent === 'Always show similar')
-      .click();
-
-    // The click dispatches; the handler writes asynchronously.
-    await new Promise((resolve) => setTimeout(resolve, 0));
-
-    const stored = (await chrome.storage.local.get('settings')).settings;
-    expect(stored.rules.templateStacking).toBe(false);
-    expect(cards()).toBe(0);
-  });
-
+describe('always show similar event compatibility', () => {
   it('ignores an event carrying no analysis', async () => {
     await start();
     document.dispatchEvent(new CustomEvent(ALWAYS_SHOW_EVENT, { detail: {} }));

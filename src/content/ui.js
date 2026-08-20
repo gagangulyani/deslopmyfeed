@@ -88,17 +88,21 @@ function patternDescription(analysis) {
   return 'Recurring formulaic cues';
 }
 
-function alwaysShow(post, analysis) {
-  return button('Always show similar', () => {
-    post.dispatchEvent(
-      new CustomEvent(ALWAYS_SHOW_EVENT, { bubbles: true, detail: { analysis } })
-    );
-    restore(post);
-  });
+function hiddenAuthor(author, avatarUrl) {
+  const row = el('div', 'dsmf-hidden-author');
+  if (avatarUrl) {
+    const avatar = document.createElement('img');
+    avatar.className = 'dsmf-hidden-avatar';
+    avatar.src = avatarUrl;
+    avatar.alt = '';
+    row.appendChild(avatar);
+  }
+  row.appendChild(el('span', 'dsmf-hidden-author-name', `${author || 'This author'}’s post was hidden`));
+  return row;
 }
 
-/** @param {Element} post @param {import('../detector/scoring.js').Analysis} analysis */
-export function applyWarn(post, analysis) {
+/** @param {Element} post @param {import('../detector/scoring.js').Analysis} analysis @param {boolean} [showDetails] */
+export function applyWarn(post, analysis, showDetails = false) {
   if (!post || post.querySelector(`[${ARTIFACT}]`)) return;
 
   const badge = el('div', 'dsmf-badge dsmf-decision');
@@ -106,28 +110,31 @@ export function applyWarn(post, analysis) {
   badge.appendChild(el('span', 'dsmf-badge-label', 'Pattern detected'));
   badge.appendChild(el('span', 'dsmf-badge-reason', patternDescription(analysis)));
 
-  badge.appendChild(explanation(analysis));
+  if (showDetails) badge.appendChild(explanation(analysis));
 
   post.classList.add(WARNED);
   post.prepend(badge);
   reportFlagCount({ delta: 1 });
 }
 
-/** @param {Element} post @param {import('../detector/scoring.js').Analysis} analysis */
-export function applyHide(post, analysis) {
+/** @param {Element} post @param {import('../detector/scoring.js').Analysis} analysis @param {{author?: string|null, authorAvatar?: string|null, showDetails?: boolean}} [postInfo] */
+export function applyHide(post, analysis, postInfo = {}) {
   if (!post || post.querySelector(`[${ARTIFACT}]`)) return;
 
-  const card = el('div', 'dsmf-card');
+  const card = el('div', 'dsmf-card dsmf-hidden-row');
   card.setAttribute(ARTIFACT, 'hide');
-  card.appendChild(el('div', 'dsmf-card-title', 'Post hidden'));
-  card.appendChild(el('div', 'dsmf-card-reason', summary(analysis)));
+  card.appendChild(hiddenAuthor(postInfo.author, postInfo.authorAvatar));
 
-  const panel = explanation(analysis);
+  const info = button('ⓘ', () => {});
+  info.classList.add('dsmf-info-button');
+  info.setAttribute('aria-label', `Hidden because: ${summary(analysis)}`);
+  info.title = `Hidden because: ${summary(analysis)}`;
+  card.appendChild(info);
+
   const show = button('Show post', () => restore(post));
   show.classList.add('dsmf-primary');
   card.appendChild(show);
-  card.appendChild(alwaysShow(post, analysis));
-  card.appendChild(panel);
+  if (postInfo.showDetails) card.appendChild(explanation(analysis));
 
   post.classList.add(COLLAPSED);
   post.prepend(card);

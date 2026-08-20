@@ -55,8 +55,8 @@ export function processPost(el, settings) {
   }
 
   const analysis = analyze(post, settings);
-  if (analysis.verdict === 'warn') applyWarn(el, analysis);
-  else if (analysis.verdict === 'hide') applyHide(el, analysis);
+  if (analysis.verdict === 'warn') applyWarn(el, analysis, debug);
+  else if (analysis.verdict === 'hide') applyHide(el, analysis, { ...post, showDetails: debug });
 
   // After the verdict, so the debug tag never blocks the real badge.
   if (debug) stamp(el, analysis.verdict, describeScore(analysis, post.text));
