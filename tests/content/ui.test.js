@@ -90,15 +90,23 @@ describe('hide', () => {
 
   it('uses a compact author row and concise reason for a hidden post', () => {
     const el = post();
-    applyHide(el, analysis('hide'), { author: 'Priya Sharma', authorAvatar: 'https://example.test/priya.png' });
+    applyHide(el, analysis('hide'), {
+      author: 'Priya Sharma',
+      authorAvatar: 'https://example.test/priya.png',
+      authorUrl: 'https://www.linkedin.com/in/priya-sharma/'
+    });
     expect(el.querySelector('.dsmf-hidden-author-name').textContent).toBe('Priya Sharma’s post was hidden');
     expect(el.querySelector('.dsmf-hidden-avatar').src).toBe('https://example.test/priya.png');
+    expect(el.querySelector('.dsmf-hidden-author-link').href).toBe('https://www.linkedin.com/in/priya-sharma/');
     const info = el.querySelector('.dsmf-info-button');
     expect(info.title).toBe('');
     info.click();
     expect(info.getAttribute('aria-expanded')).toBe('true');
     expect(el.querySelector('.dsmf-reason-popover').textContent).toContain('Why this post was hidden');
     expect(el.querySelector('.dsmf-reason-popover').textContent).toContain('template structure');
+    document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(info.getAttribute('aria-expanded')).toBe('false');
+    expect(el.querySelector('.dsmf-reason-popover').hidden).toBe(true);
     expect(el.querySelector('.dsmf-explain')).toBeNull();
     expect([...el.querySelectorAll('button')].map((b) => b.textContent)).toEqual(['ⓘ', 'Show post']);
   });
