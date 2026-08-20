@@ -4,7 +4,7 @@
  */
 import { findPosts, resetProcessed } from './post-detector.js';
 import { processPost, markAlwaysShow } from './post-filter.js';
-import { clearAll, ALWAYS_SHOW_EVENT, HIDDEN_COUNT_EVENT } from './ui.js';
+import { clearAll, ALWAYS_SHOW_EVENT, FLAG_COUNT_EVENT } from './ui.js';
 import {
   DEFAULT_SETTINGS, loadSettings, saveSettings, onSettingsChanged, mergeSettings
 } from '../storage/settings.js';
@@ -102,9 +102,9 @@ function applyTheme(theme) {
  * label suggests, which is the honest trade for not inventing a hidden
  * per-pattern memory.
  */
-function updateHiddenBadge(event) {
+function updateFlagBadge(event) {
   try {
-    chrome.runtime.sendMessage({ type: 'dsmf-hidden-count', ...event.detail });
+    chrome.runtime.sendMessage({ type: 'dsmf-flag-count', ...event.detail });
   } catch {
     // Badge failures must never affect filtering.
   }
@@ -178,7 +178,7 @@ export async function start() {
   // Debug is opt-in, so never leave an old diagnostic strip behind at boot.
   if (!settings.debug) clearDebug();
   document.addEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
-  document.addEventListener(HIDDEN_COUNT_EVENT, updateHiddenBadge);
+  document.addEventListener(FLAG_COUNT_EVENT, updateFlagBadge);
   try {
     chrome.runtime.sendMessage({ type: 'dsmf-linkedin-active' });
   } catch {
@@ -223,7 +223,7 @@ export function stop() {
     unsubscribe = null;
   }
   document.removeEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
-  document.removeEventListener(HIDDEN_COUNT_EVENT, updateHiddenBadge);
+  document.removeEventListener(FLAG_COUNT_EVENT, updateFlagBadge);
   settings = null;
   resetProcessed();
   clearAll();

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  applyWarn, applyHide, restore, clearAll, ALWAYS_SHOW_EVENT, HIDDEN_COUNT_EVENT
+  applyWarn, applyHide, restore, clearAll, ALWAYS_SHOW_EVENT, FLAG_COUNT_EVENT
 } from '../../src/content/ui.js';
 
 const analysis = (verdict = 'warn') => ({
@@ -96,13 +96,16 @@ describe('hide', () => {
     expect([...el.querySelectorAll('button')].map((b) => b.textContent)).not.toContain('Why it was hidden ›');
   });
 
-  it('reports hidden-count changes when a post hides and restores', () => {
-    const el = post();
+  it('reports flag-count changes when posts warn, hide, and restore', () => {
+    const warned = post();
+    const hidden = post();
     const changes = [];
-    document.addEventListener(HIDDEN_COUNT_EVENT, (event) => changes.push(event.detail));
-    applyHide(el, analysis('hide'));
-    restore(el);
-    expect(changes).toEqual([{ delta: 1 }, { delta: -1 }]);
+    document.addEventListener(FLAG_COUNT_EVENT, (event) => changes.push(event.detail));
+    applyWarn(warned, analysis());
+    applyHide(hidden, analysis('hide'));
+    restore(warned);
+    restore(hidden);
+    expect(changes).toEqual([{ delta: 1 }, { delta: 1 }, { delta: -1 }, { delta: -1 }]);
   });
 
   it('restores the post to exactly what it was', () => {

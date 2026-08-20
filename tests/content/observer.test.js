@@ -10,7 +10,7 @@ vi.mock('../../src/content/ui.js', () => ({
   restore: vi.fn(),
   clearAll: (...a) => clearAll(...a),
   ALWAYS_SHOW_EVENT: 'dsmf-always-show',
-  HIDDEN_COUNT_EVENT: 'dsmf-hidden-count'
+  FLAG_COUNT_EVENT: 'dsmf-flag-count'
 }));
 
 const { start, stop, isFeedRoute } = await import('../../src/content/observer.js');

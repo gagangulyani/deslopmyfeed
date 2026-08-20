@@ -40,6 +40,15 @@ describe('popup renders from the settings schema', () => {
     expect(changes).toEqual([{ mode: 'hide' }]);
   });
 
+  it('renders and persists an adjustable hide threshold', () => {
+    render({ ...DEFAULT_SETTINGS, thresholds: { ...DEFAULT_SETTINGS.thresholds, hide: 3.5 } });
+    const input = root.querySelector('#hide-threshold');
+    expect(input.value).toBe('3.5');
+    input.value = '4.5';
+    input.dispatchEvent(new Event('change'));
+    expect(changes).toEqual([{ thresholds: { ...DEFAULT_SETTINGS.thresholds, hide: 4.5 } }]);
+  });
+
   it('reports a rule toggle without dropping the other rules', () => {
     render();
     root.querySelectorAll('input[type="checkbox"]')[1].click();

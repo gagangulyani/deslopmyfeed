@@ -31,7 +31,7 @@ The post is not deleted from LinkedIn. Only your local presentation changes.
 
 The toolbar icon is gray outside LinkedIn or while filtering is off. On an
 active LinkedIn tab it uses the colored brand icon and displays the number of
-currently hidden posts; the badge disappears at zero.
+currently flagged posts, whether they are warned or hidden; the badge disappears at zero.
 
 Every hidden card states the matched categories. **Why hidden?** expands the
 specific structural and phrasing evidence used for that decision.
@@ -98,8 +98,8 @@ a real post.
 - 50–100 words are scored conservatively (0.7x).
 - Posts detected as likely Romanized Hindi/Hinglish are left unscored; other languages are not yet reliably identified.
 - Sponsored posts are never judged — ad copy is engineered to trip the rules.
-- Hide mode collapses posts at the warning threshold only when at least two independent signal categories agree, including one structural signal.
-- Weak rules cannot reach a hide verdict between them, at any weight.
+- Hide mode collapses posts only when the user-selected Hide threshold is met, at least two independent signal categories agree, and one is structural. Template structure and formatting count as one layout category for this purpose.
+- Posts with concrete first-person context and multiple real-world anchors remain visible, even when other signals warn.
 - Every hidden post offers **Show post** and **Always show similar**, and a post
   you have asked to see stays visible for the rest of the session.
 

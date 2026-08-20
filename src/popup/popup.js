@@ -48,6 +48,31 @@ function toggle(label, checked, onChange) {
   return row;
 }
 
+function threshold(value, onChange) {
+  const control = el('label', 'threshold-control');
+  const heading = el('span', 'threshold-heading', 'Hide threshold');
+  const output = el('output', 'threshold-value', value.toFixed(1));
+  output.htmlFor = 'hide-threshold';
+  heading.appendChild(output);
+
+  const input = document.createElement('input');
+  input.id = 'hide-threshold';
+  input.type = 'range';
+  input.min = '2.5';
+  input.max = '5';
+  input.step = '0.5';
+  input.value = String(value);
+  input.addEventListener('input', () => {
+    output.textContent = Number(input.value).toFixed(1);
+  });
+  input.addEventListener('change', () => onChange(Number(input.value)));
+
+  control.appendChild(heading);
+  control.appendChild(input);
+  control.appendChild(el('span', 'threshold-hint', 'Lower hides more posts. Higher requires stronger evidence.'));
+  return control;
+}
+
 function choice(name, options, current, onChange) {
   const group = el('div', 'choices');
   group.setAttribute('role', 'radiogroup');
@@ -90,6 +115,14 @@ export function renderInto(root, settings, onChange) {
     choice('sensitivity', SENSITIVITIES, config.sensitivity, (value) => onChange({ sensitivity: value }))
   );
   root.appendChild(sensitivity);
+
+  const hideThreshold = section('Hide threshold');
+  hideThreshold.appendChild(
+    threshold(config.thresholds.hide, (hide) =>
+      onChange({ thresholds: { ...config.thresholds, hide } })
+    )
+  );
+  root.appendChild(hideThreshold);
 
   const rules = section('Signals');
   for (const [id, label] of Object.entries(RULE_LABELS)) {

@@ -164,6 +164,14 @@ describe('guard rail: hiding needs corroboration', () => {
     expect(result.verdict).toBe('hide');
   });
 
+  it('uses the configured hide threshold after a post qualifies for hiding', () => {
+    const rules = stub({ templateStacking: 1, vocabulary: 1 });
+    const low = analyze(LONG, { mode: 'hide', thresholds: { warn: 2.5, hide: 2.5 } }, rules);
+    const high = analyze(LONG, { mode: 'hide', thresholds: { warn: 2.5, hide: 5 } }, rules);
+    expect(low.verdict).toBe('hide');
+    expect(high.verdict).toBe('warn');
+  });
+
   it('does not treat two layout rules as independent hide corroboration', () => {
     const result = analyze(LONG, HIDE_MODE, stub({ templateStacking: 0.5, formatting: 0.5 }));
     expect(result.score).toBe(DEFAULT_SETTINGS.thresholds.warn);
