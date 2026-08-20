@@ -35,7 +35,7 @@ const TOGGLE_SELECTORS = [
 /** A post still ending in an ellipsis after the toggle is removed is truncated. */
 const TRUNCATED = /(?:…|\.\.\.)\s*$/;
 
-const processed = new WeakSet();
+let processed = new WeakSet();
 
 function firstMatch(el, selectors) {
   for (const selector of selectors) {
@@ -99,4 +99,12 @@ export function isProcessed(post) {
 
 export function markProcessed(post) {
   processed.add(post);
+}
+
+/**
+ * Forget every element. Used when settings change: the whole page has to be
+ * judged again under the new configuration, and a WeakSet cannot be emptied.
+ */
+export function resetProcessed() {
+  processed = new WeakSet();
 }

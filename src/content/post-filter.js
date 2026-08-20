@@ -8,6 +8,19 @@ import { extractPost, isProcessed, markProcessed } from './post-detector.js';
 import { applyWarn, applyHide } from './ui.js';
 
 /**
+ * Posts the user has explicitly asked to see. Survives a rescan, unlike the
+ * processed set: turning off the rule that drove a verdict does not guarantee
+ * the remaining rules stay under the threshold, and a post the user just
+ * un-hid must never collapse again underneath them.
+ */
+const alwaysShown = new WeakSet();
+
+/** @param {Element} el */
+export function markAlwaysShow(el) {
+  if (el) alwaysShown.add(el);
+}
+
+/**
  * Process one candidate post element. Returns the analysis, or null when the
  * element was skipped for any reason.
  *
@@ -16,7 +29,7 @@ import { applyWarn, applyHide } from './ui.js';
  * @returns {import('../detector/scoring.js').Analysis | null}
  */
 export function processPost(el, settings) {
-  if (isProcessed(el)) return null;
+  if (isProcessed(el) || alwaysShown.has(el)) return null;
   markProcessed(el);
 
   const post = extractPost(el);

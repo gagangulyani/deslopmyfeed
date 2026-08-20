@@ -8,7 +8,8 @@ vi.mock('../../src/content/ui.js', () => ({
   applyWarn: (...a) => applyWarn(...a),
   applyHide: (...a) => applyHide(...a),
   restore: vi.fn(),
-  clearAll: (...a) => clearAll(...a)
+  clearAll: (...a) => clearAll(...a),
+  ALWAYS_SHOW_EVENT: 'dsmf-always-show'
 }));
 
 const { start, stop, isFeedRoute } = await import('../../src/content/observer.js');

@@ -53,17 +53,43 @@ export function mergeSettings(stored) {
   return merged;
 }
 
+/** The single key under which everything is stored. */
+export const STORAGE_KEY = 'settings';
+
 /** @returns {Promise<typeof DEFAULT_SETTINGS>} */
 export async function loadSettings() {
-  throw new Error('not implemented');
+  const stored = await chrome.storage.local.get(STORAGE_KEY);
+  return mergeSettings(stored?.[STORAGE_KEY]);
 }
 
-/** @param {Partial<typeof DEFAULT_SETTINGS>} patch */
+/**
+ * Read-modify-write so a patch touching one field cannot drop the rest, and so
+ * a settings object saved by an older version gains any new defaults on its
+ * next write.
+ *
+ * @param {Partial<typeof DEFAULT_SETTINGS>} patch
+ * @returns {Promise<typeof DEFAULT_SETTINGS>}
+ */
 export async function saveSettings(patch) {
-  throw new Error('not implemented');
+  const current = await loadSettings();
+  const next = mergeSettings({ ...current, ...patch });
+  await chrome.storage.local.set({ [STORAGE_KEY]: next });
+  return next;
 }
 
-/** @param {(settings: typeof DEFAULT_SETTINGS) => void} handler */
+/**
+ * Subscribe to changes made anywhere — the popup writing while a feed tab is
+ * open is the case that matters, and it is what makes settings take effect
+ * without a reload.
+ *
+ * @param {(settings: typeof DEFAULT_SETTINGS) => void} handler
+ * @returns {() => void} unsubscribe
+ */
 export function onSettingsChanged(handler) {
-  throw new Error('not implemented');
+  const listener = (changes, area) => {
+    if (area !== 'local' || !changes[STORAGE_KEY]) return;
+    handler(mergeSettings(changes[STORAGE_KEY].newValue));
+  };
+  chrome.storage.onChanged.addListener(listener);
+  return () => chrome.storage.onChanged.removeListener(listener);
 }

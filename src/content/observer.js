@@ -2,10 +2,13 @@
  * Feed lifecycle: watch for newly inserted posts, process each exactly once.
  * Never rescans the whole page.
  */
-import { findPosts } from './post-detector.js';
-import { processPost } from './post-filter.js';
-import { clearAll } from './ui.js';
-import { DEFAULT_SETTINGS, loadSettings, mergeSettings } from '../storage/settings.js';
+import { findPosts, resetProcessed } from './post-detector.js';
+import { processPost, markAlwaysShow } from './post-filter.js';
+import { clearAll, ALWAYS_SHOW_EVENT } from './ui.js';
+import {
+  DEFAULT_SETTINGS, loadSettings, saveSettings, onSettingsChanged, mergeSettings
+} from '../storage/settings.js';
+import { RULES } from '../detector/scoring.js';
 
 /** Mutations arrive in bursts while the feed renders; batch them. */
 const DEBOUNCE_MS = 100;
@@ -14,6 +17,7 @@ let observer = null;
 let settings = null;
 let pending = new Set();
 let timer = null;
+let unsubscribe = null;
 
 /** Runtime path gate — the content script matches all of linkedin.com so that
  * SPA navigation into /feed still has us loaded, but we only act on the feed. */
@@ -53,12 +57,56 @@ function schedule(root) {
   if (timer === null) timer = setTimeout(flush, DEBOUNCE_MS);
 }
 
+/** Judge the whole page again. Cheap enough: a feed holds tens of posts. */
+function rescan() {
+  resetProcessed();
+  clearAll();
+  if (!settings?.enabled || settings.mode === 'off') return;
+  for (const post of findPosts(document)) processPost(post, settings);
+}
+
+/** 'system' leaves the attribute unset so the media query decides. */
+function applyTheme(theme) {
+  const root = document.documentElement;
+  if (theme === 'light' || theme === 'dark') root.setAttribute('data-dsmf-theme', theme);
+  else root.removeAttribute('data-dsmf-theme');
+}
+
+/**
+ * "Always show similar" turns off the signal that drove the verdict.
+ *
+ * The spec (§12) names the control but not its mechanism. Disabling the
+ * dominant rule is the reading that uses only what the settings schema already
+ * has: it is visible in the popup, reversible in one click, and cannot silently
+ * accumulate state the user cannot inspect. It is a heavier action than the
+ * label suggests, which is the honest trade for not inventing a hidden
+ * per-pattern memory.
+ */
+async function onAlwaysShow(event) {
+  // The post the user just un-hid stays visible no matter what the rules say
+  // afterwards. The rule change below is about future posts.
+  if (event?.target?.nodeType === 1) markAlwaysShow(event.target);
+
+  const results = event?.detail?.analysis?.results ?? [];
+  if (results.length === 0 || !settings) return;
+
+  const dominant = results.reduce((best, r) =>
+    r.score * (settings.weights[r.rule] ?? 0) > best.score * (settings.weights[best.rule] ?? 0)
+      ? r
+      : best
+  );
+  if (!RULES[dominant.rule]) return;
+
+  await saveSettings({ rules: { ...settings.rules, [dominant.rule]: false } });
+}
+
 /** Boot: load settings, install MutationObserver, process what is already there. */
 export async function start() {
   if (observer) return false;
   if (!isFeedRoute()) return false;
 
   settings = await readSettings();
+  applyTheme(settings.theme);
   if (!settings.enabled || settings.mode === 'off') return false;
 
   for (const post of findPosts(document)) processPost(post, settings);
@@ -71,6 +119,19 @@ export async function start() {
     }
   });
   observer.observe(document.body, { childList: true, subtree: true });
+
+  document.addEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
+
+  // Settings changed in the popup take effect here without a reload.
+  try {
+    unsubscribe = onSettingsChanged((next) => {
+      settings = next;
+      applyTheme(settings.theme);
+      rescan();
+    });
+  } catch {
+    unsubscribe = null;
+  }
 
   return true;
 }
@@ -85,7 +146,13 @@ export function stop() {
     clearTimeout(timer);
     timer = null;
   }
+  if (unsubscribe) {
+    unsubscribe();
+    unsubscribe = null;
+  }
+  document.removeEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
   pending = new Set();
   settings = null;
+  resetProcessed();
   clearAll();
 }
