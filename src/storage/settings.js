@@ -34,6 +34,22 @@ export const DEFAULT_SETTINGS = {
   theme: 'system'            // 'system' | 'dark' | 'light'
 };
 
+/**
+ * Merge a stored (possibly older, possibly partial) settings object over the
+ * defaults. Nested objects are merged one level deep so that adding a rule in
+ * a later version does not leave existing users with it missing.
+ *
+ * @param {Partial<typeof DEFAULT_SETTINGS>} [stored]
+ * @returns {typeof DEFAULT_SETTINGS}
+ */
+export function mergeSettings(stored) {
+  const merged = { ...DEFAULT_SETTINGS, ...(stored ?? {}) };
+  for (const key of ['thresholds', 'rules', 'weights', 'customVocabulary', 'exceptions']) {
+    merged[key] = { ...DEFAULT_SETTINGS[key], ...(stored?.[key] ?? {}) };
+  }
+  return merged;
+}
+
 /** @returns {Promise<typeof DEFAULT_SETTINGS>} */
 export async function loadSettings() {
   throw new Error('not implemented');
