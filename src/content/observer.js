@@ -21,9 +21,11 @@ let timer = null;
 let unsubscribe = null;
 
 /** Runtime path gate — the content script matches all of linkedin.com so that
- * SPA navigation into /feed still has us loaded, but we only act on the feed. */
+ * SPA navigation into /feed still has us loaded, but we only act on feeds and
+ * a profile's public recent-activity stream. */
 export function isFeedRoute(pathname = location.pathname) {
-  return pathname === '/' || pathname.startsWith('/feed');
+  return pathname === '/' || pathname.startsWith('/feed') ||
+    /^\/in\/[^/]+\/recent-activity\/all\/?$/.test(pathname);
 }
 
 /**

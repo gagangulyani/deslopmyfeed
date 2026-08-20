@@ -44,7 +44,7 @@ afterEach(() => {
 });
 
 describe('isFeedRoute', () => {
-  it.each([['/', true], ['/feed/', true], ['/feed/update/x', true], ['/jobs', false], ['/in/someone', false]])(
+  it.each([['/', true], ['/feed/', true], ['/feed/update/x', true], ['/in/example-profile/recent-activity/all/', true], ['/in/anyone/recent-activity/all', true], ['/in/someone', false], ['/in/someone/recent-activity/comments', false], ['/jobs', false]])(
     '%s -> %s',
     (path, expected) => expect(isFeedRoute(path)).toBe(expected)
   );
