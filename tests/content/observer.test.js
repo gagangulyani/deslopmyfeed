@@ -60,6 +60,12 @@ describe('start', () => {
     expect(applyHide).not.toHaveBeenCalled();
   });
 
+  it('removes stale debug artifacts when debugging is off', async () => {
+    document.body.insertAdjacentHTML('beforeend', '<div data-dsmf-debug="warn">old debug output</div>');
+    await start();
+    expect(document.querySelector('[data-dsmf-debug]')).toBeNull();
+  });
+
   it('processes posts inserted later', async () => {
     await start();
     expect(applyWarn).not.toHaveBeenCalled();
