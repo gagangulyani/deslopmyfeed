@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, relative } from 'node:path';
+import { dirname, join, relative, sep } from 'node:path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -91,6 +91,56 @@ describe('permissions are the minimum (spec §18)', () => {
   it('declares no background service worker', () => {
     // Nothing needs to run when the user is not looking at LinkedIn.
     expect(manifest.background).toBeUndefined();
+  });
+});
+
+describe('the packaged extension is internally consistent', () => {
+  const globToPaths = (pattern) => {
+    const dir = join(ROOT, pattern.slice(0, pattern.lastIndexOf('/')));
+    const ext = pattern.slice(pattern.lastIndexOf('*') + 1);
+    return readdirSync(dir).filter((f) => f.endsWith(ext));
+  };
+
+  it('every file the manifest names exists', () => {
+    const referenced = [
+      ...manifest.content_scripts.flatMap((entry) => [...entry.js, ...(entry.css ?? [])]),
+      manifest.action.default_popup
+    ];
+    for (const file of referenced) {
+      expect(existsSync(join(ROOT, file)), `${file} is missing`).toBe(true);
+    }
+  });
+
+  it('web accessible resources cover every module the bootstrap can reach', () => {
+    // A module missing from this list loads fine under Vitest and fails only in
+    // Chrome, which is the worst possible place to find out.
+    const exposed = new Set(
+      manifest.web_accessible_resources.flatMap((entry) =>
+        entry.resources.flatMap((pattern) => globToPaths(pattern).map(
+          (f) => `${pattern.slice(0, pattern.lastIndexOf('/'))}/${f}`
+        ))
+      )
+    );
+    // The popup is an extension page and loads its own modules directly; only
+    // what the injected bootstrap imports has to be exposed to linkedin.com.
+    const bootstrap = 'src/content/bootstrap.js';
+    const injected = sources
+      .map((f) => relative(ROOT, f).split(sep).join('/'))
+      .filter((f) => f !== bootstrap && !f.startsWith('src/popup/'));
+
+    for (const file of injected) {
+      expect(exposed.has(file), `${file} is not web-accessible`).toBe(true);
+    }
+  });
+
+  it('every import in src resolves to a file that exists', () => {
+    for (const file of sources) {
+      const code = readFileSync(file, 'utf8');
+      for (const match of code.matchAll(/from '(\.[^']+)'/g)) {
+        const target = join(dirname(file), match[1]);
+        expect(existsSync(target), `${relative(ROOT, file)} imports missing ${match[1]}`).toBe(true);
+      }
+    }
   });
 });
 
