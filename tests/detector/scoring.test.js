@@ -164,10 +164,22 @@ describe('guard rail: hiding needs corroboration', () => {
     expect(result.verdict).toBe('hide');
   });
 
-  it('hides at the warning threshold when corroborated', () => {
+  it('does not treat two layout rules as independent hide corroboration', () => {
     const result = analyze(LONG, HIDE_MODE, stub({ templateStacking: 0.5, formatting: 0.5 }));
     expect(result.score).toBe(DEFAULT_SETTINGS.thresholds.warn);
-    expect(result.verdict).toBe('hide');
+    expect(result.verdict).toBe('warn');
+  });
+
+  it('does not hide a concrete first-person event account', () => {
+    const text = [
+      'I hosted a meetup with Anuvrat and Nupur in Delhi last Saturday.',
+      'I shared the event link after June 20th.',
+      'The conversations were thoughtful and I learned a lot from the group.',
+      LONG
+    ].join(' ');
+    const result = analyze(text, HIDE_MODE, stub({ templateStacking: 1, vocabulary: 1 }));
+    expect(result.score).toBeGreaterThanOrEqual(DEFAULT_SETTINGS.thresholds.warn);
+    expect(result.verdict).toBe('warn');
   });
 });
 

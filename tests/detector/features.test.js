@@ -30,6 +30,24 @@ describe('extractFeatures input shapes', () => {
   });
 });
 
+describe('Unicode and concrete-context extraction', () => {
+  it('normalizes presentation glyphs before counting words', () => {
+    const features = extractFeatures('𝗧𝗵𝗲 𝗙𝗶𝗿𝘀𝘁 𝗦𝗾𝘂𝗮𝗿𝗲 𝗶𝘀 𝗵𝗲𝗿𝗲');
+    expect(features.wordCount).toBe(5);
+  });
+
+  it('recognizes a first-person account with distinct real-world anchors', () => {
+    const features = extractFeatures(
+      'I hosted a meetup with Anuvrat and Nupur in Delhi last Saturday. I shared the event link after June 20th.'
+    );
+    expect(features.concreteContext).toBe(true);
+  });
+
+  it('does not infer concrete context from generic first-person prose alone', () => {
+    expect(extractFeatures('I think we should keep learning and I want to grow together.').concreteContext).toBe(false);
+  });
+});
+
 describe('dash feature extraction', () => {
   it('counts em dashes, en dashes, and double hyphens as dash separators', () => {
     const features = extractFeatures('One — two – three -- four');

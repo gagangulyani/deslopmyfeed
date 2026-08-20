@@ -142,6 +142,13 @@ function isSponsored(post) {
   return false;
 }
 
+function isRepost(post) {
+  for (const el of ownLeaves(post)) {
+    if (/reposted this$/i.test(el.textContent.trim())) return true;
+  }
+  return false;
+}
+
 /**
  * The headline sits in the actor block as the profile link's sibling
  * (structure [4]). No stable attribute — positional, so null is normal.
@@ -194,12 +201,12 @@ function findCounts(post) {
  *
  * @param {Element} post
  * @returns {{ text: string|null, author: string|null, headline: string|null,
- *   reactions: number|null, comments: number|null,
+ *   reactions: number|null, comments: number|null, reposted: boolean,
  *   skip: null|'no text node'|'sponsored' }}
  */
 export function readPost(post) {
   const unreadable = (skip) => ({
-    text: null, author: null, headline: null, reactions: null, comments: null, skip
+    text: null, author: null, headline: null, reactions: null, comments: null, reposted: false, skip
   });
 
   if (!post || typeof post.querySelector !== 'function') return unreadable('no text node');
@@ -228,6 +235,7 @@ export function readPost(post) {
 
   return {
     text,
+    reposted: isRepost(post),
     author: findAuthor(post),
     headline: findHeadline(post),
     ...findCounts(post),

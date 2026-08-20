@@ -21,6 +21,8 @@
  * @property {number|null} comments  Comment count; null is "unknown", not zero.
  * @property {boolean} hinglish      True when the text is not English, so the
  *                                   English-only rules must not score it.
+ * @property {boolean} concreteContext True for a first-person account carrying
+ *                                    multiple specific real-world anchors.
  */
 
 const WORD = /[a-z0-9']+/gi;
@@ -40,12 +42,30 @@ const HINGLISH = new Set([
   'mein', 'aur', 'karo', 'karna'
 ]);
 const HINGLISH_MINIMUM = 3;
+const MONTH_OR_WEEKDAY = /\b(?:january|february|march|april|may|june|july|august|september|october|november|december|monday|tuesday|wednesday|thursday|friday|saturday|sunday|today|tomorrow|weekend)\b/i;
+const FIRST_PERSON = /\b(?:i|i'm|i've|i'll|i'd|me|my|mine|we|we're|we've|our|ours)\b/gi;
+const PROPER_NAME = /\b[A-Z][a-z]{2,}\b/g;
+const COMMON_CAPITALIZED = new Set(['The', 'This', 'That', 'And', 'But', 'For', 'With', 'When', 'After', 'Then', 'What', 'How', 'If', 'So', 'You', 'Your', 'We', 'Our', 'I']);
 
 /** Count of distinct Hinglish markers among the post's word tokens. */
 function hinglishMarkers(words) {
   const found = new Set();
   for (const word of words) if (HINGLISH.has(word)) found.add(word);
   return found.size;
+}
+
+function hasConcreteContext(text) {
+  const firstPerson = (text.match(FIRST_PERSON) ?? []).length >= 2;
+  if (!firstPerson) return false;
+
+  const names = new Set(
+    (text.match(PROPER_NAME) ?? []).filter((word) => !COMMON_CAPITALIZED.has(word))
+  );
+  const hasNamedEntity = names.size >= 2;
+  const hasTimeAnchor = MONTH_OR_WEEKDAY.test(text) || /\b\d{1,2}(?:st|nd|rd|th)\b/.test(text);
+  const hasLink = /https?:\/\//i.test(text);
+
+  return [hasNamedEntity, hasTimeAnchor, hasLink].filter(Boolean).length >= 2;
 }
 
 /**
@@ -69,7 +89,9 @@ function splitSentences(text) {
 export function extractFeatures(post) {
   const input = typeof post === 'string' ? { text: post } : post ?? {};
   const raw = typeof input.text === 'string' ? input.text : '';
-  const trimmed = raw.trim();
+  // LinkedIn presentation glyphs such as mathematical bold letters otherwise
+  // evade ASCII word matching and can turn a normal hook into a "0-word" one.
+  const trimmed = raw.normalize('NFKC').trim();
 
   const lines = trimmed
     .split('\n')
@@ -110,6 +132,7 @@ export function extractFeatures(post) {
     headline: typeof input.headline === 'string' ? input.headline.trim() || null : null,
     reactions: Number.isInteger(input.reactions) ? input.reactions : null,
     comments: Number.isInteger(input.comments) ? input.comments : null,
-    hinglish: hinglishMarkers(words) >= HINGLISH_MINIMUM
+    hinglish: hinglishMarkers(words) >= HINGLISH_MINIMUM,
+    concreteContext: hasConcreteContext(trimmed)
   };
 }

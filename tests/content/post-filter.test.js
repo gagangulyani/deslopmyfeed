@@ -17,10 +17,11 @@ const slop = loadCorpus('ai').find((p) => p.id === 'ai-001').text;   // reaches 
 const mild = loadCorpus('ai').find((p) => p.id === 'ai-011').text;   // reaches warn only
 const human = loadCorpus('human').find((p) => p.id === 'human-063').text;
 
-function element(text, author = 'A Person') {
+function element(text, author = 'A Person', reposted = false) {
   const el = document.createElement('div');
   el.setAttribute('data-id', 'urn:li:activity:1');
-  el.innerHTML = `<div class="update-components-actor__title">${author}</div>
+  el.innerHTML = `${reposted ? '<span>Example Person reposted this</span>' : ''}
+    <div class="update-components-actor__title">${author}</div>
     <div class="update-components-text"></div>`;
   el.querySelector('.update-components-text').textContent = text;
   return el;
@@ -57,6 +58,13 @@ describe('processPost', () => {
     const el = document.createElement('div');
     el.innerHTML = '<div class="unknown-markup">text</div>';
     expect(processPost(el, {})).toBeNull();
+  });
+
+  it('skips reposts in a profile activity archive', () => {
+    history.replaceState({}, '', '/in/example-profile/recent-activity/all/');
+    expect(processPost(element(slop, 'A Person', true), { mode: 'hide' })).toBeNull();
+    expect(applyHide).not.toHaveBeenCalled();
+    history.replaceState({}, '', '/');
   });
 });
 
