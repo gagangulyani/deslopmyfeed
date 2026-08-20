@@ -41,12 +41,21 @@ describe('popup renders from the settings schema', () => {
   });
 
   it('renders and persists an adjustable hide threshold', () => {
-    render({ ...DEFAULT_SETTINGS, thresholds: { ...DEFAULT_SETTINGS.thresholds, hide: 3.5 } });
+    render({ ...DEFAULT_SETTINGS, thresholds: { ...DEFAULT_SETTINGS.thresholds, hide: 0.5 } });
     const input = root.querySelector('#hide-threshold');
-    expect(input.value).toBe('3.5');
+    expect(input.min).toBe('0.5');
+    expect(input.value).toBe('0.5');
     input.value = '4.5';
     input.dispatchEvent(new Event('change'));
     expect(changes).toEqual([{ thresholds: { ...DEFAULT_SETTINGS.thresholds, hide: 4.5 } }]);
+  });
+
+  it('offers any enabled signal as an alternative to score-based hiding', () => {
+    render();
+    root.querySelector('input[name="hide-policy"][value="any-match"]').click();
+    expect(changes).toEqual([{ hidePolicy: 'any-match' }]);
+    render({ ...DEFAULT_SETTINGS, hidePolicy: 'any-match' });
+    expect(root.querySelector('#hide-threshold')).toBeNull();
   });
 
   it('reports a rule toggle without dropping the other rules', () => {

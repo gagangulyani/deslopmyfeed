@@ -172,6 +172,16 @@ describe('guard rail: hiding needs corroboration', () => {
     expect(high.verdict).toBe('warn');
   });
 
+  it('hides any enabled signal when the user selects any-match policy', () => {
+    const result = analyze(LONG, { mode: 'hide', hidePolicy: 'any-match' }, stub({ vocabulary: 0.1 }));
+    expect(result.verdict).toBe('hide');
+  });
+
+  it('keeps short posts warn-only even with any-match policy', () => {
+    const result = analyze(SHORT, { mode: 'hide', hidePolicy: 'any-match' }, stub({ vocabulary: 1 }));
+    expect(result.verdict).toBe('warn');
+  });
+
   it('does not treat two layout rules as independent hide corroboration', () => {
     const result = analyze(LONG, HIDE_MODE, stub({ templateStacking: 0.5, formatting: 0.5 }));
     expect(result.score).toBe(DEFAULT_SETTINGS.thresholds.warn);
