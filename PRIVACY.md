@@ -25,7 +25,7 @@ extension's own files through `chrome.runtime.getURL`.
 `chrome.storage.local` holds only your configuration:
 
 - Whether filtering is enabled, and the mode (off / warn / hide)
-- Sensitivity and Hide threshold
+- Sensitivity, Hide policy, and Hide threshold
 - Which detection rules are enabled
 - Theme preference
 - Whether the diagnostics overlay is on

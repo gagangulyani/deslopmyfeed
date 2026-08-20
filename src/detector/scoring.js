@@ -138,13 +138,14 @@ export function analyze(post, settings, rules = RULES) {
   const warnAt = config.thresholds.warn + offset;
   const hideAt = config.thresholds.hide;
 
+  const anyMatch = config.hidePolicy === 'any-match' && results.length > 0;
   const onlyShortDash =
     features.wordCount < MIN_WORDS_TO_ANALYZE &&
     results.length === 1 &&
     results[0].rule === 'formatting' &&
     results[0].evidence.includes('short post uses a dash separator');
 
-  if (score < warnAt || onlyShortDash) {
+  if ((!anyMatch && score < warnAt) || onlyShortDash) {
     return verdictShow(describe(results), results, score);
   }
 
@@ -155,9 +156,11 @@ export function analyze(post, settings, rules = RULES) {
 
   const hasStrong = results.some((r) => STRONG_RULES.includes(r.rule));
   const canHide =
-    score >= hideAt &&
-    independentCategoryCount(results) >= MIN_CATEGORIES_TO_HIDE &&
-    hasStrong &&
+    (anyMatch || (
+      score >= hideAt &&
+      independentCategoryCount(results) >= MIN_CATEGORIES_TO_HIDE &&
+      hasStrong
+    )) &&
     !features.concreteContext &&
     config.mode === 'hide';
 

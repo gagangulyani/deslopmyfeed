@@ -18,6 +18,11 @@ const SENSITIVITIES = [
   ['high', 'High']
 ];
 
+const HIDE_POLICIES = [
+  ['threshold', 'Score threshold', 'Hide qualifying posts at the selected score.'],
+  ['any-match', 'Any enabled signal', 'Hide when any enabled filter matches.']
+];
+
 const THEMES = [
   ['system', 'System'],
   ['light', 'Light'],
@@ -58,7 +63,7 @@ function threshold(value, onChange) {
   const input = document.createElement('input');
   input.id = 'hide-threshold';
   input.type = 'range';
-  input.min = '2.5';
+  input.min = '0.5';
   input.max = '5';
   input.step = '0.5';
   input.value = String(value);
@@ -116,13 +121,19 @@ export function renderInto(root, settings, onChange) {
   );
   root.appendChild(sensitivity);
 
-  const hideThreshold = section('Hide threshold');
-  hideThreshold.appendChild(
-    threshold(config.thresholds.hide, (hide) =>
-      onChange({ thresholds: { ...config.thresholds, hide } })
-    )
-  );
-  root.appendChild(hideThreshold);
+  const hideWhen = section('Hide when');
+  hideWhen.appendChild(choice('hide-policy', HIDE_POLICIES, config.hidePolicy, (hidePolicy) => onChange({ hidePolicy })));
+  root.appendChild(hideWhen);
+
+  if (config.hidePolicy === 'threshold') {
+    const hideThreshold = section('Hide threshold');
+    hideThreshold.appendChild(
+      threshold(config.thresholds.hide, (hide) =>
+        onChange({ thresholds: { ...config.thresholds, hide } })
+      )
+    );
+    root.appendChild(hideThreshold);
+  }
 
   const rules = section('Signals');
   for (const [id, label] of Object.entries(RULE_LABELS)) {
