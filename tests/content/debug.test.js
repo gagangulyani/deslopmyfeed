@@ -19,10 +19,10 @@ function post() {
 describe('stamp', () => {
   it('tags a post with the stage it reached', () => {
     const el = post();
-    stamp(el, 'truncated');
+    stamp(el, 'no text node');
     const tag = el.querySelector(`[${DEBUG_ATTR}]`);
-    expect(tag.getAttribute(DEBUG_ATTR)).toBe('truncated');
-    expect(tag.textContent).toBe('truncated');
+    expect(tag.getAttribute(DEBUG_ATTR)).toBe('no text node');
+    expect(tag.textContent).toBe('no text node');
   });
 
   it('puts the tag first so it reads above the post', () => {
@@ -32,7 +32,7 @@ describe('stamp', () => {
   });
 
   it('colours by outcome, not by stage name', () => {
-    expect(stamp(post(), 'truncated').className).toContain('dsmf-debug-skip');
+    expect(stamp(post(), 'no text node').className).toContain('dsmf-debug-skip');
     expect(stamp(post(), 'show').className).toContain('dsmf-debug-clean');
     expect(stamp(post(), 'hide').className).toContain('dsmf-debug-flag');
   });
@@ -99,10 +99,10 @@ describe('status panel', () => {
     showHud('active');
     stamp(post(), 'show');
     stamp(post(), 'show');
-    stamp(post(), 'truncated');
+    stamp(post(), 'sponsored');
     expect(hud().textContent).toContain('3 post(s) seen');
     expect(hud().textContent).toContain('show 2');
-    expect(hud().textContent).toContain('truncated 1');
+    expect(hud().textContent).toContain('sponsored 1');
   });
 
   it('reuses one panel rather than stacking them', () => {

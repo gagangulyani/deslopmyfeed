@@ -84,13 +84,13 @@ export function applyHide(post, analysis) {
   const card = el('div', 'dsmf-card');
   card.setAttribute(ARTIFACT, 'hide');
   card.appendChild(el('div', 'dsmf-card-title', 'Post hidden'));
-  card.appendChild(el('div', 'dsmf-card-reason', analysis.reason));
+  card.appendChild(el('div', 'dsmf-card-reason', `Hidden because: ${analysis.reason}`));
 
   const panel = explanation(analysis);
   const show = button('Show post', () => restore(post));
   show.classList.add('dsmf-primary');
   card.appendChild(show);
-  card.appendChild(button('Why?', () => { panel.hidden = !panel.hidden; }));
+  card.appendChild(button('Why hidden?', () => { panel.hidden = !panel.hidden; }));
   card.appendChild(alwaysShow(post, analysis));
   card.appendChild(panel);
 

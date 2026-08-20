@@ -74,6 +74,19 @@ describe('hide', () => {
       .toEqual(expect.arrayContaining(['Show post', 'Always show similar']));
   });
 
+  it('states why the post was hidden and expands the supporting evidence', () => {
+    const el = post();
+    applyHide(el, analysis('hide'));
+    expect(el.querySelector('.dsmf-card-reason').textContent)
+      .toBe('Hidden because: template structure and synthetic formatting');
+
+    const panel = el.querySelector('.dsmf-explain');
+    expect(panel.hidden).toBe(true);
+    [...el.querySelectorAll('button')].find((b) => b.textContent === 'Why hidden?').click();
+    expect(panel.hidden).toBe(false);
+    expect(panel.textContent).toContain('3 enumerated items');
+  });
+
   it('restores the post to exactly what it was', () => {
     const el = post('Untouched body');
     const before = el.innerHTML;
