@@ -64,8 +64,7 @@ rather than guessed — the highest score any human fixture reaches is 0.8.
 | Score | Reading | Default action |
 | ---: | --- | --- |
 | under 2.5 | Insufficient signal | Show |
-| 2.5–4 | Suspicious pattern | Warn |
-| 4+ | Strong pattern | Hide (in hide mode, with corroboration) |
+| 2.5+ | Corroborated suspicious pattern | Warn, or hide in Hide mode |
 
 ### Measured behavior
 
@@ -92,11 +91,8 @@ a real post.
 - 50–100 words are scored conservatively (0.7x).
 - Posts detected as likely Romanized Hindi/Hinglish are left unscored; other languages are not yet reliably identified.
 - Sponsored posts are never judged — ad copy is engineered to trip the rules.
-- Hiding requires at least two independent signal categories, one structural.
+- Hide mode collapses posts at the warning threshold only when at least two independent signal categories agree, including one structural signal.
 - Weak rules cannot reach a hide verdict between them, at any weight.
-- A post truncated behind "…see more" is treated as unanalyzable and left alone,
-  because clicking the control is a LinkedIn interaction this project refuses to
-  automate.
 - Every hidden post offers **Show post** and **Always show similar**, and a post
   you have asked to see stays visible for the rest of the session.
 
@@ -113,7 +109,6 @@ popup: every post gets a tag naming the stage it reached.
 | `SHOW` (green) | Analyzed, scored below the warn threshold. Working as intended. |
 | `WARN` / `HIDE` (red) | Flagged. |
 | `SPONSORED` (slate) | Promoted content. Never judged. |
-| `TRUNCATED` (slate) | Collapsed behind "…see more", so the full text is not in the DOM. Never analyzed. |
 | `NO TEXT NODE` (slate) | The text selector did not match — LinkedIn's markup has moved. |
 | `EXEMPT` (slate) | Skipped by a configured exception. |
 

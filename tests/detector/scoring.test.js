@@ -163,6 +163,12 @@ describe('guard rail: hiding needs corroboration', () => {
     const result = analyze(LONG, overHide, stub({ templateStacking: 1, vocabulary: 1 }));
     expect(result.verdict).toBe('hide');
   });
+
+  it('hides at the warning threshold when corroborated', () => {
+    const result = analyze(LONG, HIDE_MODE, stub({ templateStacking: 0.5, formatting: 0.5 }));
+    expect(result.score).toBe(DEFAULT_SETTINGS.thresholds.warn);
+    expect(result.verdict).toBe('hide');
+  });
 });
 
 describe('modes', () => {

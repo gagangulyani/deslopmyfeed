@@ -58,9 +58,6 @@ const AUTHOR_SELECTORS = [
   '.feed-shared-actor__title'
 ];
 
-/** A post still ending in an ellipsis after the toggle is removed is truncated. */
-const TRUNCATED = /(?:\u2026|\.\.\.)\s*$/;
-
 let processed = new WeakSet();
 
 function firstMatch(el, selectors) {
@@ -198,7 +195,7 @@ function findCounts(post) {
  * @param {Element} post
  * @returns {{ text: string|null, author: string|null, headline: string|null,
  *   reactions: number|null, comments: number|null,
- *   skip: null|'no text node'|'truncated'|'sponsored' }}
+ *   skip: null|'no text node'|'sponsored' }}
  */
 export function readPost(post) {
   const unreadable = (skip) => ({
@@ -228,12 +225,6 @@ export function readPost(post) {
 
   const text = (copy.textContent ?? '').replace(/\u00a0/g, ' ').trim();
   if (!text) return unreadable('no text node');
-
-  // "…more" clamps long posts visually, but the full text is in the DOM, so
-  // this now fires rarely. When it does fire the visible text really is a
-  // prefix, and judging an arbitrary prefix is worse than not judging. Clicking
-  // the control to expand it is a LinkedIn interaction and forbidden (spec §19).
-  if (TRUNCATED.test(text)) return unreadable('truncated');
 
   return {
     text,
