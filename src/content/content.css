@@ -373,7 +373,16 @@
   object-fit: cover;
 }
 
+.dsmf-hidden-author-link {
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.dsmf-hidden-author-link:hover .dsmf-hidden-author-name { text-decoration: underline; }
+
 .dsmf-hidden-author-name {
+  display: block;
   overflow: hidden;
   color: #172033;
   font-weight: 600;

@@ -88,7 +88,7 @@ function patternDescription(analysis) {
   return 'Recurring formulaic cues';
 }
 
-function hiddenAuthor(author, avatarUrl) {
+function hiddenAuthor(author, avatarUrl, authorUrl) {
   const row = el('div', 'dsmf-hidden-author');
   if (avatarUrl) {
     const avatar = document.createElement('img');
@@ -97,7 +97,16 @@ function hiddenAuthor(author, avatarUrl) {
     avatar.alt = '';
     row.appendChild(avatar);
   }
-  row.appendChild(el('span', 'dsmf-hidden-author-name', `${author || 'This author'}’s post was hidden`));
+  const name = el('span', 'dsmf-hidden-author-name', `${author || 'This author'}’s post was hidden`);
+  if (authorUrl) {
+    const link = document.createElement('a');
+    link.className = 'dsmf-hidden-author-link';
+    link.href = authorUrl;
+    link.appendChild(name);
+    row.appendChild(link);
+  } else {
+    row.appendChild(name);
+  }
   return row;
 }
 
@@ -179,12 +188,30 @@ export function applyHide(post, analysis, postInfo = {}) {
 
   const card = el('div', 'dsmf-card dsmf-hidden-row');
   card.setAttribute(ARTIFACT, 'hide');
-  card.appendChild(hiddenAuthor(postInfo.author, postInfo.authorAvatar));
+  card.appendChild(hiddenAuthor(postInfo.author, postInfo.authorAvatar, postInfo.authorUrl));
 
   const popover = reasonPopover(analysis);
+  let listeningForOutsideClick = false;
+  const outsideClick = (event) => {
+    if (!card.contains(event.target)) closePopover();
+  };
+  const closePopover = () => {
+    popover.hidden = true;
+    info.setAttribute('aria-expanded', 'false');
+    if (listeningForOutsideClick) {
+      document.removeEventListener('click', outsideClick, true);
+      listeningForOutsideClick = false;
+    }
+  };
   const info = button('ⓘ', () => {
-    popover.hidden = !popover.hidden;
-    info.setAttribute('aria-expanded', String(!popover.hidden));
+    if (!popover.hidden) {
+      closePopover();
+      return;
+    }
+    popover.hidden = false;
+    info.setAttribute('aria-expanded', 'true');
+    document.addEventListener('click', outsideClick, true);
+    listeningForOutsideClick = true;
   });
   info.classList.add('dsmf-info-button');
   info.setAttribute('aria-label', 'Why this post was hidden');

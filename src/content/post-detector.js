@@ -98,8 +98,19 @@ function findTextContainer(post) {
   return null;
 }
 
-function findAvatar(post) {
-  const image = post.querySelector('a[href*="/in/"] img, a[href*="/company/"] img');
+function findActorLink(post, author) {
+  if (!author) return null;
+  const normalized = author.toLowerCase();
+  for (const link of post.querySelectorAll('a[href*="/in/"], a[href*="/company/"]')) {
+    const text = (link.innerText ?? link.textContent ?? '').toLowerCase();
+    const alt = link.querySelector('img')?.getAttribute('alt')?.toLowerCase() ?? '';
+    if (text.includes(normalized) || alt.includes(normalized)) return link;
+  }
+  return null;
+}
+
+function findAvatar(post, author) {
+  const image = findActorLink(post, author)?.querySelector('img');
   return image?.currentSrc || image?.getAttribute('src') || null;
 }
 
@@ -205,13 +216,13 @@ function findCounts(post) {
  * null-or-post contract.
  *
  * @param {Element} post
- * @returns {{ text: string|null, author: string|null, authorAvatar: string|null, headline: string|null,
+ * @returns {{ text: string|null, author: string|null, authorAvatar: string|null, authorUrl: string|null, headline: string|null,
  *   reactions: number|null, comments: number|null, reposted: boolean,
  *   skip: null|'no text node'|'sponsored' }}
  */
 export function readPost(post) {
   const unreadable = (skip) => ({
-    text: null, author: null, authorAvatar: null, headline: null, reactions: null, comments: null, reposted: false, skip
+    text: null, author: null, authorAvatar: null, authorUrl: null, headline: null, reactions: null, comments: null, reposted: false, skip
   });
 
   if (!post || typeof post.querySelector !== 'function') return unreadable('no text node');
@@ -238,11 +249,14 @@ export function readPost(post) {
   const text = (copy.textContent ?? '').replace(/\u00a0/g, ' ').trim();
   if (!text) return unreadable('no text node');
 
+  const author = findAuthor(post);
+  const actorLink = findActorLink(post, author);
   return {
     text,
     reposted: isRepost(post),
-    author: findAuthor(post),
-    authorAvatar: findAvatar(post),
+    author,
+    authorAvatar: findAvatar(post, author),
+    authorUrl: actorLink?.href ?? null,
     headline: findHeadline(post),
     ...findCounts(post),
     skip: null
