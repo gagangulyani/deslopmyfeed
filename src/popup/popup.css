@@ -272,3 +272,15 @@ input[type='radio']:focus-visible {
   font-size: 12px;
   line-height: 1.35;
 }
+
+.reset-personalization {
+  padding: 7px 10px;
+  color: var(--signal);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.reset-personalization:disabled { opacity: 0.5; cursor: default; }

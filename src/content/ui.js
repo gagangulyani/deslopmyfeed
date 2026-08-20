@@ -18,6 +18,7 @@ const WARNED = 'dsmf-warned';
 /** Fired when the user asks to stop filtering posts like this one. Phase 6
  * listens for it; the UI layer does not touch storage itself. */
 export const ALWAYS_SHOW_EVENT = 'dsmf-always-show';
+export const FEEDBACK_EVENT = 'dsmf-pattern-feedback';
 export const FLAG_COUNT_EVENT = 'dsmf-flag-count';
 
 function reportFlagCount(detail) {
@@ -110,7 +111,15 @@ function hiddenAuthor(author, avatarUrl, authorUrl) {
   return row;
 }
 
-function reasonPopover(analysis) {
+function feedbackButton(label, post, analysis, direction) {
+  const node = button(label, () => {
+    document.dispatchEvent(new CustomEvent(FEEDBACK_EVENT, { detail: { post, analysis, direction } }));
+  });
+  node.classList.add('dsmf-feedback-button');
+  return node;
+}
+
+function reasonPopover(analysis, post) {
   const popover = el('div', 'dsmf-reason-popover');
   popover.hidden = true;
   popover.appendChild(el('strong', 'dsmf-reason-title', 'Why this post was hidden'));
@@ -120,6 +129,11 @@ function reasonPopover(analysis) {
     list.appendChild(el('li', '', SUMMARY_LABELS[result.rule] ?? RULE_LABELS[result.rule] ?? result.rule));
   }
   popover.appendChild(list);
+  const feedback = el('div', 'dsmf-feedback');
+  feedback.appendChild(el('span', 'dsmf-reason-label', 'Improve your feed'));
+  feedback.appendChild(feedbackButton('Useful — show more like this', post, analysis, -1));
+  feedback.appendChild(feedbackButton('Hide more like this', post, analysis, 1));
+  popover.appendChild(feedback);
   return popover;
 }
 
@@ -190,7 +204,7 @@ export function applyHide(post, analysis, postInfo = {}) {
   card.setAttribute(ARTIFACT, 'hide');
   card.appendChild(hiddenAuthor(postInfo.author, postInfo.authorAvatar, postInfo.authorUrl));
 
-  const popover = reasonPopover(analysis);
+  const popover = reasonPopover(analysis, post);
   let listeningForOutsideClick = false;
   const outsideClick = (event) => {
     if (!card.contains(event.target)) closePopover();

@@ -3,7 +3,7 @@
 > Take your feed back.
 
 A privacy-first Chrome extension that locally filters low-quality, repetitive,
-generic and AI-style content out of your LinkedIn feed.
+generic, formulaic, and promotional content out of your LinkedIn feed.
 
 Analysis happens entirely in your browser. No post content is sent anywhere, no
 AI API is used, no account is required.
@@ -34,7 +34,10 @@ active LinkedIn tab it uses the colored brand icon and displays the number of
 currently flagged posts, whether they are warned or hidden; the badge disappears at zero.
 
 Every hidden card states the matched categories. **Why hidden?** expands the
-specific structural and phrasing evidence used for that decision.
+specific structural and phrasing evidence used for that decision. You can also
+choose **Useful — show more like this** or **Hide more like this**; those explicit
+choices adjust matching pattern weights locally, never storing post text, author
+identity, or post URLs.
 
 ## What it does not claim
 

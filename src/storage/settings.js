@@ -36,6 +36,7 @@ export const DEFAULT_SETTINGS = {
     keywords: []             // posts containing these are always shown
   },
   theme: 'system',           // 'system' | 'dark' | 'light'
+  personalization: { enabled: true, adjustments: {} },
   // Diagnostics. Tags every candidate post with the stage it reached and logs
   // selector match counts, so a silent feed can be told apart from a stale
   // selector. Off by default; it changes nothing about what gets filtered.
@@ -52,7 +53,7 @@ export const DEFAULT_SETTINGS = {
  */
 export function mergeSettings(stored) {
   const merged = { ...DEFAULT_SETTINGS, ...(stored ?? {}) };
-  for (const key of ['thresholds', 'rules', 'weights', 'customVocabulary', 'exceptions']) {
+  for (const key of ['thresholds', 'rules', 'weights', 'customVocabulary', 'exceptions', 'personalization']) {
     merged[key] = { ...DEFAULT_SETTINGS[key], ...(stored?.[key] ?? {}) };
   }
   return merged;
@@ -89,7 +90,8 @@ export function commitSettingsPatch(patch) {
       rules: { ...current.rules, ...(patch.rules ?? {}) },
       weights: { ...current.weights, ...(patch.weights ?? {}) },
       customVocabulary: { ...current.customVocabulary, ...(patch.customVocabulary ?? {}) },
-      exceptions: { ...current.exceptions, ...(patch.exceptions ?? {}) }
+      exceptions: { ...current.exceptions, ...(patch.exceptions ?? {}) },
+      personalization: { ...current.personalization, ...(patch.personalization ?? {}) }
     });
     await chrome.storage.local.set({ [STORAGE_KEY]: next });
     return next;

@@ -10,6 +10,7 @@ vi.mock('../../src/content/ui.js', () => ({
   restore: vi.fn(),
   clearAll: (...a) => clearAll(...a),
   ALWAYS_SHOW_EVENT: 'dsmf-always-show',
+  FEEDBACK_EVENT: 'dsmf-pattern-feedback',
   FLAG_COUNT_EVENT: 'dsmf-flag-count'
 }));
 

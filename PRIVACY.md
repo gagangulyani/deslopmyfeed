@@ -29,6 +29,7 @@ extension's own files through `chrome.runtime.getURL`.
 - Which detection rules are enabled
 - Theme preference
 - Whether the diagnostics overlay is on
+- The optional local-only per-pattern adjustments created by explicit feedback
 
 The popup exposes the Hide threshold alongside the existing controls. The
 internal settings schema also reserves fields for future vocabulary, exception,
@@ -38,8 +39,7 @@ This never leaves your machine and is never synced.
 
 ## What is *not* stored
 
-Post content. Text is read from the page, analyzed in memory, and discarded.
-There is no post database, no history, no cache on disk. `tests/policy.test.js`
+Post content, author identity, and post URLs. Text is read from the page, analyzed in memory, and discarded. There is no post database, no history, no cache on disk. `tests/policy.test.js`
 asserts that `src/storage/settings.js` is the only file that writes to storage
 at all, and that the stored object contains exactly the settings schema keys.
 
