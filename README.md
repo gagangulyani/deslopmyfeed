@@ -98,7 +98,7 @@ a real post.
 - 50–100 words are scored conservatively (0.7x).
 - Posts detected as likely Romanized Hindi/Hinglish are left unscored; other languages are not yet reliably identified.
 - Sponsored posts are never judged — ad copy is engineered to trip the rules.
-- Hide mode offers two policies: **Score threshold** hides only when the user-selected threshold is met, at least two independent signal categories agree, and one is structural; **Any enabled signal** hides a 50+ word post whenever one enabled rule matches. Template structure and formatting count as one layout category for score-threshold hiding.
+- Hide mode offers two policies: **Score threshold** hides a 50+ word post when its score meets the user-selected threshold; **Any enabled signal** hides a 50+ word post whenever one enabled rule matches. Concrete first-person posts with multiple real-world anchors remain visible in both modes.
 - Posts with concrete first-person context and multiple real-world anchors remain visible, even when other signals warn.
 - Every hidden post offers **Show post** and **Always show similar**, and a post
   you have asked to see stays visible for the rest of the session.

@@ -50,12 +50,8 @@ export const CONSERVATIVE_MULTIPLIER = 0.7;
  */
 export const SENSITIVITY_OFFSETS = { low: 1.5, medium: 0, high: -1 };
 
-/** Hiding requires this many independent triggered categories, one structural. */
+/** Retained for rule taxonomy and diagnostics; user-selected score hiding does not require corroboration. */
 export const MIN_CATEGORIES_TO_HIDE = 2;
-
-// Both rules observe paragraph/list layout. They are useful together for a
-// warning, but must not count twice as independent evidence for hiding.
-const LAYOUT_RULES = new Set(['templateStacking', 'formatting']);
 
 /**
  * @typedef {Object} Analysis
@@ -75,11 +71,6 @@ function describe(results) {
   if (names.length === 0) return 'no patterns matched';
   if (names.length === 1) return names[0];
   return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
-}
-
-function independentCategoryCount(results) {
-  const nonLayout = results.filter((result) => !LAYOUT_RULES.has(result.rule)).length;
-  return nonLayout + (results.some((result) => LAYOUT_RULES.has(result.rule)) ? 1 : 0);
 }
 
 /**
@@ -154,13 +145,8 @@ export function analyze(post, settings, rules = RULES) {
     return { verdict: 'warn', score, results, reason: describe(results) };
   }
 
-  const hasStrong = results.some((r) => STRONG_RULES.includes(r.rule));
   const canHide =
-    (anyMatch || (
-      score >= hideAt &&
-      independentCategoryCount(results) >= MIN_CATEGORIES_TO_HIDE &&
-      hasStrong
-    )) &&
+    (anyMatch || score >= hideAt) &&
     !features.concreteContext &&
     config.mode === 'hide';
 
