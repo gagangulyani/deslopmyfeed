@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { stamp, clearDebug, probe, DEBUG_ATTR } from '../../src/content/debug.js';
+import { stamp, clearDebug, showHud, probe, DEBUG_ATTR } from '../../src/content/debug.js';
 import { POST_SELECTORS } from '../../src/content/post-detector.js';
 
 beforeEach(() => {
+  clearDebug();
   document.body.textContent = '';
 });
 
@@ -80,5 +81,49 @@ describe('probe', () => {
     expect(Object.keys(counts)).toEqual(POST_SELECTORS);
     expect(counts['div[data-id^="urn:li:activity"]']).toBe(1);
     expect(counts['div.feed-shared-update-v2']).toBe(0);
+  });
+});
+
+describe('status panel', () => {
+  const hud = () => document.querySelector('[data-dsmf-hud]');
+
+  // The case the per-post tags structurally cannot cover: nothing matched, so
+  // there is no post to attach a tag to.
+  it('appears even when no post was ever seen', () => {
+    showHud('active · /feed/ · 0 selector match(es)');
+    expect(hud().textContent).toContain('0 selector match(es)');
+    expect(hud().textContent).toContain('0 post(s) seen');
+  });
+
+  it('counts each stage as posts are stamped', () => {
+    showHud('active');
+    stamp(post(), 'show');
+    stamp(post(), 'show');
+    stamp(post(), 'truncated');
+    expect(hud().textContent).toContain('3 post(s) seen');
+    expect(hud().textContent).toContain('show 2');
+    expect(hud().textContent).toContain('truncated 1');
+  });
+
+  it('reuses one panel rather than stacking them', () => {
+    showHud('first');
+    showHud('second');
+    expect(document.querySelectorAll('[data-dsmf-hud]')).toHaveLength(1);
+    expect(hud().textContent).toContain('second');
+  });
+
+  it('renders its note as text, never as markup', () => {
+    showHud('<img src=x onerror=alert(1)>');
+    expect(hud().querySelector('img')).toBeNull();
+  });
+
+  it('is taken down, tally and all, when debug is switched off', () => {
+    showHud('active');
+    stamp(post(), 'show');
+    clearDebug();
+    expect(hud()).toBeNull();
+
+    showHud('active again');
+    expect(hud().textContent).toContain('0 post(s) seen');
   });
 });

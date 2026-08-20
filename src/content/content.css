@@ -137,3 +137,21 @@
 
 /* Amber: warned or hidden. */
 .dsmf-debug-flag { background: #9a6212; }
+
+/* Status panel. Fixed rather than inline because its job is to be visible even
+   when no post matched — which is precisely when there is nothing to attach an
+   inline tag to. */
+.dsmf-hud {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2147483647;
+  max-width: 320px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #12263a;
+  color: #fff;
+  font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+  box-shadow: 0 2px 12px rgb(0 0 0 / 35%);
+  pointer-events: none;
+}

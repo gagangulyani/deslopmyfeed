@@ -4,14 +4,18 @@
  * modules via chrome.runtime.getURL(). Everything else in the codebase stays a
  * plain ES module that Node/Vitest can import directly.
  *
- * Failure here must be silent and inert: a broken import leaves LinkedIn
- * untouched (spec §22).
+ * Failure here must be inert: a broken import leaves LinkedIn untouched
+ * (spec §22). It is not silent, though — an inert extension that says nothing
+ * cannot be told apart from one that never loaded.
  */
 (async () => {
   try {
     const { start } = await import(chrome.runtime.getURL('src/content/observer.js'));
     await start();
   } catch (err) {
-    console.debug('[DeSlopMyFeed] disabled:', err);
+    // console.error, not console.debug: Chrome hides the Verbose level by
+    // default, so a failed import used to produce a completely silent
+    // extension with no way to tell it apart from one that never loaded.
+    console.error('[DeSlopMyFeed] failed to start:', err);
   }
 })();

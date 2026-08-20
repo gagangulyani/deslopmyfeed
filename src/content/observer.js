@@ -9,7 +9,7 @@ import {
   DEFAULT_SETTINGS, loadSettings, saveSettings, onSettingsChanged, mergeSettings
 } from '../storage/settings.js';
 import { RULES } from '../detector/scoring.js';
-import { clearDebug, log, probe } from './debug.js';
+import { clearDebug, log, probe, showHud } from './debug.js';
 
 /** Mutations arrive in bursts while the feed renders; batch them. */
 const DEBOUNCE_MS = 100;
@@ -63,11 +63,22 @@ function schedule(root) {
   if (timer === null) timer = setTimeout(flush, DEBOUNCE_MS);
 }
 
+/** One line describing what the extension is currently doing, for the panel. */
+function describeState() {
+  if (!settings?.enabled || settings.mode === 'off') {
+    return `idle — enabled=${settings?.enabled} mode=${settings?.mode}`;
+  }
+  return `active · ${location.pathname} · mode=${settings.mode} · sensitivity=${settings.sensitivity}`;
+}
+
 /** Judge the whole page again. Cheap enough: a feed holds tens of posts. */
 function rescan() {
   resetProcessed();
   clearAll();
+  // Takes the panel down with the tags, so it is put back below with a fresh
+  // tally rather than accumulating counts across configuration changes.
   clearDebug();
+  if (settings?.debug) showHud(describeState());
   if (!settings?.enabled || settings.mode === 'off') return;
   for (const post of findPosts(document)) processPost(post, settings);
 }
@@ -123,11 +134,18 @@ export async function start() {
   applyTheme(settings.theme);
   if (!settings.enabled || settings.mode === 'off') {
     log(`loaded but idle — enabled=${settings.enabled} mode=${settings.mode}`);
+    // Shown even though nothing will be filtered: "idle" and "dead" are the
+    // two states hardest to tell apart, and this is the one that says which.
+    if (settings.debug) showHud(describeState());
     return false;
   }
 
   log(`active on ${location.pathname} — mode=${settings.mode} sensitivity=${settings.sensitivity}`);
-  if (settings.debug) probe();
+  if (settings.debug) {
+    const counts = probe();
+    const matched = Object.values(counts).reduce((a, b) => a + b, 0);
+    showHud(`${describeState()} · ${matched} selector match(es)`);
+  }
 
   let initial = 0;
   for (const post of findPosts(document)) {

@@ -16,7 +16,15 @@ import { POST_SELECTORS } from './post-detector.js';
  * never makes applyWarn/applyHide think the post is already decorated. */
 export const DEBUG_ATTR = 'data-dsmf-debug';
 
+/** The status panel. Separate attribute so clearDebug can drop the per-post
+ * tags on a rescan without taking the panel down with them. */
+export const HUD_ATTR = 'data-dsmf-hud';
+
 const PREFIX = '[DeSlopMyFeed]';
+
+/** Running tally of what each post was classified as, for the panel. */
+let tally = Object.create(null);
+let hudNote = '';
 
 /**
  * Stage -> what it means, in the order a post passes through them.
@@ -60,6 +68,9 @@ export function probe(root = document) {
 export function stamp(post, stage, detail = '') {
   if (!post || typeof post.prepend !== 'function') return null;
 
+  tally[stage] = (tally[stage] ?? 0) + 1;
+  renderHud();
+
   const existing = post.querySelector(`[${DEBUG_ATTR}]`);
   if (existing) existing.remove();
 
@@ -84,7 +95,58 @@ export function stamp(post, stage, detail = '') {
   return tag;
 }
 
-/** Remove every debug tag. Called when debug is switched back off. */
+/** Remove every debug tag and the panel. Called when debug is switched off. */
 export function clearDebug(root = document) {
   for (const tag of root.querySelectorAll(`[${DEBUG_ATTR}]`)) tag.remove();
+  for (const hud of root.querySelectorAll(`[${HUD_ATTR}]`)) hud.remove();
+  tally = Object.create(null);
+  hudNote = '';
+}
+
+/**
+ * A fixed panel in the corner of the page, independent of whether any post was
+ * ever found.
+ *
+ * This is the piece the per-post tags cannot provide: if no post matches the
+ * selectors, there is nothing to tag, and a stale selector looks exactly like
+ * an extension that never loaded. The panel appears either way, so "no panel"
+ * and "panel saying 0 posts" are different answers.
+ *
+ * @param {string} note  One line of context — route, mode, why it is idle.
+ */
+export function showHud(note) {
+  hudNote = note;
+  renderHud();
+}
+
+function renderHud() {
+  if (typeof document === 'undefined' || !document.body) return null;
+
+  let hud = document.querySelector(`[${HUD_ATTR}]`);
+  if (!hud) {
+    hud = document.createElement('div');
+    hud.setAttribute(HUD_ATTR, '');
+    hud.className = 'dsmf-hud';
+    document.body.appendChild(hud);
+  }
+
+  const seen = Object.values(tally).reduce((a, b) => a + b, 0);
+  const breakdown = Object.entries(tally)
+    .map(([stage, n]) => `${stage} ${n}`)
+    .join(' · ');
+
+  hud.textContent = '';
+  const title = document.createElement('strong');
+  title.textContent = 'DeSlopMyFeed';
+  hud.appendChild(title);
+  hud.appendChild(line(hudNote));
+  hud.appendChild(line(`${seen} post(s) seen`));
+  if (breakdown) hud.appendChild(line(breakdown));
+  return hud;
+}
+
+function line(text) {
+  const node = document.createElement('div');
+  node.textContent = text;
+  return node;
 }

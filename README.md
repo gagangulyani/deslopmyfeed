@@ -113,8 +113,19 @@ popup: every post gets a tag naming the stage it reached.
 | `NO TEXT NODE` (grey) | The text selector did not match — LinkedIn's markup has moved. |
 | `EXEMPT` (grey) | Skipped by your author or keyword exceptions. |
 
-No tags at all means the content script is not running. The console prints one
-line per page load saying whether it went active and why not if it did not.
+A status panel appears in the bottom-right corner whether or not any post
+matched, because a selector that matches nothing leaves nothing to tag:
+
+- **No panel at all** — the content script is not running. The console prints
+  one line per page load; `[DeSlopMyFeed] failed to start:` names the reason.
+- **Panel reading `0 selector match(es)`** — running, but LinkedIn's markup has
+  moved out from under `src/content/post-detector.js`.
+- **Panel counting posts** — running and reading the feed. The per-stage
+  breakdown says what it decided.
+
+`tools/probe-selectors.js` answers the same question without the extension:
+paste it into the DevTools console on your feed and it reports which selectors
+match and what LinkedIn currently wraps post text in.
 
 ## Privacy
 
