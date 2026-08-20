@@ -51,6 +51,9 @@ function toggle(label, checked, onChange) {
 function choice(name, options, current, onChange) {
   const group = el('div', 'choices');
   group.setAttribute('role', 'radiogroup');
+  // Options without hints (sensitivity, theme) are short labels that read
+  // better as one segmented pill row than as a vertical radio list.
+  if (!options.some(([, , hint]) => hint)) group.classList.add('segmented');
   for (const [value, label, hint] of options) {
     const row = el('label', 'row');
     const input = document.createElement('input');

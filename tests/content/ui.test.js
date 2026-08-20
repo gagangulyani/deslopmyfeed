@@ -49,6 +49,14 @@ describe('warn', () => {
     expect(panel.textContent).toContain('3 enumerated items');
   });
 
+  it('names rules in words, not internal ids', () => {
+    const el = post();
+    applyWarn(el, analysis());
+    const panel = el.querySelector('.dsmf-explain');
+    expect(panel.textContent).toContain('template structure');
+    expect(panel.textContent).not.toContain('templateStacking');
+  });
+
   it('does not decorate the same post twice', () => {
     const el = post();
     applyWarn(el, analysis());

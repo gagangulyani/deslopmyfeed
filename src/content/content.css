@@ -1,99 +1,162 @@
 /* All selectors namespaced under .dsmf- so nothing leaks into LinkedIn styles.
-   Tokens are defined on :root as light, overridden for dark, and overridden
-   again by data-dsmf-theme so the user's explicit choice wins in both
-   directions. */
+   Same palette as the popup: navy, off-white, green for active states, red
+   for slop signals. Light is the base here (the feed is light more often);
+   dark overrides only tokens, and data-dsmf-theme wins in both directions.
+   #dc2626 is the red-700 shade, used where red text sits on off-white for AA
+   contrast. */
 
 :root {
-  --dsmf-bg: #f6f6f4;
-  --dsmf-fg: #1a1a1a;
-  --dsmf-muted: #6b6b6b;
-  --dsmf-border: #dcdcd8;
+  --dsmf-navy: #0f172a;
+  --dsmf-paper: #f8fafc;
+  --dsmf-green: #22c55e;
+  --dsmf-red: #ef4444;
+  --dsmf-muted: #64748b;
+  --dsmf-gray: #1e293b;
+
+  --dsmf-bg: var(--dsmf-paper);
+  --dsmf-fg: var(--dsmf-navy);
+  --dsmf-secondary: var(--dsmf-muted);
+  --dsmf-border: rgb(15 23 42 / 14%);
+  --dsmf-signal: #dc2626;
+  --dsmf-signal-bg: rgb(239 68 68 / 8%);
+  --dsmf-signal-border: rgb(239 68 68 / 35%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-dsmf-theme='light']) {
-    --dsmf-bg: #1b1b1b;
-    --dsmf-fg: #ededed;
-    --dsmf-muted: #9a9a9a;
-    --dsmf-border: #303030;
+    --dsmf-bg: var(--dsmf-navy);
+    --dsmf-fg: var(--dsmf-paper);
+    --dsmf-secondary: #94a3b8;
+    --dsmf-border: rgb(100 116 139 / 35%);
+    --dsmf-signal: var(--dsmf-red);
+    --dsmf-signal-bg: rgb(239 68 68 / 14%);
+    --dsmf-signal-border: rgb(239 68 68 / 45%);
   }
 }
 
 :root[data-dsmf-theme='dark'] {
-  --dsmf-bg: #1b1b1b;
-  --dsmf-fg: #ededed;
-  --dsmf-muted: #9a9a9a;
-  --dsmf-border: #303030;
+  --dsmf-bg: var(--dsmf-navy);
+  --dsmf-fg: var(--dsmf-paper);
+  --dsmf-secondary: #94a3b8;
+  --dsmf-border: rgb(100 116 139 / 35%);
+  --dsmf-signal: var(--dsmf-red);
+  --dsmf-signal-bg: rgb(239 68 68 / 14%);
+  --dsmf-signal-border: rgb(239 68 68 / 45%);
 }
 
 :root[data-dsmf-theme='light'] {
-  --dsmf-bg: #f6f6f4;
-  --dsmf-fg: #1a1a1a;
-  --dsmf-muted: #6b6b6b;
-  --dsmf-border: #dcdcd8;
+  --dsmf-bg: var(--dsmf-paper);
+  --dsmf-fg: var(--dsmf-navy);
+  --dsmf-secondary: var(--dsmf-muted);
+  --dsmf-border: rgb(15 23 42 / 14%);
+  --dsmf-signal: #dc2626;
+  --dsmf-signal-bg: rgb(239 68 68 / 8%);
+  --dsmf-signal-border: rgb(239 68 68 / 35%);
 }
 
 /* Collapse hides the post's own children and nothing else, so restoring is
    removing one class and one node. */
 .dsmf-hidden > *:not(.dsmf-card):not(.dsmf-debug) { display: none !important; }
 
-.dsmf-card,
-.dsmf-badge {
-  background: var(--dsmf-bg);
-  color: var(--dsmf-fg);
-  border: 1px solid var(--dsmf-border);
-  font: 13px/1.5 system-ui, -apple-system, sans-serif;
-}
-
-.dsmf-card {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  padding: 14px 16px;
-  border-radius: 8px;
-}
-
-.dsmf-card-title { font-weight: 600; }
-
-.dsmf-card-reason,
-.dsmf-badge-reason {
-  color: var(--dsmf-muted);
-  flex: 1 1 100%;
-}
-
+/* The warn badge: a tinted red pill pinned to the top of the post. */
 .dsmf-badge {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin: 8px 12px 0;
-  padding: 4px 10px;
-  border-radius: 999px;
+  padding: 5px 12px;
   width: fit-content;
   max-width: calc(100% - 24px);
+  background: var(--dsmf-signal-bg);
+  border: 1px solid var(--dsmf-signal-border);
+  border-radius: 999px;
+  color: var(--dsmf-fg);
+  font: 12px/1.5 system-ui, -apple-system, sans-serif;
 }
 
-.dsmf-badge-label { font-weight: 600; }
+.dsmf-badge-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dsmf-signal);
+}
+
+.dsmf-badge-reason { color: var(--dsmf-secondary); }
+
+/* The hide card replaces the post in place. */
+.dsmf-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--dsmf-bg);
+  color: var(--dsmf-fg);
+  border: 1px solid var(--dsmf-border);
+  border-radius: 10px;
+  font: 13px/1.5 system-ui, -apple-system, sans-serif;
+}
+
+.dsmf-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 650;
+}
+
+.dsmf-card-title::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dsmf-red);
+  flex: none;
+}
+
+.dsmf-card-reason {
+  color: var(--dsmf-secondary);
+  flex: 1 1 100%;
+  font-size: 12px;
+}
 
 .dsmf-button {
   background: transparent;
   color: inherit;
   border: 1px solid var(--dsmf-border);
   border-radius: 999px;
-  padding: 2px 10px;
+  padding: 3px 12px;
   font: inherit;
+  font-size: 12px;
   cursor: pointer;
+  transition: border-color 140ms ease-out, background 140ms ease-out;
 }
 
-.dsmf-button:hover { border-color: var(--dsmf-fg); }
+.dsmf-button:hover { border-color: var(--dsmf-secondary); }
+
+.dsmf-button:focus-visible {
+  outline: 2px solid var(--dsmf-green);
+  outline-offset: 1px;
+}
+
+/* The way back to the post is the one primary action. */
+.dsmf-button.dsmf-primary {
+  background: var(--dsmf-green);
+  border-color: var(--dsmf-green);
+  color: var(--dsmf-navy);
+  font-weight: 600;
+}
+
+.dsmf-button.dsmf-primary:hover { filter: brightness(1.06); }
 
 .dsmf-explain {
   flex: 1 1 100%;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 4px;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 12px;
 }
 
 .dsmf-explain[hidden] { display: none; }
@@ -104,15 +167,16 @@
   gap: 2px;
 }
 
-.dsmf-explain-rule { font-weight: 600; }
+.dsmf-explain-rule { font-weight: 650; }
 
 .dsmf-explain-evidence {
-  color: var(--dsmf-muted);
+  color: var(--dsmf-secondary);
   overflow-wrap: anywhere;
 }
 
 /* Diagnostics. Only rendered when the debug setting is on. Deliberately loud:
-   its whole job is to be impossible to miss on a busy feed. */
+   its whole job is to be impossible to miss on a busy feed. Palette mapping:
+   muted blue for skips, green for analyzed-and-clean, red for flagged. */
 .dsmf-debug {
   display: flex;
   flex-wrap: wrap;
@@ -128,18 +192,18 @@
 
 .dsmf-debug-detail { opacity: 0.85; overflow-wrap: anywhere; }
 
-/* Grey: the post never reached the detectors. */
-.dsmf-debug-skip { background: #565656; }
+/* Muted blue: the post never reached the detectors (skip, exempt, sponsored). */
+.dsmf-debug-skip { background: var(--dsmf-muted); }
 
-/* Blue: analyzed, below threshold. The extension is working and this post is
-   not slop — the outcome that looks identical to doing nothing. */
-.dsmf-debug-clean { background: #2f5d8c; }
+/* Green: analyzed, below threshold. The extension is working and this post is
+   not slop, the outcome that looks identical to doing nothing. */
+.dsmf-debug-clean { background: var(--dsmf-green); color: var(--dsmf-navy); }
 
-/* Amber: warned or hidden. */
-.dsmf-debug-flag { background: #9a6212; }
+/* Red: warned or hidden. */
+.dsmf-debug-flag { background: var(--dsmf-red); }
 
 /* Status panel. Fixed rather than inline because its job is to be visible even
-   when no post matched — which is precisely when there is nothing to attach an
+   when no post matched, which is precisely when there is nothing to attach an
    inline tag to. */
 .dsmf-hud {
   position: fixed;
@@ -148,10 +212,13 @@
   z-index: 2147483647;
   max-width: 320px;
   padding: 8px 12px;
-  border-radius: 6px;
-  background: #12263a;
-  color: #fff;
+  border: 1px solid var(--dsmf-gray);
+  border-radius: 8px;
+  background: var(--dsmf-navy);
+  color: var(--dsmf-paper);
   font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
-  box-shadow: 0 2px 12px rgb(0 0 0 / 35%);
+  box-shadow: 0 4px 16px rgb(15 23 42 / 40%);
   pointer-events: none;
 }
+
+.dsmf-hud strong { color: var(--dsmf-green); }

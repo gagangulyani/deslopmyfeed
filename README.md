@@ -110,11 +110,12 @@ popup: every post gets a tag naming the stage it reached.
 
 | Tag | Meaning |
 | --- | --- |
-| `SHOW` (blue) | Analyzed, scored below the warn threshold. Working as intended. |
-| `WARN` / `HIDE` (amber) | Flagged. |
-| `TRUNCATED` (grey) | Collapsed behind "…see more", so the full text is not in the DOM. Never analyzed. |
-| `NO TEXT NODE` (grey) | The text selector did not match — LinkedIn's markup has moved. |
-| `EXEMPT` (grey) | Skipped by your author or keyword exceptions. |
+| `SHOW` (green) | Analyzed, scored below the warn threshold. Working as intended. |
+| `WARN` / `HIDE` (red) | Flagged. |
+| `SPONSORED` (slate) | Promoted content. Never judged. |
+| `TRUNCATED` (slate) | Collapsed behind "…see more", so the full text is not in the DOM. Never analyzed. |
+| `NO TEXT NODE` (slate) | The text selector did not match — LinkedIn's markup has moved. |
+| `EXEMPT` (slate) | Skipped by your author or keyword exceptions. |
 
 A status panel appears in the bottom-right corner whether or not any post
 matched, because a selector that matches nothing leaves nothing to tag:

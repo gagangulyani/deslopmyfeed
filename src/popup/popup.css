@@ -1,77 +1,241 @@
-/* Light is the base; dark overrides only tokens. Theme is set as
-   data-theme on <html> by popup.js: 'system' leaves it unset. */
+/* DeSlopMyFeed palette. Deep navy is the brand surface, off-white the light
+   theme. Green is reserved for active states and primary actions, red for
+   slop signals. Two shades are derived from the same families purely for AA
+   contrast: slate-400 (#94a3b8) for secondary text on navy, red-700 (#dc2626)
+   for red text on off-white.
+
+   Dark is the default; 'system' resolves through the light media query, and
+   data-theme on <html> (set by popup.js) wins in both directions. */
 
 :root {
-  --bg: #ffffff;
-  --fg: #1a1a1a;
-  --muted: #6b6b6b;
-  --border: #e5e5e5;
-  --accent: #2563eb;
+  --navy: #0f172a;
+  --paper: #f8fafc;
+  --green: #22c55e;
+  --red: #ef4444;
+  --muted: #64748b;
+  --gray: #1e293b;
+
+  --bg: var(--navy);
+  --surface: var(--gray);
+  --fg: var(--paper);
+  --secondary: #94a3b8;
+  --border: rgb(100 116 139 / 35%);
+  --hover: rgb(100 116 139 / 14%);
+  --signal: var(--red);
+  --track: rgb(100 116 139 / 45%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #0d0d0d;
-    --fg: #ededed;
-    --muted: #8a8a8a;
-    --border: #222222;
-    --accent: #5b8cff;
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --bg: var(--paper);
+    --surface: #f1f5f9;
+    --fg: var(--navy);
+    --secondary: var(--muted);
+    --border: rgb(15 23 42 / 14%);
+    --hover: rgb(15 23 42 / 6%);
+    --signal: #dc2626;
+    --track: rgb(15 23 42 / 18%);
   }
 }
 
-:root[data-theme='dark'] {
-  --bg: #0d0d0d;
-  --fg: #ededed;
-  --muted: #8a8a8a;
-  --border: #222222;
-  --accent: #5b8cff;
+:root[data-theme='light'] {
+  --bg: var(--paper);
+  --surface: #f1f5f9;
+  --fg: var(--navy);
+  --secondary: var(--muted);
+  --border: rgb(15 23 42 / 14%);
+  --hover: rgb(15 23 42 / 6%);
+  --signal: #dc2626;
+  --track: rgb(15 23 42 / 18%);
 }
 
 body {
-  width: 300px;
+  width: 320px;
   margin: 0;
-  padding: 16px;
+  padding-bottom: 16px;
   background: var(--bg);
   color: var(--fg);
-  font: 14px/1.5 system-ui, sans-serif;
+  font: 13px/1.5 system-ui, -apple-system, sans-serif;
 }
 
-.section { margin-top: 18px; }
+/* Brand header. Static markup in index.html; #app renders below it. */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand img { display: block; border-radius: 7px; }
+
+.brand h1 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+#app { padding: 0 18px; }
+
+.section { margin-top: 20px; }
 
 .section-title {
-  margin: 0 0 6px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--secondary);
+}
+
+/* The master toggle is the first row: promoted to a card so the kill switch
+   reads as the control it is. */
+#app > .row:first-child {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-weight: 600;
 }
 
 .row {
   display: grid;
   grid-template-columns: auto 1fr;
-  align-items: baseline;
-  gap: 8px;
-  padding: 3px 0;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  margin: 0 -8px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-.row-label { color: var(--fg); }
+.row:hover { background: var(--hover); }
 
 .row-hint {
   grid-column: 2;
   font-size: 12px;
-  color: var(--muted);
+  line-height: 1.4;
+  color: var(--secondary);
 }
 
+/* Checkboxes render as switches. Structure is unchanged: still one input per
+   row, so settings wiring and tests are untouched. */
+input[type='checkbox'] {
+  appearance: none;
+  width: 34px;
+  height: 20px;
+  margin: 0;
+  flex: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--track);
+  position: relative;
+  cursor: pointer;
+  transition: background 160ms ease-out, border-color 160ms ease-out;
+}
+
+input[type='checkbox']::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--paper);
+  transition: transform 160ms ease-out;
+}
+
+input[type='checkbox']:checked {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+input[type='checkbox']:checked::after { transform: translateX(14px); }
+
+input[type='checkbox']:focus-visible,
+input[type='radio']:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+/* Radio lists (mode): custom dots, and the checked row gets a green tint so
+   the current state is visible at a glance. */
 .choices { display: flex; flex-direction: column; }
 
-input[type='checkbox'],
-input[type='radio'] { accent-color: var(--accent); margin: 0; }
+.choices:not(.segmented) input[type='radio'] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1.5px solid var(--secondary);
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+}
+
+.choices:not(.segmented) input[type='radio']::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  transform: scale(0);
+  transition: transform 140ms ease-out;
+}
+
+.choices:not(.segmented) input[type='radio']:checked { border-color: var(--green); }
+
+.choices:not(.segmented) input[type='radio']:checked::after { transform: scale(1); }
+
+.choices:not(.segmented) .row:has(input:checked) { background: rgb(34 197 94 / 10%); }
+
+/* Segmented groups (sensitivity, theme): options without hints render as one
+   pill row. The input stays in the DOM, visually hidden but focusable and
+   clickable, so the settings schema and tests are untouched. */
+.choices.segmented {
+  flex-direction: row;
+  gap: 4px;
+  padding: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.choices.segmented .row {
+  display: block;
+  flex: 1;
+  margin: 0;
+  padding: 5px 0;
+  text-align: center;
+  border-radius: 7px;
+}
+
+.choices.segmented .row:hover { background: var(--hover); }
+
+.choices.segmented input[type='radio'] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.choices.segmented .row:has(input:checked) {
+  background: var(--green);
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.choices.segmented .row:has(input:focus-visible) {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
 
 .section-hint {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   font-size: 12px;
   line-height: 1.4;
-  color: var(--muted);
+  color: var(--secondary);
 }

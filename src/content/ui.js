@@ -7,6 +7,8 @@
  * one place it gets rendered back into the DOM.
  */
 
+import { RULE_LABELS } from '../detector/scoring.js';
+
 /** Marks our own nodes so clearAll can find them without retaining references
  * to LinkedIn's recycled post elements. */
 const ARTIFACT = 'data-dsmf-artifact';
@@ -40,7 +42,7 @@ function explanation(analysis) {
 
   for (const result of analysis.results) {
     const item = el('div', 'dsmf-explain-item');
-    item.appendChild(el('span', 'dsmf-explain-rule', result.rule));
+    item.appendChild(el('span', 'dsmf-explain-rule', RULE_LABELS[result.rule] ?? result.rule));
     for (const line of result.evidence.slice(0, 3)) {
       item.appendChild(el('span', 'dsmf-explain-evidence', line));
     }
@@ -85,7 +87,9 @@ export function applyHide(post, analysis) {
   card.appendChild(el('div', 'dsmf-card-reason', analysis.reason));
 
   const panel = explanation(analysis);
-  card.appendChild(button('Show post', () => restore(post)));
+  const show = button('Show post', () => restore(post));
+  show.classList.add('dsmf-primary');
+  card.appendChild(show);
   card.appendChild(button('Why?', () => { panel.hidden = !panel.hidden; }));
   card.appendChild(alwaysShow(post, analysis));
   card.appendChild(panel);
