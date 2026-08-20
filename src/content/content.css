@@ -1,20 +1,112 @@
-/* All selectors namespaced under .dsmf- so nothing leaks into LinkedIn styles. */
+/* All selectors namespaced under .dsmf- so nothing leaks into LinkedIn styles.
+   Tokens are defined on :root as light, overridden for dark, and overridden
+   again by data-dsmf-theme so the user's explicit choice wins in both
+   directions. */
 
-.dsmf-hidden > * { display: none !important; }
+:root {
+  --dsmf-bg: #f6f6f4;
+  --dsmf-fg: #1a1a1a;
+  --dsmf-muted: #6b6b6b;
+  --dsmf-border: #dcdcd8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dsmf-theme='light']) {
+    --dsmf-bg: #1b1b1b;
+    --dsmf-fg: #ededed;
+    --dsmf-muted: #9a9a9a;
+    --dsmf-border: #303030;
+  }
+}
+
+:root[data-dsmf-theme='dark'] {
+  --dsmf-bg: #1b1b1b;
+  --dsmf-fg: #ededed;
+  --dsmf-muted: #9a9a9a;
+  --dsmf-border: #303030;
+}
+
+:root[data-dsmf-theme='light'] {
+  --dsmf-bg: #f6f6f4;
+  --dsmf-fg: #1a1a1a;
+  --dsmf-muted: #6b6b6b;
+  --dsmf-border: #dcdcd8;
+}
+
+/* Collapse hides the post's own children and nothing else, so restoring is
+   removing one class and one node. */
+.dsmf-hidden > *:not(.dsmf-card) { display: none !important; }
+
+.dsmf-card,
+.dsmf-badge {
+  background: var(--dsmf-bg);
+  color: var(--dsmf-fg);
+  border: 1px solid var(--dsmf-border);
+  font: 13px/1.5 system-ui, -apple-system, sans-serif;
+}
 
 .dsmf-card {
-  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 14px 16px;
   border-radius: 8px;
-  font: 14px/1.5 system-ui, sans-serif;
+}
+
+.dsmf-card-title { font-weight: 600; }
+
+.dsmf-card-reason,
+.dsmf-badge-reason {
+  color: var(--dsmf-muted);
+  flex: 1 1 100%;
 }
 
 .dsmf-badge {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
+  gap: 8px;
+  margin: 8px 12px 0;
+  padding: 4px 10px;
   border-radius: 999px;
-  font-size: 12px;
+  width: fit-content;
+  max-width: calc(100% - 24px);
 }
 
-/* Themes are applied by setting data-dsmf-theme on <html>. */
+.dsmf-badge-label { font-weight: 600; }
+
+.dsmf-button {
+  background: transparent;
+  color: inherit;
+  border: 1px solid var(--dsmf-border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.dsmf-button:hover { border-color: var(--dsmf-fg); }
+
+.dsmf-explain {
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.dsmf-explain[hidden] { display: none; }
+
+.dsmf-explain-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dsmf-explain-rule { font-weight: 600; }
+
+.dsmf-explain-evidence {
+  color: var(--dsmf-muted);
+  overflow-wrap: anywhere;
+}
