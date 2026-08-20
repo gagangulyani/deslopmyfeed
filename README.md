@@ -8,11 +8,11 @@ generic and AI-style content out of your LinkedIn feed.
 Analysis happens entirely in your browser. No post content is sent anywhere, no
 AI API is used, no account is required.
 
-**Status: alpha, never run on LinkedIn.** All seven detectors, the content
-script, the UI and settings are implemented and tested (177 tests). Nobody has
-loaded it into Chrome and scrolled a real feed yet, so the DOM selectors are
-unproven. See [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) for what is verified
-and what is not.
+**Status: alpha, exercised against a live LinkedIn feed.** The DOM extraction
+path and classifier were evaluated on live feed cards, but this is not a
+controlled end-to-end release test or a measured field false-positive rate. See
+[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) for verified behavior and remaining
+validation gaps.
 
 ---
 
@@ -50,7 +50,7 @@ are weak on purpose; combinations carry the signal.
 | Template stacking | 3 | Hook + story + numbered lessons + generic close, together |
 | Rhetorical templates | 2 | "Here's what I learned", "It's not X, it's Y" |
 | Genericity | 2 | Broad claims, few dates, numbers, names or concrete events |
-| Synthetic formatting | 2 | One-line paragraph clusters, colon-led lines, em-dash density |
+| Synthetic formatting | 2 | One-line paragraph clusters, colon-led lines, dash separators |
 | Vocabulary clusters | 1 | Co-occurring abstract/inspirational/discourse terms |
 | Engagement formula | 1 | "Thoughts?", "Comment below", 👇 |
 | Hashtag behavior | 1 | Hashtag-stuffed endings |
@@ -69,11 +69,11 @@ rather than guessed — the highest score any human fixture reaches is 0.8.
 
 ### Measured behavior
 
-Against `tests/fixtures/` (178 posts), at default settings:
+Against `tests/fixtures/` (179 posts), at default settings:
 
 | Corpus | Flagged | Hidden |
 | --- | ---: | ---: |
-| human (54 analyzable) | 0.0% | 0.0% |
+| human (91 judged) | 0.0% | 0.0% |
 | ai (50) | 74.0% | 26.0% |
 | assisted (22) | 0.0% | 0.0% |
 | adversarial (16) | 0.0% | 0.0% |
@@ -88,9 +88,9 @@ a real post.
 ### Guard rails
 
 - Posts under 10 words are never judged.
-- 10–49 words can be flagged but never hidden — little text is little evidence.
+- 10–49 words can be flagged but never hidden — little text is little evidence. A dash separator is weak evidence and needs another signal to warn.
 - 50–100 words are scored conservatively (0.7x).
-- Non-English text is left alone; every rule is English-only.
+- Posts detected as likely Romanized Hindi/Hinglish are left unscored; other languages are not yet reliably identified.
 - Sponsored posts are never judged — ad copy is engineered to trip the rules.
 - Hiding requires at least two independent signal categories, one structural.
 - Weak rules cannot reach a hide verdict between them, at any weight.
@@ -115,7 +115,7 @@ popup: every post gets a tag naming the stage it reached.
 | `SPONSORED` (slate) | Promoted content. Never judged. |
 | `TRUNCATED` (slate) | Collapsed behind "…see more", so the full text is not in the DOM. Never analyzed. |
 | `NO TEXT NODE` (slate) | The text selector did not match — LinkedIn's markup has moved. |
-| `EXEMPT` (slate) | Skipped by your author or keyword exceptions. |
+| `EXEMPT` (slate) | Skipped by a configured exception. |
 
 A status panel appears in the bottom-right corner whether or not any post
 matched, because a selector that matches nothing leaves nothing to tag:

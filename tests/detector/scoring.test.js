@@ -82,6 +82,27 @@ describe('guard rail: short posts', () => {
     expect(result.verdict).toBe('warn');
   });
 
+  it('does not warn on a short-post dash without another signal', () => {
+    const dashOnly = {
+      formatting: () => signal('formatting', 0.5, ['short post uses a dash separator'])
+    };
+    const result = analyze(SHORT, { ...HIDE_MODE, weights: { formatting: 9 } }, dashOnly);
+    expect(result.score).toBeGreaterThanOrEqual(DEFAULT_SETTINGS.thresholds.warn);
+    expect(result.verdict).toBe('show');
+  });
+
+  it('allows a short-post dash to corroborate another signal', () => {
+    const corroborated = {
+      formatting: () => signal('formatting', 0.5, ['short post uses a dash separator']),
+      templateStacking: () => signal('templateStacking', 1, ['stock hook'])
+    };
+    const result = analyze(SHORT, {
+      ...HIDE_MODE,
+      weights: { formatting: 9, templateStacking: 9 }
+    }, corroborated);
+    expect(result.verdict).toBe('warn');
+  });
+
   it('the hide verdict still needs the full analysis floor', () => {
     const rules = stub({ templateStacking: 1, vocabulary: 1 });
     const weights = { templateStacking: 9, vocabulary: 9 };

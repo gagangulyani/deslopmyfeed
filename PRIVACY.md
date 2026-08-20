@@ -25,12 +25,14 @@ extension's own files through `chrome.runtime.getURL`.
 `chrome.storage.local` holds only your configuration:
 
 - Whether filtering is enabled, and the mode (off / warn / hide)
-- Sensitivity and score thresholds
-- Which detection rules are enabled, and their weights
-- Custom vocabulary terms you add
-- Local exceptions (authors and keywords you always want to see)
+- Sensitivity
+- Which detection rules are enabled
 - Theme preference
 - Whether the diagnostics overlay is on
+
+The popup currently exposes only these controls. The internal settings schema
+also reserves fields for future vocabulary, exception, threshold, and weight
+controls; the extension does not currently provide a UI for editing them.
 
 This never leaves your machine and is never synced.
 
@@ -69,5 +71,7 @@ Analytics, PostHog, Mixpanel, or telemetry of any kind.
 
 ## Kill switch
 
-Filtering can be disabled entirely from the popup, which restores every
-collapsed post and detaches all observers.
+Filtering can be disabled entirely from the popup. It restores every collapsed
+post, clears diagnostics, and disconnects the feed MutationObserver. The page
+continues listening for settings changes so filtering can be re-enabled without
+a reload.
