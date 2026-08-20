@@ -21,7 +21,7 @@
   // even when every selector we remembered has gone.
   const freq = new Map();
   for (const e of all) {
-    for (const c of String(e.className || '').trim().split(/\s+/)) {
+    for (const c of e.classList) {
       if (c) freq.set(c, (freq.get(c) ?? 0) + 1);
     }
   }

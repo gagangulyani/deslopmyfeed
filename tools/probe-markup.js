@@ -5,8 +5,8 @@
 // copies a summary to the clipboard and prints nothing about post content.
 (() => {
   const cls = (e) => {
-    const c = String(e.className || '').trim();
-    return c ? '.' + c.split(/\s+/).slice(0, 4).join('.') : '';
+    const c = [...e.classList].slice(0, 4);
+    return c.length ? '.' + c.join('.') : '';
   };
   const tag = (e) => e.tagName.toLowerCase() + cls(e);
 
