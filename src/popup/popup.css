@@ -1,0 +1,37 @@
+/* Light is the base; dark overrides only tokens. Theme is set as
+   data-theme on <html> by popup.js: 'system' leaves it unset. */
+
+:root {
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --muted: #6b6b6b;
+  --border: #e5e5e5;
+  --accent: #2563eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0d0d0d;
+    --fg: #ededed;
+    --muted: #8a8a8a;
+    --border: #222222;
+    --accent: #5b8cff;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #0d0d0d;
+  --fg: #ededed;
+  --muted: #8a8a8a;
+  --border: #222222;
+  --accent: #5b8cff;
+}
+
+body {
+  width: 300px;
+  margin: 0;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.5 system-ui, sans-serif;
+}

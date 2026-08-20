@@ -1,0 +1,20 @@
+/* All selectors namespaced under .dsmf- so nothing leaks into LinkedIn styles. */
+
+.dsmf-hidden > * { display: none !important; }
+
+.dsmf-card {
+  padding: 16px;
+  border-radius: 8px;
+  font: 14px/1.5 system-ui, sans-serif;
+}
+
+.dsmf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* Themes are applied by setting data-dsmf-theme on <html>. */

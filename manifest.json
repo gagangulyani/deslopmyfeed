@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "DeSlopMyFeed",
+  "version": "0.1.0",
+  "description": "Locally filters formulaic, generic, and AI-style posts from your LinkedIn feed. No servers, no accounts, no telemetry.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["src/content/bootstrap.js"],
+      "css": ["src/content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/content/*.js", "src/detector/*.js", "src/storage/*.js"],
+      "matches": ["https://www.linkedin.com/*"]
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_title": "DeSlopMyFeed"
+  },
+  "icons": {}
+}

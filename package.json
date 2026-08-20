@@ -1,0 +1,16 @@
+{
+  "name": "deslopmyfeed",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Privacy-first Chrome extension that locally filters AI-style LinkedIn posts.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "bench": "node tests/bench.js"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  }
+}
