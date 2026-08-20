@@ -448,5 +448,10 @@
     "id": "human-090",
     "label": "human",
     "text": "Some numbers on our apprenticeship programme, three cohorts in, because I keep being asked whether it is worth it and the honest answer is complicated.\n\nWe have taken 12 apprentices over three years. Nine are still with us. Two left for other companies, which is fine and expected. One left the industry.\n\nCost: an apprentice is roughly 40% of a junior salary, plus the mentoring time, which we measured at about four hours a week for the first six months. Four hours of a senior engineer is not cheap. Total cost per apprentice in year one is close to a junior hire.\n\nOutput: by month nine, our apprentices are producing at roughly the level of a junior with a year of experience. By month eighteen there is no distinguishable difference between them and someone we hired conventionally.\n\nSo purely financially, it is roughly a wash with a slower ramp.\n\nWhy we keep doing it: the nine who stayed have a retention pattern nothing else in our hiring produces. Average tenure is now past three years against a company average of 2.1. And two of them are now the best mentors we have, which I did not anticipate and which I think comes from having been on the other side recently enough to remember it."
+  },
+  {
+    "id": "human-091",
+    "label": "human",
+    "text": "Shipped the accessibility fix today; screen-reader navigation now works correctly."
   }
 ]

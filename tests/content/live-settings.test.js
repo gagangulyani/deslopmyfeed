@@ -35,6 +35,16 @@ afterEach(() => {
 });
 
 describe('settings take effect without a reload', () => {
+  it('enables filtering live when the tab booted disabled', async () => {
+    await saveSettings({ enabled: false });
+    appendPost();
+    await start();
+    expect(badges()).toBe(0);
+
+    await saveSettings({ enabled: true });
+    expect(badges()).toBe(1);
+  });
+
   it('switching to hide collapses posts already on the page', async () => {
     appendPost();
     await start();
@@ -58,11 +68,15 @@ describe('settings take effect without a reload', () => {
     expect(document.querySelectorAll('.dsmf-hidden')).toHaveLength(0);
   });
 
-  it('the kill switch clears the page', async () => {
+  it('the kill switch clears the page and stops observing new posts', async () => {
     appendPost();
     await start();
     await saveSettings({ enabled: false });
     expect(document.querySelectorAll('[data-dsmf-artifact]')).toHaveLength(0);
+
+    appendPost();
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    expect(badges()).toBe(0);
   });
 
   it('turning a rule off re-judges the page', async () => {

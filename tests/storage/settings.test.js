@@ -39,6 +39,14 @@ describe('load and save', () => {
     expect(await loadSettings()).toMatchObject({ mode: 'hide', sensitivity: 'high' });
   });
 
+  it('serializes overlapping patches so neither update is lost', async () => {
+    await Promise.all([
+      saveSettings({ mode: 'hide' }),
+      saveSettings({ sensitivity: 'high' })
+    ]);
+    expect(await loadSettings()).toMatchObject({ mode: 'hide', sensitivity: 'high' });
+  });
+
   it('writes everything under one key', async () => {
     await saveSettings({ mode: 'hide' });
     expect(Object.keys(await chrome.storage.local.get(STORAGE_KEY))).toEqual([STORAGE_KEY]);
