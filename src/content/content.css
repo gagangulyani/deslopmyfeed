@@ -35,7 +35,7 @@
 
 /* Collapse hides the post's own children and nothing else, so restoring is
    removing one class and one node. */
-.dsmf-hidden > *:not(.dsmf-card) { display: none !important; }
+.dsmf-hidden > *:not(.dsmf-card):not(.dsmf-debug) { display: none !important; }
 
 .dsmf-card,
 .dsmf-badge {
@@ -110,3 +110,30 @@
   color: var(--dsmf-muted);
   overflow-wrap: anywhere;
 }
+
+/* Diagnostics. Only rendered when the debug setting is on. Deliberately loud:
+   its whole job is to be impossible to miss on a busy feed. */
+.dsmf-debug {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  padding: 3px 10px;
+  border-radius: 4px 4px 0 0;
+  font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #fff;
+}
+
+.dsmf-debug-stage { font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+
+.dsmf-debug-detail { opacity: 0.85; overflow-wrap: anywhere; }
+
+/* Grey: the post never reached the detectors. */
+.dsmf-debug-skip { background: #565656; }
+
+/* Blue: analyzed, below threshold. The extension is working and this post is
+   not slop — the outcome that looks identical to doing nothing. */
+.dsmf-debug-clean { background: #2f5d8c; }
+
+/* Amber: warned or hidden. */
+.dsmf-debug-flag { background: #9a6212; }

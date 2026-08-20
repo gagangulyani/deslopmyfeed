@@ -102,6 +102,15 @@ export function renderInto(root, settings, onChange) {
   theme.appendChild(choice('theme', THEMES, config.theme, (value) => onChange({ theme: value })));
   root.appendChild(theme);
 
+  const diagnostics = section('Diagnostics');
+  diagnostics.appendChild(
+    toggle('Show what the extension sees', config.debug === true, (debug) => onChange({ debug }))
+  );
+  diagnostics.appendChild(
+    el('p', 'section-hint', 'Tags every post on the feed with the stage it reached and its score. Changes nothing about what gets filtered.')
+  );
+  root.appendChild(diagnostics);
+
   applyTheme(config.theme);
   return root;
 }

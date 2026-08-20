@@ -9,6 +9,7 @@ import {
   DEFAULT_SETTINGS, loadSettings, saveSettings, onSettingsChanged, mergeSettings
 } from '../storage/settings.js';
 import { RULES } from '../detector/scoring.js';
+import { clearDebug, log, probe } from './debug.js';
 
 /** Mutations arrive in bursts while the feed renders; batch them. */
 const DEBOUNCE_MS = 100;
@@ -47,9 +48,14 @@ function flush() {
   // the user can navigate off the feed without any page load happening.
   if (!isFeedRoute()) return;
 
+  let seen = 0;
   for (const root of roots) {
-    for (const post of findPosts(root)) processPost(post, settings);
+    for (const post of findPosts(root)) {
+      processPost(post, settings);
+      seen += 1;
+    }
   }
+  if (settings?.debug && seen > 0) log(`scanned ${seen} newly inserted post(s)`);
 }
 
 function schedule(root) {
@@ -61,6 +67,7 @@ function schedule(root) {
 function rescan() {
   resetProcessed();
   clearAll();
+  clearDebug();
   if (!settings?.enabled || settings.mode === 'off') return;
   for (const post of findPosts(document)) processPost(post, settings);
 }
@@ -103,13 +110,31 @@ async function onAlwaysShow(event) {
 /** Boot: load settings, install MutationObserver, process what is already there. */
 export async function start() {
   if (observer) return false;
-  if (!isFeedRoute()) return false;
+
+  // One line, unconditionally. Without it a content script that loaded and
+  // then declined to act is indistinguishable from one that never loaded at
+  // all, which is the single hardest thing to diagnose from a real feed.
+  if (!isFeedRoute()) {
+    log(`loaded on ${location.pathname} — not a feed route, standing by`);
+    return false;
+  }
 
   settings = await readSettings();
   applyTheme(settings.theme);
-  if (!settings.enabled || settings.mode === 'off') return false;
+  if (!settings.enabled || settings.mode === 'off') {
+    log(`loaded but idle — enabled=${settings.enabled} mode=${settings.mode}`);
+    return false;
+  }
 
-  for (const post of findPosts(document)) processPost(post, settings);
+  log(`active on ${location.pathname} — mode=${settings.mode} sensitivity=${settings.sensitivity}`);
+  if (settings.debug) probe();
+
+  let initial = 0;
+  for (const post of findPosts(document)) {
+    processPost(post, settings);
+    initial += 1;
+  }
+  if (settings.debug) log(`${initial} post(s) present at boot`);
 
   observer = new MutationObserver((records) => {
     for (const record of records) {
@@ -155,4 +180,5 @@ export function stop() {
   settings = null;
   resetProcessed();
   clearAll();
+  clearDebug();
 }

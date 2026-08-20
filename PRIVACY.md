@@ -30,6 +30,7 @@ extension's own files through `chrome.runtime.getURL`.
 - Custom vocabulary terms you add
 - Local exceptions (authors and keywords you always want to see)
 - Theme preference
+- Whether the diagnostics overlay is on
 
 This never leaves your machine and is never synced.
 

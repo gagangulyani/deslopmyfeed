@@ -99,6 +99,23 @@ a real post.
 
 The project prefers *missing some slop* over *hiding legitimate content*.
 
+## When it looks like nothing is happening
+
+Most posts are not slop, so a working extension and a broken one look the same
+from a feed. Turn on **Diagnostics -> Show what the extension sees** in the
+popup: every post gets a tag naming the stage it reached.
+
+| Tag | Meaning |
+| --- | --- |
+| `SHOW` (blue) | Analyzed, scored below the warn threshold. Working as intended. |
+| `WARN` / `HIDE` (amber) | Flagged. |
+| `TRUNCATED` (grey) | Collapsed behind "…see more", so the full text is not in the DOM. Never analyzed. |
+| `NO TEXT NODE` (grey) | The text selector did not match — LinkedIn's markup has moved. |
+| `EXEMPT` (grey) | Skipped by your author or keyword exceptions. |
+
+No tags at all means the content script is not running. The console prints one
+line per page load saying whether it went active and why not if it did not.
+
 ## Privacy
 
 See [PRIVACY.md](PRIVACY.md). Short version: no backend, no AI APIs, no

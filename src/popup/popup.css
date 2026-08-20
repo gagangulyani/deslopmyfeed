@@ -68,3 +68,10 @@ body {
 
 input[type='checkbox'],
 input[type='radio'] { accent-color: var(--accent); margin: 0; }
+
+.section-hint {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}

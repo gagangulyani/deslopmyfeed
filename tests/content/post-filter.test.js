@@ -88,3 +88,46 @@ describe('exceptions beat the detector', () => {
     expect(isExempt({ text: 'x', author: 'y' }, {})).toBe(false);
   });
 });
+
+describe('diagnostics', () => {
+  const tag = (el) => el.querySelector('[data-dsmf-debug]');
+
+  it('marks nothing when debug is off', () => {
+    const el = element(human);
+    processPost(el, { mode: 'warn' });
+    expect(tag(el)).toBeNull();
+  });
+
+  it('marks a post that was analyzed and cleared, which otherwise looks like doing nothing', () => {
+    const el = element(human);
+    processPost(el, { mode: 'warn', debug: true });
+    expect(tag(el).getAttribute('data-dsmf-debug')).toBe('show');
+    expect(tag(el).textContent).toContain('score');
+  });
+
+  it('marks a post that never reached the detectors, and says which stage stopped it', () => {
+    const el = element('A thought that LinkedIn cut off…');
+    processPost(el, { mode: 'warn', debug: true });
+    expect(tag(el).getAttribute('data-dsmf-debug')).toBe('truncated');
+  });
+
+  it('marks a post skipped by the user exception list', () => {
+    const el = element(slop, 'Trusted Colleague');
+    processPost(el, { mode: 'hide', debug: true, exceptions: { authors: ['Trusted Colleague'] } });
+    expect(tag(el).getAttribute('data-dsmf-debug')).toBe('exempt');
+  });
+
+  it('marks a flagged post without suppressing the real badge', () => {
+    const el = element(mild);
+    processPost(el, { mode: 'warn', debug: true });
+    expect(tag(el).getAttribute('data-dsmf-debug')).toBe('warn');
+    expect(applyWarn).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not change any verdict', () => {
+    const quiet = processPost(element(mild), { mode: 'warn' });
+    const loud = processPost(element(mild), { mode: 'warn', debug: true });
+    expect(loud.verdict).toBe(quiet.verdict);
+    expect(loud.score).toBe(quiet.score);
+  });
+});

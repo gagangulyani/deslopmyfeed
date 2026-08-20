@@ -4,8 +4,9 @@
  * (spec §15).
  */
 import { analyze } from '../detector/scoring.js';
-import { extractPost, isProcessed, markProcessed } from './post-detector.js';
+import { readPost, isProcessed, markProcessed } from './post-detector.js';
 import { applyWarn, applyHide } from './ui.js';
+import { stamp } from './debug.js';
 
 /**
  * Posts the user has explicitly asked to see. Survives a rescan, unlike the
@@ -32,16 +33,34 @@ export function processPost(el, settings) {
   if (isProcessed(el) || alwaysShown.has(el)) return null;
   markProcessed(el);
 
-  const post = extractPost(el);
-  if (!post) return null;
+  const debug = settings?.debug === true;
 
-  if (isExempt(post, settings)) return null;
+  const post = readPost(el);
+  if (post.skip) {
+    if (debug) stamp(el, post.skip);
+    return null;
+  }
+
+  if (isExempt(post, settings)) {
+    if (debug) stamp(el, 'exempt', post.author ?? '');
+    return null;
+  }
 
   const analysis = analyze(post.text, settings);
   if (analysis.verdict === 'warn') applyWarn(el, analysis);
   else if (analysis.verdict === 'hide') applyHide(el, analysis);
 
+  // After the verdict, so the debug tag never blocks the real badge.
+  if (debug) stamp(el, analysis.verdict, describeScore(analysis, post.text));
+
   return analysis;
+}
+
+/** Debug-only. Counts words the way features.js does, without re-tokenizing
+ * the whole post, because the word count is what explains "too short to judge". */
+function describeScore(analysis, text) {
+  const words = text.match(/[a-z0-9']+/gi)?.length ?? 0;
+  return `${words}w · score ${analysis.score} · ${analysis.reason}`;
 }
 
 /** Local whitelist check. User preference always beats the detector (spec §23). */

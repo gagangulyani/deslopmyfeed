@@ -63,14 +63,23 @@ export function findPosts(root) {
 }
 
 /**
+ * Read a post, and say why when it cannot be read.
+ *
+ * The reason is split out because every skip looks identical to the caller,
+ * which makes a stale selector indistinguishable from a post LinkedIn happened
+ * to truncate. Only the diagnostics read `skip`; extractPost keeps the original
+ * null-or-post contract.
+ *
  * @param {Element} post
- * @returns {{ text: string, author: string|null } | null}
+ * @returns {{ text: string|null, author: string|null, skip: null|'no text node'|'truncated' }}
  */
-export function extractPost(post) {
-  if (!post || typeof post.querySelector !== 'function') return null;
+export function readPost(post) {
+  const unreadable = (skip) => ({ text: null, author: null, skip });
+
+  if (!post || typeof post.querySelector !== 'function') return unreadable('no text node');
 
   const container = firstMatch(post, TEXT_SELECTORS);
-  if (!container) return null;
+  if (!container) return unreadable('no text node');
 
   // Read a copy so removing LinkedIn's own controls never mutates the page.
   const copy = container.cloneNode(true);
@@ -79,17 +88,26 @@ export function extractPost(post) {
   }
 
   const text = (copy.textContent ?? '').replace(/ /g, ' ').trim();
-  if (!text) return null;
+  if (!text) return unreadable('no text node');
 
   // "…see more" collapses long posts. Clicking it is a LinkedIn control and
   // therefore forbidden (spec §19), and judging the visible fragment would mean
   // judging an arbitrary prefix. Unanalyzable is the honest answer.
-  if (TRUNCATED.test(text)) return null;
+  if (TRUNCATED.test(text)) return unreadable('truncated');
 
   const authorEl = firstMatch(post, AUTHOR_SELECTORS);
   const author = authorEl ? (authorEl.textContent ?? '').trim() || null : null;
 
-  return { text, author };
+  return { text, author, skip: null };
+}
+
+/**
+ * @param {Element} post
+ * @returns {{ text: string, author: string|null } | null}
+ */
+export function extractPost(post) {
+  const read = readPost(post);
+  return read.skip ? null : { text: read.text, author: read.author };
 }
 
 /** True if this element has already been processed in this page session. */

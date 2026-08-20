@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  findPosts, extractPost, isProcessed, markProcessed
+  findPosts, readPost, extractPost, isProcessed, markProcessed
 } from '../../src/content/post-detector.js';
 
 /** Minimal stand-in for LinkedIn's post markup. */
@@ -107,5 +107,31 @@ describe('processed marking', () => {
     expect(isProcessed(el)).toBe(false);
     markProcessed(el);
     expect(isProcessed(el)).toBe(true);
+  });
+});
+
+describe('readPost', () => {
+  it('names a missing text container rather than just failing', () => {
+    const el = document.createElement('div');
+    el.setAttribute('data-id', 'urn:li:activity:1');
+    expect(readPost(el).skip).toBe('no text node');
+  });
+
+  it('distinguishes a truncated post from an unreadable one', () => {
+    const el = document.createElement('div');
+    el.setAttribute('data-id', 'urn:li:activity:1');
+    el.innerHTML = '<div class="update-components-text"></div>';
+    el.querySelector('.update-components-text').textContent = 'A long thought that stops…';
+    expect(readPost(el).skip).toBe('truncated');
+  });
+
+  it('reports no skip reason when the post reads cleanly', () => {
+    const el = document.createElement('div');
+    el.setAttribute('data-id', 'urn:li:activity:1');
+    el.innerHTML = '<div class="update-components-text"></div>';
+    el.querySelector('.update-components-text').textContent = 'A complete thought.';
+    const read = readPost(el);
+    expect(read.skip).toBeNull();
+    expect(read.text).toBe('A complete thought.');
   });
 });

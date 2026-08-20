@@ -34,7 +34,11 @@ export const DEFAULT_SETTINGS = {
     authors: [],             // author names the user always wants to see
     keywords: []             // posts containing these are always shown
   },
-  theme: 'system'            // 'system' | 'dark' | 'light'
+  theme: 'system',           // 'system' | 'dark' | 'light'
+  // Diagnostics. Tags every candidate post with the stage it reached and logs
+  // selector match counts, so a silent feed can be told apart from a stale
+  // selector. Off by default; it changes nothing about what gets filtered.
+  debug: false
 };
 
 /**
