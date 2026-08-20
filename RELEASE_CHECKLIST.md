@@ -9,9 +9,9 @@ regresses; "verified" means it was checked once by hand and could drift.
 | 2 | All analysis local | Tested | `tests/policy.test.js` — no `fetch`, `XMLHttpRequest`, `WebSocket`, `sendBeacon`, `EventSource` or `importScripts` anywhere in `src/`. |
 | 3 | Zero network requests | Tested + needs DevTools | Same test, plus no remote URLs in any CSS or HTML. A DevTools network check on a real feed is still owed. |
 | 4 | Every detector independently toggleable | Tested | `tests/detector/scoring.test.js` skips a disabled rule; `tests/popup.test.js` renders one toggle per registered rule. |
-| 5 | Warn and hide modes | Tested | `tests/detector/scoring.test.js` (warn never hides, off analyzes nothing); `tests/content/live-settings.test.js` switches modes on a live page. |
+| 5 | Warn and hide modes | Tested | `tests/detector/scoring.test.js` verifies warning-threshold posts hide only in Hide mode when corroborated; `tests/content/live-settings.test.js` switches modes on a live page. |
 | 6 | Sensitivity adjustable | Tested | `tests/detector/scoring.test.js` — low raises the bar, high lowers it. |
-| 7 | Hidden posts always restorable | Tested | `tests/content/ui.test.js` asserts `innerHTML` is byte-identical after Show post. |
+| 7 | Hidden posts explained and restorable | Tested | `tests/content/ui.test.js` asserts the hide reason and expandable evidence, then byte-identical restoration after Show post. |
 | 8 | False-positive rate measured | Measured, weak corpus | `tests/metrics.test.js` prints the table and fails the build on the budget. It includes warnable 10–49 word posts but the fixtures are authored, not collected. See the caveat below. |
 | 9 | Dark, light and system correct | Tested | `tests/popup.test.js` for the attribute contract; `tests/content/live-settings.test.js` applies the theme to the page. Rendering itself was not eyeballed in a browser. |
 | 10 | No LinkedIn account actions automated | Tested | `tests/policy.test.js` — nothing in `src/` calls `.click()`, `.submit()` or dispatches a MouseEvent. |

@@ -25,9 +25,12 @@ and, depending on your chosen mode, either marks a post:
 
 or collapses it locally:
 
-> **Post hidden** — strong AI-style pattern detected · **Show post**
+> **Post hidden** — **Hidden because:** template structure and synthetic formatting · **Show post** · **Why hidden?**
 
 The post is not deleted from LinkedIn. Only your local presentation changes.
+
+Every hidden card states the matched categories. **Why hidden?** expands the
+specific structural and phrasing evidence used for that decision.
 
 ## What it does not claim
 
@@ -73,7 +76,7 @@ Against `tests/fixtures/` (179 posts), at default settings:
 | Corpus | Flagged | Hidden |
 | --- | ---: | ---: |
 | human (91 judged) | 0.0% | 0.0% |
-| ai (50) | 74.0% | 26.0% |
+| ai (50) | 74.0% | 74.0% |
 | assisted (22) | 0.0% | 0.0% |
 | adversarial (16) | 0.0% | 0.0% |
 
