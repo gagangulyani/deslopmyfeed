@@ -30,6 +30,17 @@ describe('extractFeatures input shapes', () => {
   });
 });
 
+describe('dash feature extraction', () => {
+  it('counts em dashes, en dashes, and double hyphens as dash separators', () => {
+    const features = extractFeatures('One — two – three -- four');
+    expect(features.emDashCount).toBe(3);
+  });
+
+  it('does not count a single hyphen as a dash separator', () => {
+    expect(extractFeatures('a well-known example').emDashCount).toBe(0);
+  });
+});
+
 describe('the Hinglish scope guard', () => {
   it('flags romanized Hindi once three distinct markers appear', () => {
     expect(extractFeatures('yeh update bahut important hai, matlab seriously').hinglish).toBe(true);

@@ -8,7 +8,7 @@ generic and AI-style content out of your LinkedIn feed.
 Analysis happens entirely in your browser. No post content is sent anywhere, no
 AI API is used, no account is required.
 
-**Status: alpha, never run on LinkedIn.** All seven detectors, the content
+**Status: alpha, tested against a live LinkedIn feed.** The extension has been run against real LinkedIn DOM structures and a live sample of 39 loaded feed cards. All seven detectors, the content
 script, the UI and settings are implemented and tested (177 tests). Nobody has
 loaded it into Chrome and scrolled a real feed yet, so the DOM selectors are
 unproven. See [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) for what is verified
@@ -80,7 +80,7 @@ Against `tests/fixtures/` (178 posts), at default settings:
 
 Run `npm test` to reproduce; the build fails if the human false-positive rate
 goes above budget. **These fixtures were written for the project, not collected
-from LinkedIn** — the number is a regression guard, not a field measurement.
+from LinkedIn** — the number is a regression guard, not a field measurement. Live calibration is still ongoing and does not establish a measured false-positive rate.
 Adversarial recall is 0% by construction: those posts were written to evade
 every rule, and the project's stated preference is to miss slop rather than hide
 a real post.

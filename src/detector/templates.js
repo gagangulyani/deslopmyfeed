@@ -49,5 +49,9 @@ export const TEMPLATE_PATTERNS = [
   /and that'?s okay\b/i,
   /the (?:best|worst) [^.\n]{1,30} i ever (?:received|got|made|heard|had)/i,
   /\bmost (?:people|leaders|founders|managers) (?:get|miss|think)\b/i,
-  /what (?:most|nobody) (?:people )?(?:miss|misses|tells you)/i
+  /what (?:most|nobody) (?:people )?(?:miss|misses|tells you)/i,
+  /\b(?:get|stay) ahead of (?:most|\d+%)\b/i,
+  /\bdo this instead\b/i,
+  /\b(?:the )?secret is\b/i,
+  /\bthings i wish i knew\b/i
 ];

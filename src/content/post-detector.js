@@ -219,6 +219,13 @@ export function readPost(post) {
     for (const toggle of copy.querySelectorAll(selector)) toggle.remove();
   }
 
+  // LinkedIn uses <br> tags for newlines. copy.textContent completely ignores
+  // them and collapses everything into a single line, making all structural
+  // rules blind. Replacing them with actual newlines preserves formatting.
+  for (const br of copy.querySelectorAll('br')) {
+    br.replaceWith(document.createTextNode('\n'));
+  }
+
   const text = (copy.textContent ?? '').replace(/\u00a0/g, ' ').trim();
   if (!text) return unreadable('no text node');
 

@@ -92,7 +92,8 @@ export function extractFeatures(post) {
   for (const _ of trimmed.matchAll(NUMBER)) digitGroups += 1;
 
   let emDashCount = 0;
-  for (const ch of trimmed) if (ch === '—') emDashCount += 1;
+  for (const ch of trimmed) if (ch === '—' || ch === '–') emDashCount += 1;
+  for (const _ of trimmed.matchAll(/--/g)) emDashCount += 1;
 
   return {
     raw: trimmed,

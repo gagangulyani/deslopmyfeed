@@ -19,7 +19,8 @@ const MIN_ENUMERATED_ITEMS = 3;
 /** Fragmentation: standalone one-sentence paragraphs used as beats. */
 const MIN_FRAGMENT_PARAGRAPHS = 4;
 
-const ENUMERATION = /^(?:\d{1,2}[.)]\s|[-•*→▪]\s|[0-9]️?⃣\s)/;
+// Standalone digits followed by space (no dot) are common in listicles.
+const ENUMERATION = /^(?:\d{1,2}[.)]?\s|[-•*→▪]\s|[0-9]️?⃣\s)/;
 
 /** Closing moves: aphorism, imperative, or a rhetorical question at the end. */
 const GENERIC_CLOSE = [
