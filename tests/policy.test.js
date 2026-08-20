@@ -88,9 +88,11 @@ describe('permissions are the minimum (spec §18)', () => {
     }
   });
 
-  it('declares no background service worker', () => {
-    // Nothing needs to run when the user is not looking at LinkedIn.
-    expect(manifest.background).toBeUndefined();
+  it('uses a module service worker only to serialize local settings writes', () => {
+    expect(manifest.background).toEqual({
+      service_worker: 'src/background/settings-writer.js',
+      type: 'module'
+    });
   });
 });
 
@@ -104,7 +106,8 @@ describe('the packaged extension is internally consistent', () => {
   it('every file the manifest names exists', () => {
     const referenced = [
       ...manifest.content_scripts.flatMap((entry) => [...entry.js, ...(entry.css ?? [])]),
-      manifest.action.default_popup
+      manifest.action.default_popup,
+      manifest.background.service_worker
     ];
     for (const file of referenced) {
       expect(existsSync(join(ROOT, file)), `${file} is missing`).toBe(true);
@@ -126,7 +129,7 @@ describe('the packaged extension is internally consistent', () => {
     const bootstrap = 'src/content/bootstrap.js';
     const injected = sources
       .map((f) => relative(ROOT, f).split(sep).join('/'))
-      .filter((f) => f !== bootstrap && !f.startsWith('src/popup/'));
+      .filter((f) => f !== bootstrap && !f.startsWith('src/popup/') && !f.startsWith('src/background/'));
 
     for (const file of injected) {
       expect(exposed.has(file), `${file} is not web-accessible`).toBe(true);

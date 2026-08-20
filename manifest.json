@@ -6,6 +6,10 @@
   "permissions": [
     "storage"
   ],
+  "background": {
+    "service_worker": "src/background/settings-writer.js",
+    "type": "module"
+  },
   "content_scripts": [
     {
       "matches": [
