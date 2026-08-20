@@ -31,11 +31,12 @@ describe('warn', () => {
     expect(el.classList.contains('dsmf-hidden')).toBe(false);
   });
 
-  it('states a reason without inventing a number', () => {
+  it('states a compact reason without inventing a number', () => {
     const el = post();
     applyWarn(el, analysis());
     const badge = el.querySelector('.dsmf-badge').textContent;
-    expect(badge).toContain('template structure');
+    expect(badge).toContain('Formulaic pattern detected');
+    expect(badge).toContain('template structure + synthetic formatting');
     expect(badge).not.toMatch(/\d+(\.\d+)?%/);
   });
 
@@ -44,17 +45,26 @@ describe('warn', () => {
     applyWarn(el, analysis());
     const panel = el.querySelector('.dsmf-explain');
     expect(panel.hidden).toBe(true);
-    [...el.querySelectorAll('button')].find((b) => b.textContent === 'Why?').click();
+    [...el.querySelectorAll('button')].find((b) => b.textContent === 'Why it was flagged ›').click();
     expect(panel.hidden).toBe(false);
-    expect(panel.textContent).toContain('3 enumerated items');
+    expect(panel.querySelector('.dsmf-explain-item').textContent).toContain('Short hook');
+    expect(panel.querySelector('.dsmf-explain-item').textContent).not.toContain('3 enumerated items');
+    expect(panel.querySelector('summary').textContent).toBe('Show technical details');
   });
 
-  it('names rules in words, not internal ids', () => {
+  it('uses user-facing rule labels and keeps raw vocabulary hits technical', () => {
     const el = post();
-    applyWarn(el, analysis());
+    const vocabulary = {
+      ...analysis(),
+      results: [{ rule: 'vocabulary', triggered: true, score: 0.5, evidence: ['navigate', 'journey'] }]
+    };
+    applyWarn(el, vocabulary);
     const panel = el.querySelector('.dsmf-explain');
-    expect(panel.textContent).toContain('template structure');
-    expect(panel.textContent).not.toContain('templateStacking');
+    const visible = panel.querySelector('.dsmf-explain-item').textContent;
+    expect(visible).toContain('vocabulary cues');
+    expect(visible).toContain('Generic business language detected');
+    expect(visible).not.toContain('navigate');
+    expect(panel.querySelector('.dsmf-technical').open).toBe(false);
   });
 
   it('does not decorate the same post twice', () => {
@@ -78,13 +88,13 @@ describe('hide', () => {
     const el = post();
     applyHide(el, analysis('hide'));
     expect(el.querySelector('.dsmf-card-reason').textContent)
-      .toBe('Hidden because: template structure and synthetic formatting');
+      .toBe('template structure + synthetic formatting');
 
     const panel = el.querySelector('.dsmf-explain');
     expect(panel.hidden).toBe(true);
-    [...el.querySelectorAll('button')].find((b) => b.textContent === 'Why hidden?').click();
+    [...el.querySelectorAll('button')].find((b) => b.textContent === 'Why it was hidden ›').click();
     expect(panel.hidden).toBe(false);
-    expect(panel.textContent).toContain('3 enumerated items');
+    expect(panel.textContent).toContain('Repeated short paragraphs');
   });
 
   it('restores the post to exactly what it was', () => {
