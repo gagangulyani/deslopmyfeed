@@ -43,6 +43,7 @@ export const TEMPLATE_PATTERNS = [
   /nobody (?:tells|talks about|is talking about|warns)/i,
   /unpopular opinion/i,
   /the (?:uncomfortable|honest|hard|real) truth/i,
+  /here'?s the uncomfortable part/i,
   /let that sink in/i,
   /read that again/i,
   /steal this/i,
