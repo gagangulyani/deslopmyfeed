@@ -20,6 +20,12 @@ describe('synthetic formatting', () => {
     expect(run(long).score).toBe(run(short).score);
   });
 
+  it.each(['—', '–', '--'])('treats one %s separator in a short post as weak evidence', (dash) => {
+    const result = run(`Shipping today ${dash} please report accessibility issues right away after release.`);
+    expect(result).toMatchObject({ triggered: true, score: 0.5 });
+    expect(result.evidence).toContain('short post uses a dash separator');
+  });
+
   it('one weak sub-signal alone is not enough', () => {
     // Colon-led lines only: a common way to write structured human notes.
     const colonsOnly = [

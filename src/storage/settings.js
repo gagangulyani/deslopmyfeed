@@ -66,6 +66,10 @@ export async function loadSettings() {
   return mergeSettings(stored?.[STORAGE_KEY]);
 }
 
+// chrome.storage has no atomic read-modify-write operation. Serializing saves
+// prevents quick successive popup changes from each merging against stale data.
+let pendingWrite = Promise.resolve();
+
 /**
  * Read-modify-write so a patch touching one field cannot drop the rest, and so
  * a settings object saved by an older version gains any new defaults on its
@@ -74,11 +78,17 @@ export async function loadSettings() {
  * @param {Partial<typeof DEFAULT_SETTINGS>} patch
  * @returns {Promise<typeof DEFAULT_SETTINGS>}
  */
-export async function saveSettings(patch) {
-  const current = await loadSettings();
-  const next = mergeSettings({ ...current, ...patch });
-  await chrome.storage.local.set({ [STORAGE_KEY]: next });
-  return next;
+export function saveSettings(patch) {
+  const write = pendingWrite.then(async () => {
+    const current = await loadSettings();
+    const next = mergeSettings({ ...current, ...patch });
+    await chrome.storage.local.set({ [STORAGE_KEY]: next });
+    return next;
+  });
+
+  // A failed write must not strand later writes behind a rejected promise.
+  pendingWrite = write.catch(() => {});
+  return write;
 }
 
 /**

@@ -8,7 +8,7 @@ Four labelled corpora, per spec §24. Each file is JSON:
 
 | File | Label | Count | Notes |
 | --- | --- | --- | --- |
-| `human.json` | `human` | 90 | Varied professions, styles, industries, lengths. |
+| `human.json` | `human` | 91 | Varied professions, styles, industries, lengths, including a warn-only short post. |
 | `ai.json` | `ai` | 42 | Several formulaic registers and structures. |
 | `assisted.json` | `assisted` | 22 | Concrete human content, smoothed structure. |
 | `adversarial.json` | `adversarial` | 16 | Written to evade the rules in spec §6. |
@@ -30,17 +30,16 @@ catch a detector that starts firing on plain prose. It will not tell you what
 happens on a real feed. Replacing these with anonymized real posts is the single
 highest-value improvement available to the project.
 
-## The 50-word floor
+## The short-post band
 
-Posts under `MIN_WORDS_TO_ANALYZE` (50) are never filtered, so they pass for
-free. 54 of the 90 human posts clear that floor and they are the ones the
-false-positive budget is actually measured on — hence the deliberate weight of
-long, discursive human posts, including ones that use numbered lists, em dashes,
-hashtags and closing questions. Those are the false-positive traps.
+Posts under 10 words are never judged and are excluded from metrics. Posts from
+10–49 words can warn but cannot hide, so they are included in the warning
+false-positive budget. Posts of 50 or more words can warn or hide. This keeps
+the measured budget aligned with every user-visible verdict path.
 
-Every `ai`, `assisted` and `adversarial` fixture is above the floor by
-construction; one below it could never be filtered and would only pollute the
-recall figure.
+Most `ai`, `assisted`, and `adversarial` fixtures are long-form by construction;
+short positive fixtures would be useful only for warning recall, never hiding
+recall.
 
 `assisted` is deliberately not scored as a pass/fail class — it exists to check
 that the detector degrades gracefully rather than treating light editing as slop.

@@ -1,8 +1,9 @@
 # Implementation Plan — V1
 
 **All eight phases are implemented.** What each one actually produced, and where
-it diverged from the plan, is recorded inline below. The one thing the plan
-cannot close is that none of it has run on LinkedIn — see
+it diverged from the plan, is recorded inline below. The detector has since been
+exercised against live LinkedIn feed cards; the remaining validation is a
+controlled unpacked-extension release check. See
 [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
 
 Ordered by dependency, not by how interesting the work is. Each phase has a
@@ -29,9 +30,9 @@ and the popup opens. (The popup will render nothing until Phase 5.)
 
 Build the measuring instrument first.
 
-1. `tests/fixtures/human.json` — 60+ anonymized real posts across professions,
-   industries, styles, lengths. This is the false-positive dataset and the one
-   that matters most.
+1. `tests/fixtures/human.json` — human-style test posts across professions,
+   industries, styles, and lengths. This is a regression dataset, not a
+   representative field sample; anonymized real posts remain future work.
 2. `tests/fixtures/ai.json` — 40+ posts from several models and prompt styles.
 3. `tests/fixtures/assisted.json` — 20+ human posts that were polished,
    expanded or rewritten.

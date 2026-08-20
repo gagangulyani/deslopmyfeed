@@ -91,6 +91,7 @@ export function extractFeatures(post) {
   let digitGroups = 0;
   for (const _ of trimmed.matchAll(NUMBER)) digitGroups += 1;
 
+  // Treat typographic dashes and double hyphens as the same separator signal.
   let emDashCount = 0;
   for (const ch of trimmed) if (ch === '—' || ch === '–') emDashCount += 1;
   for (const _ of trimmed.matchAll(/--/g)) emDashCount += 1;

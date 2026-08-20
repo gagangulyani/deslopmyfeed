@@ -1,5 +1,5 @@
 import { loadCorpus, LABELS, wordCount } from './corpus.js';
-import { analyze, MIN_WORDS_TO_ANALYZE, RULES } from '../src/detector/scoring.js';
+import { analyze, RULES } from '../src/detector/scoring.js';
 
 /**
  * The false-positive budget from the plan. Recall is deliberately not budgeted:
@@ -13,9 +13,9 @@ const pct = (n) => `${(n * 100).toFixed(1)}%`;
 /**
  * Run `analyze` over every fixture and summarize.
  *
- * Only posts at or above the analysis floor are counted. Shorter posts are
- * unfilterable by design, so including them would inflate precision and deflate
- * recall without either number meaning anything.
+ * Posts under 10 words are excluded because they are never judged. Posts from
+ * 10–49 words are included because they can produce a user-visible warn verdict
+ * even though they cannot be hidden.
  *
  * @param {{settings?: Object, rules?: Object}} [options]
  */
@@ -27,7 +27,7 @@ export function evaluate({ settings, rules } = {}) {
 
   for (const label of LABELS) {
     const posts = loadCorpus(label);
-    const analyzed = posts.filter((p) => wordCount(p.text) >= MIN_WORDS_TO_ANALYZE);
+    const analyzed = posts.filter((p) => wordCount(p.text) >= 10);
     const results = analyzed.map((post) => ({
       post,
       analysis: analyze(post.text, config, rules)

@@ -118,69 +118,7 @@ async function onAlwaysShow(event) {
   await saveSettings({ rules: { ...settings.rules, [dominant.rule]: false } });
 }
 
-/** Boot: load settings, install MutationObserver, process what is already there. */
-export async function start() {
-  if (observer) return false;
-
-  // One line, unconditionally. Without it a content script that loaded and
-  // then declined to act is indistinguishable from one that never loaded at
-  // all, which is the single hardest thing to diagnose from a real feed.
-  if (!isFeedRoute()) {
-    log(`loaded on ${location.pathname} — not a feed route, standing by`);
-    return false;
-  }
-
-  settings = await readSettings();
-  applyTheme(settings.theme);
-  if (!settings.enabled || settings.mode === 'off') {
-    log(`loaded but idle — enabled=${settings.enabled} mode=${settings.mode}`);
-    // Shown even though nothing will be filtered: "idle" and "dead" are the
-    // two states hardest to tell apart, and this is the one that says which.
-    if (settings.debug) showHud(describeState());
-    return false;
-  }
-
-  log(`active on ${location.pathname} — mode=${settings.mode} sensitivity=${settings.sensitivity}`);
-  if (settings.debug) {
-    const counts = probe();
-    const matched = Object.values(counts).reduce((a, b) => a + b, 0);
-    showHud(`${describeState()} · ${matched} selector match(es)`);
-  }
-
-  let initial = 0;
-  for (const post of findPosts(document)) {
-    processPost(post, settings);
-    initial += 1;
-  }
-  if (settings.debug) log(`${initial} post(s) present at boot`);
-
-  observer = new MutationObserver((records) => {
-    for (const record of records) {
-      for (const node of record.addedNodes) {
-        if (node.nodeType === 1) schedule(node);
-      }
-    }
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-
-  document.addEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
-
-  // Settings changed in the popup take effect here without a reload.
-  try {
-    unsubscribe = onSettingsChanged((next) => {
-      settings = next;
-      applyTheme(settings.theme);
-      rescan();
-    });
-  } catch {
-    unsubscribe = null;
-  }
-
-  return true;
-}
-
-/** Tear down observers and restore every post. Backs the global kill switch. */
-export function stop() {
+function stopObserving() {
   if (observer) {
     observer.disconnect();
     observer = null;
@@ -189,12 +127,83 @@ export function stop() {
     clearTimeout(timer);
     timer = null;
   }
+  pending = new Set();
+}
+
+function startObserving() {
+  if (observer || !settings?.enabled || settings.mode === 'off') return;
+  observer = new MutationObserver((records) => {
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node.nodeType === 1) schedule(node);
+      }
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+function applySettings(next) {
+  settings = next;
+  applyTheme(settings.theme);
+  if (!settings.enabled || settings.mode === 'off') stopObserving();
+  rescan();
+  startObserving();
+}
+
+/** Boot: load settings, subscribe to changes, then observe when enabled. */
+export async function start() {
+  // `unsubscribe` is the bootstrap sentinel: filtering may be disabled, in
+  // which case no MutationObserver exists yet but the live settings listener
+  // must remain active so the popup can enable it without a reload.
+  if (unsubscribe) return false;
+
+  if (!isFeedRoute()) {
+    log(`loaded on ${location.pathname} — not a feed route, standing by`);
+    return false;
+  }
+
+  settings = await readSettings();
+  applyTheme(settings.theme);
+  document.addEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
+
+  try {
+    unsubscribe = onSettingsChanged(applySettings);
+  } catch {
+    // Keep a non-null sentinel so repeated start calls do not install duplicate
+    // document listeners when chrome.storage is unavailable.
+    unsubscribe = () => {};
+  }
+
+  if (!settings.enabled || settings.mode === 'off') {
+    log(`loaded but idle — enabled=${settings.enabled} mode=${settings.mode}`);
+    if (settings.debug) showHud(describeState());
+    return true;
+  }
+
+  log(`active on ${location.pathname} — mode=${settings.mode} sensitivity=${settings.sensitivity}`);
+  if (settings.debug) {
+    const counts = probe();
+    const matched = Object.values(counts).reduce((a, b) => a + b, 0);
+    showHud(`${describeState()} · ${matched} selector match(es)`);
+  }
+  let initial = 0;
+  for (const post of findPosts(document)) {
+    processPost(post, settings);
+    initial += 1;
+  }
+  if (settings.debug) log(`${initial} post(s) present at boot`);
+  startObserving();
+  return true;
+}
+
+/** Tear down observers and restore every post. Backs the global kill switch. */
+export function stop() {
+  stopObserving();
   if (unsubscribe) {
     unsubscribe();
     unsubscribe = null;
   }
   document.removeEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
-  pending = new Set();
   settings = null;
   resetProcessed();
   clearAll();
