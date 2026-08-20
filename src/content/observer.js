@@ -174,6 +174,9 @@ export async function start() {
 
   settings = await readSettings();
   applyTheme(settings.theme);
+  // LinkedIn can retain injected nodes across extension/content-script reloads.
+  // Debug is opt-in, so never leave an old diagnostic strip behind at boot.
+  if (!settings.debug) clearDebug();
   document.addEventListener(ALWAYS_SHOW_EVENT, onAlwaysShow);
   document.addEventListener(HIDDEN_COUNT_EVENT, updateHiddenBadge);
   try {
