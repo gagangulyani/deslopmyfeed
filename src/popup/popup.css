@@ -239,3 +239,36 @@ input[type='radio']:focus-visible {
   line-height: 1.4;
   color: var(--secondary);
 }
+
+.threshold-control {
+  display: grid;
+  gap: 7px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.threshold-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.threshold-value {
+  color: var(--signal);
+  font-variant-numeric: tabular-nums;
+}
+
+.threshold-control input[type='range'] {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--green);
+}
+
+.threshold-hint {
+  color: var(--secondary);
+  font-size: 12px;
+  line-height: 1.35;
+}

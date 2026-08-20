@@ -25,14 +25,14 @@ extension's own files through `chrome.runtime.getURL`.
 `chrome.storage.local` holds only your configuration:
 
 - Whether filtering is enabled, and the mode (off / warn / hide)
-- Sensitivity
+- Sensitivity and Hide threshold
 - Which detection rules are enabled
 - Theme preference
 - Whether the diagnostics overlay is on
 
-The popup currently exposes only these controls. The internal settings schema
-also reserves fields for future vocabulary, exception, threshold, and weight
-controls; the extension does not currently provide a UI for editing them.
+The popup exposes the Hide threshold alongside the existing controls. The
+internal settings schema also reserves fields for future vocabulary, exception,
+and weight controls; the extension does not currently provide a UI for editing them.
 
 This never leaves your machine and is never synced.
 
@@ -56,7 +56,7 @@ the extension and never contains anything from your browsing session.
 
 The extension requests no `<all_urls>`, no `history`, no `cookies`, no
 `webRequest` and no `scripting`. The `tabs` permission is used only to set the
-per-tab action icon and hidden-post badge: gray outside LinkedIn or while
+per-tab action icon and flagged-post badge: gray outside LinkedIn or while
 filtering is off, colored while filtering is active on LinkedIn. It does not
 read browsing history or transmit URLs. The module service worker serializes
 local settings writes and maintains that per-tab badge state; it has no network

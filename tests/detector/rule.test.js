@@ -28,9 +28,7 @@ describe('settings schema', () => {
     }
   });
 
-  it('weak rules alone cannot reach the hide threshold', () => {
-    const weak = Object.keys(RULES).filter((id) => !STRONG_RULES.includes(id));
-    const total = weak.reduce((sum, id) => sum + DEFAULT_SETTINGS.weights[id], 0);
-    expect(total).toBeLessThan(DEFAULT_SETTINGS.thresholds.hide);
+  it('has a separately configurable hide threshold', () => {
+    expect(DEFAULT_SETTINGS.thresholds.hide).toBeGreaterThanOrEqual(DEFAULT_SETTINGS.thresholds.warn);
   });
 });

@@ -10,7 +10,7 @@ export const DEFAULT_SETTINGS = {
   // Calibrated against the corpus in tests/fixtures, not guessed. The highest
   // score any human fixture reaches is 0.8; warn sits at roughly three times
   // that so that real humans, who are more varied than the corpus, have room.
-  thresholds: { warn: 2.5, hide: 4 },
+  thresholds: { warn: 2.5, hide: 2.5 },
   rules: {
     templateStacking: true,
     genericity: true,

@@ -87,7 +87,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message?.type === 'dsmf-linkedin-active') {
     void setTabAppearance(tabId, true);
-  } else if (message?.type === 'dsmf-hidden-count') {
+  } else if (message?.type === 'dsmf-flag-count') {
     const count = message.reset
       ? 0
       : Math.max(0, (hiddenCounts.get(tabId) ?? 0) + (message.delta ?? 0));
