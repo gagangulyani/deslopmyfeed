@@ -25,28 +25,29 @@ function post(text = 'Post body') {
 beforeEach(() => { document.body.innerHTML = ''; });
 
 describe('warn', () => {
-  it('adds a badge without removing anything', () => {
+  it('keeps the feed visually unchanged outside diagnostics', () => {
     const el = post('Original body');
     applyWarn(el, analysis());
-    expect(el.querySelector('.dsmf-badge')).not.toBeNull();
+    expect(el.querySelector('.dsmf-badge')).toBeNull();
     expect(el.querySelector('.content').textContent).toBe('Original body');
     expect(el.classList.contains('dsmf-hidden')).toBe(false);
-    expect(el.classList.contains('dsmf-warned')).toBe(true);
+    expect(el.classList.contains('dsmf-warned')).toBe(false);
+    expect(el.querySelector('[data-dsmf-artifact="warn"]').hidden).toBe(true);
   });
 
   it('states a compact reason without inventing a number', () => {
     const el = post();
-    applyWarn(el, analysis());
+    applyWarn(el, analysis(), true);
     const badge = el.querySelector('.dsmf-badge').textContent;
     expect(badge).toContain('Pattern detected');
     expect(badge).toContain('Short, formulaic post structure');
     expect(badge).not.toMatch(/\d+(\.\d+)?%/);
   });
 
-  it('keeps detector evidence out of the normal warning UI', () => {
+  it('shows warning UI only when diagnostics are enabled', () => {
     const el = post();
-    applyWarn(el, analysis());
-    expect(el.querySelector('.dsmf-explain')).toBeNull();
+    applyWarn(el, analysis(), true);
+    expect(el.querySelector('.dsmf-explain')).not.toBeNull();
   });
 
   it('shows complete evidence only when diagnostics are enabled', () => {
@@ -74,7 +75,7 @@ describe('warn', () => {
     const el = post();
     applyWarn(el, analysis());
     applyWarn(el, analysis());
-    expect(el.querySelectorAll('.dsmf-badge')).toHaveLength(1);
+    expect(el.querySelectorAll('[data-dsmf-artifact="warn"]')).toHaveLength(1);
   });
 });
 
