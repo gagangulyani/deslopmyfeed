@@ -19,7 +19,9 @@ const FRAGMENT_RATIO = 0.5;
 /** Above this, the whole post is one-line paragraphs: a layout, not a choice. */
 const FRAGMENT_RATIO_STRONG = 0.7;
 const COLON_RATIO = 0.25;
-const EM_DASHES_PER_100_WORDS = 1.5;
+// Two em/en dashes in a long post are meaningful formatting evidence, but
+// still require another formatting signal before this rule fires.
+const EM_DASHES_PER_100_WORDS = 0.6;
 const MIN_EM_DASHES = 2;
 const SHORT_POST_FLOOR = 10;
 const SHORT_POST_CEILING = 49;
