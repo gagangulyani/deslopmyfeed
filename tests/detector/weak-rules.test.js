@@ -63,12 +63,12 @@ describe('hashtags', () => {
   });
 });
 
-describe('weak rules cannot hide a post between them', () => {
-  it('all three at full strength stay under the hide bar', () => {
+describe('score-threshold hiding', () => {
+  it('allows enabled weak rules to hide when their combined score reaches the user threshold', () => {
     const weak = Object.keys(RULES).filter((id) => !STRONG_RULES.includes(id));
     const rules = Object.fromEntries(
       weak.map((id) => [id, () => ({ rule: id, triggered: true, score: 1, evidence: ['x'] })])
     );
-    expect(analyze('word '.repeat(200), { mode: 'hide' }, rules).verdict).not.toBe('hide');
+    expect(analyze('word '.repeat(200), { mode: 'hide' }, rules).verdict).toBe('hide');
   });
 });

@@ -141,22 +141,22 @@ describe('guard rail: conservative band', () => {
   });
 });
 
-describe('guard rail: hiding needs corroboration', () => {
+describe('hide policies', () => {
   const overHide = { ...HIDE_MODE, weights: { templateStacking: 9, vocabulary: 9 } };
 
-  it('will not hide on one strong rule alone', () => {
+  it('hides one strong rule when its score reaches the user threshold', () => {
     const result = analyze(LONG, overHide, stub({ templateStacking: 1 }));
     expect(result.score).toBeGreaterThanOrEqual(DEFAULT_SETTINGS.thresholds.hide);
-    expect(result.verdict).toBe('warn');
+    expect(result.verdict).toBe('hide');
   });
 
-  it('will not hide on weak rules alone, however many', () => {
+  it('hides weak rules when their combined score reaches the user threshold', () => {
     const weak = Object.keys(RULES).filter((id) => !STRONG_RULES.includes(id));
     const scores = Object.fromEntries(weak.map((id) => [id, 1]));
     const weights = Object.fromEntries(weak.map((id) => [id, 9]));
     const result = analyze(LONG, { ...HIDE_MODE, weights }, stub(scores));
     expect(result.score).toBeGreaterThanOrEqual(DEFAULT_SETTINGS.thresholds.hide);
-    expect(result.verdict).toBe('warn');
+    expect(result.verdict).toBe('hide');
   });
 
   it('hides when a strong rule is corroborated by a second rule', () => {
@@ -182,10 +182,10 @@ describe('guard rail: hiding needs corroboration', () => {
     expect(result.verdict).toBe('warn');
   });
 
-  it('does not treat two layout rules as independent hide corroboration', () => {
+  it('hides layout signals once their score reaches the user threshold', () => {
     const result = analyze(LONG, HIDE_MODE, stub({ templateStacking: 0.5, formatting: 0.5 }));
     expect(result.score).toBe(DEFAULT_SETTINGS.thresholds.warn);
-    expect(result.verdict).toBe('warn');
+    expect(result.verdict).toBe('hide');
   });
 
   it('does not hide a concrete first-person event account', () => {
