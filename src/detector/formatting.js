@@ -21,6 +21,8 @@ const FRAGMENT_RATIO_STRONG = 0.7;
 const COLON_RATIO = 0.25;
 const EM_DASHES_PER_100_WORDS = 1.5;
 const MIN_EM_DASHES = 2;
+const SHORT_POST_FLOOR = 10;
+const SHORT_POST_CEILING = 49;
 /** Uniform sentence lengths. Human prose varies far more than this. */
 const MAX_LENGTH_VARIATION = 0.45;
 const DECORATION = /[→👇✅🔥💡🚀]|^\s*(?:\d️⃣)/mu;
@@ -30,6 +32,14 @@ const wordsIn = (text) => (text.match(/[a-z0-9']+/gi) ?? []).length;
 /** @type {import('./rule.js').Rule} */
 export function formatting(features) {
   const { paragraphs = [], lines = [], sentences = [], wordCount = 0, emDashCount = 0 } = features;
+
+  // A separator in a short post is weak evidence, never a verdict. It is kept
+  // separate from the long-form density rule because one dash can be meaningful
+  // in 10 words but is noise in 200.
+  if (wordCount >= SHORT_POST_FLOOR && wordCount <= SHORT_POST_CEILING && emDashCount >= 1) {
+    return signal('formatting', 0.5, ['short post uses a dash separator']);
+  }
+
   if (paragraphs.length < MIN_PARAGRAPHS) return noSignal('formatting');
 
   const evidence = [];

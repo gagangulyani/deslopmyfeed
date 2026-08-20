@@ -50,7 +50,7 @@ are weak on purpose; combinations carry the signal.
 | Template stacking | 3 | Hook + story + numbered lessons + generic close, together |
 | Rhetorical templates | 2 | "Here's what I learned", "It's not X, it's Y" |
 | Genericity | 2 | Broad claims, few dates, numbers, names or concrete events |
-| Synthetic formatting | 2 | One-line paragraph clusters, colon-led lines, em-dash density |
+| Synthetic formatting | 2 | One-line paragraph clusters, colon-led lines, dash separators |
 | Vocabulary clusters | 1 | Co-occurring abstract/inspirational/discourse terms |
 | Engagement formula | 1 | "Thoughts?", "Comment below", 👇 |
 | Hashtag behavior | 1 | Hashtag-stuffed endings |
@@ -88,7 +88,7 @@ a real post.
 ### Guard rails
 
 - Posts under 10 words are never judged.
-- 10–49 words can be flagged but never hidden — little text is little evidence.
+- 10–49 words can be flagged but never hidden — little text is little evidence. A dash separator is weak evidence and needs another signal to warn.
 - 50–100 words are scored conservatively (0.7x).
 - Posts detected as likely Romanized Hindi/Hinglish are left unscored; other languages are not yet reliably identified.
 - Sponsored posts are never judged — ad copy is engineered to trip the rules.

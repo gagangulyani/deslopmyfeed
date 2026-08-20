@@ -130,7 +130,13 @@ export function analyze(post, settings, rules = RULES) {
   const warnAt = config.thresholds.warn + offset;
   const hideAt = config.thresholds.hide + offset;
 
-  if (score < warnAt) {
+  const onlyShortDash =
+    features.wordCount < MIN_WORDS_TO_ANALYZE &&
+    results.length === 1 &&
+    results[0].rule === 'formatting' &&
+    results[0].evidence.includes('short post uses a dash separator');
+
+  if (score < warnAt || onlyShortDash) {
     return verdictShow(describe(results), results, score);
   }
 
