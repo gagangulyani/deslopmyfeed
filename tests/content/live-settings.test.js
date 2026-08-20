@@ -20,7 +20,7 @@ function appendPost(text = slop) {
   return el;
 }
 
-const badges = () => document.querySelectorAll('.dsmf-badge').length;
+const flags = () => document.querySelectorAll('[data-dsmf-artifact="warn"]').length;
 const cards = () => document.querySelectorAll('.dsmf-card').length;
 
 beforeEach(() => {
@@ -39,28 +39,28 @@ describe('settings take effect without a reload', () => {
     await saveSettings({ enabled: false });
     appendPost();
     await start();
-    expect(badges()).toBe(0);
+    expect(flags()).toBe(0);
 
     await saveSettings({ enabled: true });
-    expect(badges()).toBe(1);
+    expect(flags()).toBe(1);
   });
 
   it('switching to hide collapses posts already on the page', async () => {
     appendPost();
     await start();
-    expect(badges()).toBe(1);
+    expect(flags()).toBe(1);
     expect(cards()).toBe(0);
 
     await saveSettings({ mode: 'hide' });
 
     expect(cards()).toBe(1);
-    expect(badges()).toBe(0);
+    expect(flags()).toBe(0);
   });
 
   it('switching to off clears every artifact', async () => {
     appendPost();
     await start();
-    expect(badges()).toBe(1);
+    expect(flags()).toBe(1);
 
     await saveSettings({ mode: 'off' });
 
@@ -76,30 +76,30 @@ describe('settings take effect without a reload', () => {
 
     appendPost();
     await new Promise((resolve) => setTimeout(resolve, 150));
-    expect(badges()).toBe(0);
+    expect(flags()).toBe(0);
   });
 
   it('turning a rule off re-judges the page', async () => {
     appendPost();
     await start();
-    expect(badges()).toBe(1);
+    expect(flags()).toBe(1);
 
     // Removing the structural rules drops the post below the warn threshold.
     await saveSettings({
       rules: { ...DEFAULT_SETTINGS.rules, templateStacking: false, formatting: false, genericity: false }
     });
 
-    expect(badges()).toBe(0);
+    expect(flags()).toBe(0);
   });
 
   it('an exception keyword takes effect immediately', async () => {
     appendPost();
     await start();
-    expect(badges()).toBe(1);
+    expect(flags()).toBe(1);
 
     await saveSettings({ exceptions: { authors: [], keywords: ['leadership'] } });
 
-    expect(badges()).toBe(0);
+    expect(flags()).toBe(0);
   });
 
   it('applies the theme to the page and unsets it for system', async () => {

@@ -105,12 +105,22 @@ function hiddenAuthor(author, avatarUrl) {
 export function applyWarn(post, analysis, showDetails = false) {
   if (!post || post.querySelector(`[${ARTIFACT}]`)) return;
 
+  // Warn mode is intentionally quiet. Keep an invisible marker so rescan and
+  // duplicate prevention work, while showing the explanation only in Diagnostics.
+  if (!showDetails) {
+    const marker = el('span');
+    marker.setAttribute(ARTIFACT, 'warn');
+    marker.hidden = true;
+    post.prepend(marker);
+    reportFlagCount({ delta: 1 });
+    return;
+  }
+
   const badge = el('div', 'dsmf-badge dsmf-decision');
   badge.setAttribute(ARTIFACT, 'warn');
   badge.appendChild(el('span', 'dsmf-badge-label', 'Pattern detected'));
   badge.appendChild(el('span', 'dsmf-badge-reason', patternDescription(analysis)));
-
-  if (showDetails) badge.appendChild(explanation(analysis));
+  badge.appendChild(explanation(analysis));
 
   post.classList.add(WARNED);
   post.prepend(badge);
@@ -144,7 +154,10 @@ export function applyHide(post, analysis, postInfo = {}) {
 /** Restore a collapsed post. Always available to the user (spec §10). */
 export function restore(post) {
   if (!post) return;
-  const wasFlagged = post.classList.contains(COLLAPSED) || post.classList.contains(WARNED);
+  const wasFlagged =
+    post.classList.contains(COLLAPSED) ||
+    post.classList.contains(WARNED) ||
+    Boolean(post.querySelector(`[${ARTIFACT}]`));
   post.classList.remove(COLLAPSED, WARNED);
   for (const artifact of post.querySelectorAll(`[${ARTIFACT}]`)) artifact.remove();
   if (wasFlagged) reportFlagCount({ delta: -1 });
